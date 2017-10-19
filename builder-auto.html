@@ -1,0 +1,578 @@
+<!-- 
+Improvements
+ * Delete Data Row
+ * Delete Data Table
+ * Insert Tests
+ * Insert Test Steps
+ * Insert Data Row
+ ** Keep Data Table columns in order with test steps
+ * Remove drop down form formatting, or add back formatting for input areas
+ ** resize min-width for multidropdown to placeholder length
+ *** When using autocomplete, and clicking off (not selecting), multiselect does not get filled out
+ *** Export is displaying 'dimmed' opt values
+ * When writing a step, and 'createStep' is used, and fields don't get filled in with values, the input fields get those values
+ -->
+<html>
+	<head>
+		<title>Cucumber Parser</title>
+		<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  		<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+  		<script src="http://harvesthq.github.io/chosen/chosen.jquery.js"></script>
+		<script>
+			//our step functionality
+			function step() {
+				this.string = arguments[0];
+				this.inputs = new Array();
+				for (var i = 1; i < arguments.length; i++) {
+					this.inputs.push( arguments[i] );
+				}
+			}
+			//our keypair functionality
+			function keypair( key, value ) {
+				this.key = key;
+				this.value = value;
+			}
+			//our basic setup
+			var testSteps = new Object();
+			testSteps.whens = new Array();
+			testSteps.thens = new Array();
+		</script>
+		<script src='steps.js'></script>
+		<script>console.log( testSteps );</script>
+		<script>
+			if (typeof String.prototype.startsWith != 'function') {
+				String.prototype.startsWith = function (str){
+					return this.slice(0, str.length) == str;
+				};
+			}
+			if (typeof String.prototype.endsWith != 'function') {
+				String.prototype.endsWith = function (str){
+					return this.slice(-str.length) == str;
+				};
+			}
+			if (typeof String.prototype.stripTags != 'function' ) {
+				String.prototype.stripTags = function (){
+					var tmp = document.createElement("DIV");
+					tmp.innerHTML = this;
+					return tmp.textContent || tmp.innerText || "";
+				}
+			}
+			function rand(length) {
+				var text = "";
+			    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			    for( var i=0; i < length; i++ )
+			        text += possible.charAt(Math.floor(Math.random() * possible.length));
+			    return text;
+			}
+			function resizeInput() {
+				//will resize our inputs to the input value size
+				$(this).attr('size', $(this).val().length ? $(this).val().length : $(this).attr('placeholder') ? $(this).attr('placeholder').length : '20' );
+			}
+			$(document).ready(function(){
+				$('textarea').attr('rows','1');
+				makeDynamic();
+			});
+		</script>
+		<script>
+			function makeDynamic() {
+			    //make our testSteps sortable
+				$( ".testSteps" ).sortable({
+					stop: function(event,ui) {
+						buildTable( $(ui.item).parent().parent() );
+					}
+				});
+			    //make the scenarios sortable
+			    $( "#tests" ).sortable({ handle: ".what" });
+			    //make the tables (example data) sortable
+			    $( "tbody" ).sortable();
+			    //setup our new dropdowns using the chosen plugin
+			    $('select').each(function(){
+			    	var placeholder = $(this).attr('placeholder');
+			    	if ( $(this).parent().is("td") ) {
+			    		placeholder = " ";
+			    	}
+			    	if ( $(this).attr('multiple') == 'multiple' ) {
+				    	$(this).chosen({
+				    		placeholder_text_multiple: placeholder,
+				    		width: 'auto',
+				    		disable_search_threshold: 4,
+				    		inherit_select_classes: true,
+				    	});
+			    	} else {
+				    	$(this).chosen({
+				    		placeholder_text_single: placeholder,
+				    		width: $(this).width()+15,
+				    		disable_search_threshold: 4,
+				    		inherit_select_classes: true,
+				    	});			    		
+			    	}
+			    });
+			    //allow editing of an any span
+			    $('span.any').dblclick(function(){
+			    	var input = $( "<input type='text'/>" ).keyup(resizeInput).each(resizeInput).blur(function(){
+			    		if( $(this).val() == "" ) {
+			    			$(this).parent().html( "..." );
+			    		}
+			    	});
+			    	$(this).html( input );
+			    });
+			    //allow the toggling an opt span
+			    $('span.opt').dblclick(function(){
+			    	if ( $(this).css('opacity') > 0.5 ) 
+				    	$(this).css({ opacity: 0.2 });
+			    	else
+				    	$(this).css({ opacity: 1 });			    		
+			    });
+			    //keep the size of our input fields under control
+			    $('input').each(function(){
+			    	$(this).keyup(resizeInput).each(resizeInput);
+			    });
+			    //keep the size of our textareas under control
+			    $('textarea').keyup(function(){
+			    	$(this).attr('rows',($(this).val().split("\n").length||1));
+			    });
+			}
+			function addScenario() {
+				$('#tests').append( 
+						"<div class='scenario'>" +
+							"<input class='purple' placeholder='Scenario Tags' />" +
+							"<div class='green'>" +
+								"<span class='what'>Scenario:</span> <input class='green' placeholder='Test Case Name' type='text' />" + 
+								"<br/>" +
+								"<textarea rows='1' placeholder='Test Case Description'></textarea>" +
+							"</div>" +
+							"<div class='testSteps'></div>\n" +
+							"<button onclick='addTestStep(this)'>Add Test Step</button>" +
+							"<button onclick='addDataTable(this)' class='addTable' style='display:none;'>Add Data Table</button>" +
+							"<div class='delete' onclick='del(this)' style='top:60px;'>&nbsp;</div>" +
+						"</div>"
+				);
+				makeDynamic();
+			}
+			function addTestStep(el) {
+				$(el).parent().find('.testSteps').append( 
+						"<div class='testStep'><div class='edit' onclick='edit(this)'>&nbsp;</div><div class='delete' onclick='del(this)'>&nbsp;</div><select class='blue' onchange='fillStep(this)'><option></option><option>Given</option><option>When</option><option>Then</option></div>"
+				);
+				makeDynamic();
+			}
+			function fillStep(el) {
+				var value = $(el).val();
+				$(el).next().nextAll().remove();
+				var input = $("<input type='text' />");
+				var autocompletes = new Array();
+				if ( value == "Given" || value == "When" ) {
+					for (i=0;i<testSteps.whens.length;i++) {
+						autocompletes.push({
+							label: testSteps.whens[i].string.stripTags(),
+							value: testSteps.whens[i].string,
+							what: "whens",
+							order: i
+						});
+					}
+				} else if ( value == "Then" ) {
+					for (i=0;i<testSteps.thens.length;i++) {
+						autocompletes.push({
+							label: testSteps.thens[i].string.stripTags(),
+							value: testSteps.thens[i].string,
+							what: "thens",
+							order: i
+						});
+					}
+				}
+				input.autocomplete({
+				    minLength: 0,
+			        source: autocompletes,
+			        focus: function( event, ui ) {
+			        	input.val( ui.item.value.stripTags() );
+						return false;
+			        },
+			        select: function( event, ui ) {
+						fillVars(ui.item.what,ui.item.order,$(this));
+					},
+					minLength: 0,
+				}).click(function(){
+					$(this).autocomplete( "search", "" );
+				}).blur(function(){
+					createStep($(this));
+				});
+				$(el).next().after( input );
+			}
+			function createStep(el) {
+				var newStep = $(el).val();
+				var type = $(el).prev().prev();
+				var step = "";
+				//Need to determine if this step matches something
+				//Check each GWT, replace XXXX with (.*), and do a regex check
+				//if any are a match, select it
+				if ( type.val() == "Given" || type.val() == "When" ) {
+					step = "whens";
+				} else if ( type.val() == "Then" ) {
+					step = "thens"
+				} else {
+					return false;
+				}
+				for (i=0;i<testSteps[step].length;i++) {
+					var string = testSteps[step][i].string;
+					var regex = string.replace(/<span class='opt'>(.*?)<\/span>/g, "($1)?");
+					var regex = regex.replace(/<span class='any'>(.*?)<\/span>/g, "(.*?)");
+					regex = regex.replace(/XXXX/g, "(.*)");
+					regex = regex.stripTags();
+					regex = "^"+regex+"$";
+					var res = newStep.match( regex );
+					if ( res != null ) {
+						fillVars(step,i,el);
+						var inputs = type.parent().children('input,select');
+						for(j=1;j<res.length;j++) {
+							if( res[j] == "XXXX" ) {
+								res[j] = "";
+							}
+							$(inputs).eq(j).val( res[j] );
+							if ( $(inputs).eq(j).is('select') ) {
+								$(inputs).eq(j).trigger('chosen:updated');
+							}
+							buildTable(type.parent().parent().parent());
+							makeDynamic();
+						}
+						return true;
+					}
+				}
+				type.next().nextAll().remove();
+				var newStepPieces = newStep.split(/<|>/);
+				newStep = "";
+				for (i=0;i<newStepPieces.length;i++) {
+					newStep += "<span class='new'> " + newStepPieces[i] + "</span>";
+					if ( newStepPieces[i+1] ) {
+						newStep += "<input id='"+rand(10)+"' type='text' onchange='buildTable(this)' placeholder='<"+newStepPieces[i+1]+">' class='new' />";
+						i++;
+					}
+				}
+				type.parent().append( newStep );
+				buildTable(type.parent().parent().parent());
+				makeDynamic();
+			}
+			function fillVars(what,order,el) {
+				var sClass = $(el).parent().parent().parent().attr("class");
+				var testStepString = testSteps[what][order].string;
+				var testStepInputs = testSteps[what][order].inputs;
+				var testStepPieces = testStepString.split("XXXX") //.filter(function(el) {return el.length != 0});
+				var type = $(el).prev();
+				type.nextAll().remove();
+				for ( i=0;i<testStepPieces.length;i++) {
+					type.parent().append( "<span> " + testStepPieces[i] + "</span>" );
+					if ( testStepInputs[i] !== undefined ) {
+						var objID = rand(10);
+						if ( Object.prototype.toString.call( testStepInputs[i].value ) === '[object Array]' ) {
+							var sel = $("<select id='"+objID+"' type='"+testStepInputs[i].key+"' onchange='buildTable(this)' placeholder='<"+testStepInputs[i].key+">'></select>");
+							if ( testStepInputs[i].key.endsWith( "List" ) ) {
+								sel.attr("multiple","multiple");
+								sel.append( "<option></option>" );
+							} else {
+								sel.append( "<option>&lt;"+testStepInputs[i].key+"&gt;</option>" );
+							}
+							for (j=0;j<testStepInputs[i].value.length;j++) {
+								sel.append( "<option>" + testStepInputs[i].value[j] + "</option>" );
+							}
+							type.parent().append( sel );
+						} else {
+							type.parent().append( "<input id='"+objID+"' type='"+testStepInputs[i].value+"' onchange='buildTable(this)' placeholder='<"+testStepInputs[i].key+">' />" );								
+						}
+					}
+				}
+				buildTable(type.parent().parent().parent());
+				makeDynamic();
+			}
+			function addDataTable(el) {
+				addTable( $(el).parent() );
+				buildTable( $(el).parent() );
+			}
+			function buildTable(testEl) {		//el should be the test element
+				if ( !$(testEl).hasClass( 'scenario' ) ) {
+					testEl = $(testEl).parent().parent().parent();
+				}
+				if ( !$(testEl).hasClass( 'scenario' ) ) {
+					//TODO - remove this, just for error checking
+					//alert( "FAIL!" );
+					return false;
+				}
+				//add a table if needed
+				if ( $(testEl).find( '.examples' ).length == 0 ) {
+					addTable( $(testEl) );
+					$(testEl).children('.addTable').show();
+				}
+				//get each variable from our test steps
+				var variables = new Object();
+				var scenario = $(testEl).children('.testSteps');
+				scenario.children('.testStep').each(function(){
+					$(this).children('input, select').each(function(){
+						if ( $(this).val() == null ) {
+							var placeholder = $(this).attr('placeholder')
+							if ( placeholder.startsWith("<") && placeholder.endsWith(">") ) {
+								variables[ placeholder.substring(1,placeholder.length-1) ] = $(this).attr('id');
+							}
+							return true;
+						}
+						if ( Object.prototype.toString.call( $(this).val() ) === '[object Array]' ) {
+							return true;
+						}
+						if ( $(this).hasClass('ui-autocomplete-input') ) {
+							return true;
+						}
+						if ( $(this).val() == "" && $(this).is("input") ) {
+							var placeholder = $(this).attr('placeholder')
+							variables[ placeholder.substring(1,placeholder.length-1) ] = $(this).attr('id');
+							return true;
+						}
+						if ( $(this).val().startsWith("<") && $(this).val().endsWith(">") ) {
+							var placeholder = $(this).val();
+							variables[ placeholder.substring(1,placeholder.length-1) ] = $(this).attr('id');
+							return true;
+						}
+					});
+				});
+				var examples = scenario.parent().children('.examples');
+				$(examples).each(function(){
+					example = $(this);
+					//remove any columns that no longer exist in the variables
+					var header = example.children('table').children('thead').children('tr');
+					var headerVals = new Array();
+					header.children('th').each(function(){
+						headerVals.push( $(this).html() );
+						if ( !variables.hasOwnProperty($(this).html()) ) {
+						    var column = $(this).parent().children().index(this);
+						    example.find('tr').each(function(){
+						    	$(this).find("th:eq("+column+")").remove();
+						    	$(this).find("td:eq("+column+")").remove();
+						    })
+						}
+					});
+					//add in any new values that may be missing
+					for ( var key in variables ) {
+						if( $.inArray( key, headerVals ) == -1 ) {
+							header.append( "<th inheritFrom='"+variables[key]+"'>" + key + "</th>" );
+							example.children('table').children('tbody').children('tr').each(function(){
+								var cell = $("<td></td>");
+								var input = $("#"+variables[key]).clone();
+								input.removeAttr('id');
+								input.removeAttr('style');
+								input.removeAttr('onchange');
+								input.val('');
+								if ( input.is("input") ) {
+									input.removeAttr('placeholder');
+								}
+								if ( input.is("select") ) {
+									input.find(">:first-child").remove();
+								}
+								cell.append( input );
+								$(this).append( cell );
+							});
+						}
+					};					
+				});
+				//rearrange our table
+				var order = new Array();
+				for (var key in variables) {
+				    order.push(key);
+				}
+				console.log( order );
+				var newOrder = new Array();
+				examples.find('table').first().find('th').each(function(){
+					newOrder.push( jQuery.inArray($(this).html(), order) );
+				});
+				console.log( newOrder );
+//				examples.find('tr').each(function(){
+//					var tr = $(this);
+//					var td1 = tr.find('td:eq(0),th:eq(0)'); // indices are zero-based here
+//				    var td2 = tr.find('td:eq(1),th:eq(1)');
+//				    td1.detach().insertAfter(td2);
+//				});
+				
+				makeDynamic();
+				//rename our scenario type if needed
+				var cols = examples.children('table').children('thead').children('tr').children('th');
+				if ( cols.length == 0 ) {
+					examples.parent().children('.green').children('.what').html( "Scenario:" );
+					examples.remove();
+					$(testEl).children('.addTable').hide();
+				}
+			}
+			function addTable(el) {
+				$(el).append(
+					"<div class='examples'>" +
+						"<input class='purple' placeholder='Example Tags' />" +
+						"<div class='green'>Examples:</div>" +
+						"<table><thead><tr></tr></thead><tbody></tbody></table>" +
+						"<button onclick='addDataRow(this)'>Add Data Row</button>" +
+					"</div>"
+				);
+				$(el).children('.green').children('.what').html( "Scenario Outline:" );
+				addDataRow( $(el).children('.examples').last().children('table') );
+			}
+			function addDataRow(el) {
+				var examples = $(el).parent();
+				var body = examples.children('table').children('tbody');
+				var cols = examples.children('table').children('thead').children('tr').children('th');
+				var row = $("<tr></tr>");
+				cols.each(function(){
+					var cell = $("<td></td>");
+					var input = $("#"+$(this).attr('inheritFrom')).clone();
+					input.removeAttr('id');
+					input.removeAttr('style');
+					input.removeAttr('onchange');
+					if ( input.is("input") ) {
+						input.removeAttr('placeholder');
+					}
+					if ( input.is("select") ) {
+						input.find(">:first-child").remove();
+					}
+					cell.append( input );
+					row.append( cell );
+				});
+				body.append( row );
+				makeDynamic();
+			}
+			function del(el) {
+				var r=confirm("Are you sure you want to delete this " + $(el).parent().attr('class') );
+				if (r==true) {
+					tmp = $(el).parent().parent().parent()
+					$(el).parent().remove();
+					buildTable( $(tmp) );
+				}
+			}
+			function edit(el) {
+				var r=confirm("Are you sure you want to edit this " + $(el).parent().attr('class') );
+				if (r==true) {
+					tmp = $(el).parent().parent().parent()
+					fillStep( $(el).next().next() );
+					buildTable( $(tmp) );
+				}
+			}
+			function download() {
+				//build our data
+				data = "";
+				if ( $('#featTag').val() != "" ) {
+					data += $('#featTag').val() + "\n";
+				}
+				data += "Feature: " + $('#featuredef input').val() + "\n";
+				if ( $('#featuredef textarea').val() != "" ) {
+					data += $('#featuredef textarea').val() + "\n";
+				}
+				data += "\n";
+				$('.scenario').each(function(){
+					if ( $(this).children('input.purple').val() != "" ) {
+						data += $(this).children('input.purple').val() + "\n";
+					}
+					data += $(this).children('div.green').children('span.what').html() + " ";
+					data += $(this).children('div.green').children('input.green').val() + "\n";
+					if ( $(this).children('div.green').children('textarea').val() != "" ) {
+						data += $(this).children('div.green').children('textarea').val() + "\n";
+					}					
+					$(this).find('.testStep').each(function(){
+						$(this).children('input,select,span').each(function(){
+							if ( ( $(this).val() == "" || $(this).val() == null ) 
+									&& ( $(this).is("input") || $(this).is("select") ) ) {
+								if ( $(this).attr('placeholder') !== undefined ) {
+									data += $(this).attr('placeholder');
+								}
+							} else if ( $(this).is('select') || $(this).is('input') ) {
+								if ( $(this).val() !== undefined ) {
+									data += $(this).val();
+								}
+							} else {
+								if ( $(this).html() !== undefined ) {
+									data += $(this).html().stripTags();
+								}
+							}
+						});
+						data += "\n";
+					});
+					if ( $(this).children('.examples').length ) {
+						var examples = $(this).children('.examples');
+						$(examples).each(function(){
+							example = $(this);
+							if ( example.children('input.purple').val() != "" ) {
+								data += example.children('input.purple').val() + "\n";
+							}
+							data += "Examples: \n";
+							example.find('tr').each(function(){
+								$(this).find('th').each(function(){
+									data += "|\t"+$(this).html()+"\t";
+								});
+								$(this).children('td').children('input,select').each(function(){
+									data += "|\t"
+									if ( $(this).val() != null ) {
+										data += $(this).val();
+									}
+									data += "\t";
+								});
+								data += "|\n";
+							});
+						});
+					}
+					data += "\n";
+				});
+				//fix brackets
+				data = data.replace(/</g, '&lt;');
+				data = data.replace(/>/g, '&gt;');
+				//fix extra spaces
+				data = data.replace(/&nbsp;/g, ' ');
+				data = data.replace(/( ){2,}/g, ' ');
+				//download the file
+				document.location = 'data:Application/octet-stream,' +
+				encodeURIComponent( data );
+				//warn the user about filename and linebreaks
+				alert( "Note: this file will need to be renamed.\n\nOpen in wordpad or np++ to preserve line breaks.")
+				//data = data.replace(/\n/g, '<br/>');
+				//if ( $('#final').length ) {
+				//	$('#final').html( data );
+				//} else {
+				//	$("body").append( "<div id='final'>"+data+"</data>" );
+				//}
+			}
+		</script>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+		<link rel="stylesheet" href="http://harvesthq.github.io/chosen/chosen.css">
+		<style>
+			span.opt	{ font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
+			span.any	{ font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
+			span.new	{ font-style:italic; color:red; font-weight:bold; }
+			.scenario	{ margin-left:32px; padding-top:32px; position:relative; }
+			.testStep 	{ position:relative; cursor:move; }
+			.ui-autocomplete { max-height: 150px; overflow-y: auto; overflow-x: hidden; font-size:small; }
+			.what		{ position:relative; cursor:move; }
+			.examples	{ margin-left:32px; }
+			.edit		{ font-weight:900; color:red; position:absolute; top:4px; left:-16px; cursor:pointer; background-image:url('http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-10/16/Pencil-icon.png'); background-repeat:no-repeat; background-position:right top; overflow: visible; width:16px; }
+			.delete		{ font-weight:900; color:red; position:absolute; top:4px; left:-32px; cursor:pointer; background-image:url('http://icons.iconarchive.com/icons/kyo-tux/delikate/16/Close-icon.png'); background-repeat:no-repeat; background-position:right top; overflow: visible; width:16px; }
+			input[type=number] { width:50px; }
+			table		{ border-collapse:separate; border-spacing:0px 5px;}
+			td			{ border-left: 1px solid black; border-right: 1px solid black; }
+			tbody tr	{ cursor:move; }
+			input,textarea,select		{ border:1px solid white; }
+			div.testStep input,div.testStep select { font-style:italic; text-align:center; color:grey; font-weight:bold; }
+			.chosen-container-multi { min-width: 100px; }
+			.chosen-container-multi .chosen-choices li.search-field input[type="text"] { padding: 0px; }
+			.chosen-container-multi .chosen-choices { border: 1px solid white; background-image:none; box-shadow:none; }
+			.chosen-container-multi .chosen-choices:hover { border: 1px solid grey; }
+			input:hover,textarea:hover,select:hover	{ border: 1px solid grey; }
+			div.testStep input.ui-autocomplete-input	{ border: 1px solid black; font-style:normal; text-align:left; color:black; font-weight:normal; }
+			div.testStep select.blue	{ border: 1px solid black; font-style:normal; text-align:left; color:blue; font-weight:normal; }
+			div.blue span,div.blue li { color:blue; }
+			.green 		{ font-weight:900; color:green; }
+			.purple		{ font-weight:900; color:purple; }
+		</style>
+	</head>
+	<body>
+		<input id='featTag' class='purple' placeholder='Feature Tags' />
+		<div id='featuredef' class='green'>
+			Feature: <input class='green' placeholder='Feature Title' type='text' />
+			<br/>
+			<textarea class='green' placeholder="Feature Description"></textarea>
+		</div>
+		<div id='tests'></div>
+		<div style="position:fixed;bottom:0px;width:100%;">
+			<p style="text-align:center;">
+				<button onclick='addScenario()'>Add Scenario</button>
+				<button onclick='download()'>Export as Feature File</button>
+			</p>
+		</div>
+	</body>
+</html>
