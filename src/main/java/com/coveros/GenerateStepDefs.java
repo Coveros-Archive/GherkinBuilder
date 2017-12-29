@@ -10,7 +10,7 @@ import java.util.List;
 
 public class GenerateStepDefs {
 
-    private static final String INITIALSTEPLOCATION = "step.js";
+    private static final String INITIALSTEPLOCATION = "public/js/step.js";
 
     private static File checkInputs(String[] inputs) throws Exception {
         // get all of our files for the listing
