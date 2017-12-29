@@ -26,7 +26,7 @@ public class GenerateStepDefs {
 
     /**
      * a method to recursively retrieve all the files in a folder
-     * 
+     *
      * @param folder:
      *            the folder to check for files
      * @return ArrayList<String>: an ArrayList with the of multiple files
@@ -117,7 +117,7 @@ public class GenerateStepDefs {
         writer.close();
 
         // to prepend, we must copy, then unlink our old file
-        writer = new PrintWriter("steps.js", "UTF-8");
+        writer = new PrintWriter("public/js/steps.js", "UTF-8");
         // write our enumerations
         writer.println("//our enumerations");
         for (String enumeration : enumerations) {
