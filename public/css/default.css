@@ -1,0 +1,26 @@
+span.opt    { font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
+span.any    { font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
+span.new    { font-style:italic; color:red; font-weight:bold; }
+.scenario    { margin-left:32px; padding-top:32px; position:relative; }
+.testStep     { position:relative; cursor:move; }
+.ui-autocomplete { max-height: 150px; overflow-y: auto; overflow-x: hidden; font-size:small; }
+.what        { position:relative; cursor:move; }
+.examples    { margin-left:32px; }
+.edit        { font-weight:900; color:red; position:absolute; top:4px; left:-16px; cursor:pointer; background-image:url('http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-10/16/Pencil-icon.png'); background-repeat:no-repeat; background-position:right top; overflow: visible; width:16px; }
+.delete        { font-weight:900; color:red; position:absolute; top:4px; left:-32px; cursor:pointer; background-image:url('http://icons.iconarchive.com/icons/kyo-tux/delikate/16/Close-icon.png'); background-repeat:no-repeat; background-position:right top; overflow: visible; width:16px; }
+input[type=number] { width:50px; }
+table        { border-collapse:separate; border-spacing:0px 5px;}
+td            { border-left: 1px solid black; border-right: 1px solid black; }
+tbody tr    { cursor:move; }
+input,textarea,select        { border:1px solid white; }
+div.testStep input,div.testStep select { font-style:italic; text-align:center; color:grey; font-weight:bold; }
+.chosen-container-multi { min-width: 100px; }
+.chosen-container-multi .chosen-choices li.search-field input[type="text"] { padding: 0px; }
+.chosen-container-multi .chosen-choices { border: 1px solid white; background-image:none; box-shadow:none; }
+.chosen-container-multi .chosen-choices:hover { border: 1px solid grey; }
+input:hover,textarea:hover,select:hover    { border: 1px solid grey; }
+div.testStep input.ui-autocomplete-input    { border: 1px solid black; font-style:normal; text-align:left; color:black; font-weight:normal; }
+div.testStep select.blue    { border: 1px solid black; font-style:normal; text-align:left; color:blue; font-weight:normal; }
+div.blue span,div.blue li { color:blue; }
+.green         { font-weight:900; color:green; }
+.purple        { font-weight:900; color:purple; }
