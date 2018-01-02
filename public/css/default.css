@@ -1,7 +1,7 @@
 span.opt    { font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
 span.any    { font-style:italic; color:grey; font-weight:bold; cursor:pointer; }
 span.new    { font-style:italic; color:red; font-weight:bold; }
-.scenario    { margin-left:32px; padding-top:32px; position:relative; }
+.scenario, .background    { margin-left:32px; padding-top:32px; position:relative; }
 .testStep     { position:relative; cursor:move; }
 .ui-autocomplete { max-height: 150px; overflow-y: auto; overflow-x: hidden; font-size:small; }
 .what        { position:relative; cursor:move; }

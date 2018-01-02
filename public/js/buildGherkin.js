@@ -33,7 +33,7 @@ function makeDynamic() {
     });
     //allow editing of an any span
     $('span.any').dblclick(function(){
-        var input = $( "<input type='text'/>" ).keyup(resizeInput).each(resizeInput).blur(function(){
+        var input = $( "<input type='text' class='small' />" ).keyup(resizeInput).each(resizeInput).blur(function(){
             if( $(this).val() == "" ) {
                 $(this).parent().html( "..." );
             }
@@ -48,7 +48,7 @@ function makeDynamic() {
             $(this).css({ opacity: 1 });
     });
     //keep the size of our input fields under control
-    $('input').each(function(){
+    $('input.small').each(function(){
         $(this).keyup(resizeInput).each(resizeInput);
     });
     //keep the size of our textareas under control
@@ -59,9 +59,9 @@ function makeDynamic() {
 function addScenario() {
     $('#tests').append(
             "<div class='scenario'>" +
-                "<input class='purple' placeholder='Scenario Tags' />" +
+                "<input class='purple small' placeholder='Scenario Tags' />" +
                 "<div class='green'>" +
-                    "<span class='what'>Scenario:</span> <input class='green' placeholder='Test Case Name' type='text' />" +
+                    "<span class='what'>Scenario:</span> <input class='green small' placeholder='Test Case Name' type='text' />" +
                     "<br/>" +
                     "<textarea rows='1' placeholder='Test Case Description'></textarea>" +
                 "</div>" +
@@ -82,7 +82,7 @@ function addTestStep(el) {
 function fillStep(el) {
     var value = $(el).val();
     $(el).next().nextAll().remove();
-    var input = $("<input type='text' />");
+    var input = $("<input type='text' class='small' />");
     var autocompletes = new Array();
     if ( value == "Given" || value == "When" ) {
         for (i=0;i<testSteps.whens.length;i++) {
@@ -166,7 +166,7 @@ function createStep(el) {
     for (i=0;i<newStepPieces.length;i++) {
         newStep += "<span class='new'> " + newStepPieces[i] + "</span>";
         if ( newStepPieces[i+1] ) {
-            newStep += "<input id='"+rand(10)+"' type='text' onchange='buildTable(this)' placeholder='<"+newStepPieces[i+1]+">' class='new' />";
+            newStep += "<input id='"+rand(10)+"' type='text' class='small' onchange='buildTable(this)' placeholder='<"+newStepPieces[i+1]+">' class='new' />";
             i++;
         }
     }
@@ -198,7 +198,7 @@ function fillVars(what,order,el) {
                 }
                 type.parent().append( sel );
             } else {
-                type.parent().append( "<input id='"+objID+"' type='"+testStepInputs[i].value+"' onchange='buildTable(this)' placeholder='<"+testStepInputs[i].key+">' />" );
+                type.parent().append( "<input id='"+objID+"' type='"+testStepInputs[i].value+"' class='small' onchange='buildTable(this)' placeholder='<"+testStepInputs[i].key+">' />" );
             }
         }
     }
@@ -316,7 +316,7 @@ function buildTable(testEl) {        //el should be the test element
 function addTable(el) {
     $(el).append(
         "<div class='examples'>" +
-            "<input class='purple' placeholder='Example Tags' />" +
+            "<input class='purple small' placeholder='Example Tags' />" +
             "<div class='green'>Examples:</div>" +
             "<table><thead><tr></tr></thead><tbody></tbody></table>" +
             "<button onclick='addDataRow(this)'>Add Data Row</button>" +
