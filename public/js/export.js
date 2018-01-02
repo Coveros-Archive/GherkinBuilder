@@ -90,6 +90,9 @@ function jira(username, password) {
         username : username,
         password : password
     });
+    // required values from the epic 'feature' creation
+    var epic_id;
+    var epic_key;
     // create the epic to contain the scenarios
     $.post(jiraREST + "api/2/issue", {
         "fields" : {
@@ -101,15 +104,19 @@ function jira(username, password) {
             "issuetype" : {
                 "name" : "Epic"
             },
-            "labels" : getFeatureTags()
+            "labels" : getFeatureTags(),
+            "customfield_10004" : getFeatureTitle()
         // TODO - put in background steps
         }
-    }, function(d) {
-        // TODO - get the epic id
-        // $('body').html(d.status);
+    }, function(data) {
+        epic_id = data.id;
+        epic_key = data.key;
     }, 'json');
     // for each scenario
     $('.scenario').each(function() {
+        // required values from the epic 'feature' creation
+        var test_case_id;
+        var test_case_key;
         // create the test case
         $.post(jiraREST + "api/2/issue", {
             "fields" : {
@@ -122,18 +129,17 @@ function jira(username, password) {
                     "name" : "Test"
                 },
                 "labels" : getScenarioTags($(this)),
-                "customfield_10006" : epid_id
+                "customfield_10001" : epic_key
             }
-        }, function(d) {
-            // TODO - get the test case id
-            // $('body').html(d.status);
+        }, function(data) {
+            test_case_id = data.id;
+            test_case_key = data.key;
         }, 'json');
         // add the test steps
         $.each(getScenarioTestSteps($(this)), function(key, step) {
             $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
                 "step" : step
-            }, function(d) {
-                // $('body').html(d.status);
+            }, function() {
             }, 'json');
         });
         // TODO - do something with the example data - will want a custom field
