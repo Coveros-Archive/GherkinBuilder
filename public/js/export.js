@@ -106,44 +106,44 @@ function jira(jiraBase, project, username, password) {
             // TODO - put in background steps
         }
     }, function(data) {
-        epic_id = data.id;
-        epic_key = data.key;
-        // for each scenario
-        $('.scenario').each(function() {
-            // required values from the epic 'feature' creation
-            var test_case_id;
-            var test_case_key;
-            // create the test case
-            $.post(jiraREST + "api/2/issue", {
-                "fields" : {
-                    "project" : {
-                        "key" : project
-                    },
-                    "summary" : getScenarioTitle($(this)),
-                    "description" : getScenarioDescription($(this)),
-                    "issuetype" : {
-                        "name" : "Test"
-                    },
-                    "labels" : getScenarioTags($(this)),
-                    "customfield_10001" : epic_key
-                }
-            }, function(data) {
-                test_case_id = data.id;
-                test_case_key = data.key;
-                // add the test steps
-                $.each(getScenarioTestSteps($(this)), function(key, step) {
-                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
-                        "step" : step
-                    }, function() {
-                    }, 'json');
-                });
-                // TODO - do something with the example data - will want a
-                // custom field
-                // for this
-
-            }, 'json');
-        });
-
+//        epic_id = data.id;
+//        epic_key = data.key;
+//        // for each scenario
+//        $('.scenario').each(function() {
+//            // required values from the epic 'feature' creation
+//            var test_case_id;
+//            var test_case_key;
+//            // create the test case
+//            $.post(jiraREST + "api/2/issue", {
+//                "fields" : {
+//                    "project" : {
+//                        "key" : project
+//                    },
+//                    "summary" : getScenarioTitle($(this)),
+//                    "description" : getScenarioDescription($(this)),
+//                    "issuetype" : {
+//                        "name" : "Test"
+//                    },
+//                    "labels" : getScenarioTags($(this)),
+//                    "customfield_10001" : epic_key
+//                }
+//            }, function(data) {
+//                test_case_id = data.id;
+//                test_case_key = data.key;
+//                // add the test steps
+//                $.each(getScenarioTestSteps($(this)), function(key, step) {
+//                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
+//                        "step" : step
+//                    }, function() {
+//                    }, 'json');
+//                });
+//                // TODO - do something with the example data - will want a
+//                // custom field
+//                // for this
+//
+//            }, 'json');
+//        });
+//
     }, 'json');
 }
 

@@ -1,4 +1,4 @@
 jiraOptions = {
-	base: "",
-	project: "",
+    base: "",
+    project: "",
 }
