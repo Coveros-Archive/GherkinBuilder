@@ -56,10 +56,10 @@ $(function() {
         },
         buttons : {
             "Ok" : function() {
-                var jiraBase = $("#jiraBase");
-                var jiraProj = $("#jiraProj");
-                var username = $("#username");
-                var password = $("#password");
+                var jiraBase = $("#jiraBase").val();
+                var jiraProj = $("#jiraProj").val();
+                var username = $("#username").val();
+                var password = $("#password").val();
                 jira(jiraBase, jiraProj, username, password);
                 $(this).dialog("close");
             },
@@ -70,10 +70,8 @@ $(function() {
     });
 });
 
-function jira(jiraBase1, project1, username, password) {
-    var jiraBase = "https://agile.vignetcorp.com:8085/jira";
+function jira(jiraBase, project, username, password) {
     var jiraREST = jiraBase + "/rest/"
-    var project = "ATA";
     // setup our default credentials
     $.ajaxSetup({
         beforeSend : function(xhr) {
