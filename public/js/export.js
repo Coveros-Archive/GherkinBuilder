@@ -50,11 +50,17 @@ $(function() {
     $("#jira-creds").dialog({
         autoOpen : false,
         modal : true,
+        open : function() {
+            $("#jiraBase").val(jiraOptions.base);
+            $("#jiraProj").val(jiraOptions.project);
+        },
         buttons : {
             "Ok" : function() {
+                var jiraBase = $("#jiraBase");
+                var jiraProj = $("#jiraProj");
                 var username = $("#username");
                 var password = $("#password");
-                jira(username, password);
+                jira(jiraBase, jiraProj, username, password);
                 $(this).dialog("close");
             },
             "Cancel" : function() {
@@ -64,17 +70,8 @@ $(function() {
     });
 });
 
-function jira(username, password) {
-    // create an epic for the feature, and then add each scenario/scenario
-    // outline into it
-    // the background steps will be added into the epic
-
-    // define the jira we are interacting with - hard coded for now
-    var jiraBase = "https://agile.vignetcorp.com:8085/jira";
+function jira(jiraBase, project, username, password) {
     var jiraREST = jiraBase + "/rest/"
-    // define the project we are entering code into - hard coded for now,
-    // consider making this a passable parameter
-    var project = "ATA";
     // setup our default credentials
     $.ajaxSetup({
         beforeSend : function(xhr) {
@@ -106,45 +103,48 @@ function jira(username, password) {
             },
             "labels" : getFeatureTags(),
             "customfield_10004" : getFeatureTitle()
-        // TODO - put in background steps
+            // TODO - put in background steps
         }
     }, function(data) {
         epic_id = data.id;
         epic_key = data.key;
-    }, 'json');
-    // for each scenario
-    $('.scenario').each(function() {
-        // required values from the epic 'feature' creation
-        var test_case_id;
-        var test_case_key;
-        // create the test case
-        $.post(jiraREST + "api/2/issue", {
-            "fields" : {
-                "project" : {
-                    "key" : project
-                },
-                "summary" : getScenarioTitle($(this)),
-                "description" : getScenarioDescription($(this)),
-                "issuetype" : {
-                    "name" : "Test"
-                },
-                "labels" : getScenarioTags($(this)),
-                "customfield_10001" : epic_key
-            }
-        }, function(data) {
-            test_case_id = data.id;
-            test_case_key = data.key;
-        }, 'json');
-        // add the test steps
-        $.each(getScenarioTestSteps($(this)), function(key, step) {
-            $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
-                "step" : step
-            }, function() {
+        // for each scenario
+        $('.scenario').each(function() {
+            // required values from the epic 'feature' creation
+            var test_case_id;
+            var test_case_key;
+            // create the test case
+            $.post(jiraREST + "api/2/issue", {
+                "fields" : {
+                    "project" : {
+                        "key" : project
+                    },
+                    "summary" : getScenarioTitle($(this)),
+                    "description" : getScenarioDescription($(this)),
+                    "issuetype" : {
+                        "name" : "Test"
+                    },
+                    "labels" : getScenarioTags($(this)),
+                    "customfield_10001" : epic_key
+                }
+            }, function(data) {
+                test_case_id = data.id;
+                test_case_key = data.key;
+                // add the test steps
+                $.each(getScenarioTestSteps($(this)), function(key, step) {
+                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
+                        "step" : step
+                    }, function() {
+                    }, 'json');
+                });
+                // TODO - do something with the example data - will want a
+                // custom field
+                // for this
+
             }, 'json');
         });
-        // TODO - do something with the example data - will want a custom field
-        // for this
-    });
+
+    }, 'json');
 }
 
 function getJIRACreds() {

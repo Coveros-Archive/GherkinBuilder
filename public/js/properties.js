@@ -1,0 +1,4 @@
+jiraOptions = {
+	base: "",
+	project: "",
+}
