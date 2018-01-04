@@ -1,3 +1,3 @@
 jiraOptions = {
-    project : "ATA",
+    project : "",
 }
