@@ -52,6 +52,11 @@ $(function() {
         modal : true,
         open : function() {
             $("#jiraProj").val(jiraOptions.project);
+            $("#jira-creds").keypress(function(e) {
+                if (e.keyCode == $.ui.keyCode.ENTER) {
+                  $(this).next().find("button:eq(0)").trigger("click");
+                }
+              });
         },
         buttons : {
             "Ok" : function() {
