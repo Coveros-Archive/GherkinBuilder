@@ -54,16 +54,17 @@ $(function() {
             $("#jiraProj").val(jiraOptions.project);
             $("#jira-creds").keypress(function(e) {
                 if (e.keyCode == $.ui.keyCode.ENTER) {
-                  $(this).next().find("button:eq(0)").trigger("click");
+                    $(this).next().find("button:eq(0)").trigger("click");
                 }
-              });
+            });
         },
         buttons : {
             "Ok" : function() {
                 var jiraProj = $("#jiraProj").val();
                 var username = $("#username").val();
                 var password = $("#password").val();
-                jira(jiraProj, username, password);
+                auth = btoa($("#username").val() + ":" + $("#password").val());
+                jira(jiraProj, auth);
                 $(this).dialog("close");
             },
             "Cancel" : function() {
@@ -73,72 +74,32 @@ $(function() {
     });
 });
 
-function jira(project, username, password) {
-    var jiraREST = jiraOptions.base + "/rest/";
-    // setup our default credentials
-    $.ajaxSetup({
-        contentType : "application/json; charset=UTF-8",
-        dataType : "json",
-        crossDomain : true,
-        xhrFields : {
-            withCredentials : true
-        },
-        username : username,
-        password : password
-    });
+function jira(project, auth) {
     // required values from the epic 'feature' creation
-    var epic_id;
     var epic_key;
     // create the epic to contain the scenarios
-    $.post(jiraREST + "api/2/issue", JSON.stringify({
-        "fields" : {
-            "project" : {
-                "key" : project
-            },
-            "summary" : getFeatureTitle(),
-            "description" : getFeatureDescription(),
-            "issuetype" : {
-                "name" : "Epic"
-            },
-            "labels" : getFeatureTags(),
-            [jiraOptions.epic_name_field] : getFeatureTitle(),
-            [jiraOptions.background_steps_field] : getBackgroundTestSteps(),
-        }
-    }), function(data) {
-        epic_id = data.id;
+    $.post("api/createFeature.php", {
+        "auth" : auth,
+        "project" : project,
+        "featureTags" : getFeatureTags(),
+        "featureTitle" : getFeatureTitle(),
+        "featureDescription" : getFeatureDescription(),
+    }, function(data) {
         epic_key = data.key;
         // for each scenario
         $('.scenario').each(function() {
-            // required values from the epic 'feature' creation
-            var test_case_id;
-            var test_case_key;
             // create the test case
-            $.post(jiraREST + "api/2/issue", JSON.stringify({
-                "fields" : {
-                    "project" : {
-                        "key" : project
-                    },
-                    "summary" : getScenarioTitle($(this)),
-                    "description" : getScenarioDescription($(this)),
-                    "issuetype" : {
-                        "name" : "Test"
-                    },
-                    "labels" : getScenarioTags($(this)),
-                    [jiraOptions.epic_link_field] : epic_key,
-                    [jiraOptions.example_data_field] : getScenarioExamples($(this)),
-                }
-            }), function(data) {
-                test_case_id = data.id;
-                test_case_key = data.key;
-                // add the test steps
-                $.each(getScenarioTestSteps($(this)), function(key, step) {
-                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, JSON.stringify({
-                        "step" : step
-                    }), function(data) {
-                        // TODO - alert the user as to the epic and test cases
-                        // created
-                    }, 'json');
-                });
+            $.post("api/createScenario.php", {
+                "auth" : auth,
+                "project" : project,
+                "feature" : epic_key,
+                "scenarioTags" : getScenarioTags($(this)),
+                "scenarioTitle" : getScenarioTitle($(this)),
+                "scenarioDescription" : getScenarioDescription($(this)),
+                "backgroundSteps" : getBackgroundTestSteps(),
+                "scenarioTestSteps" : getScenarioTestSteps($(this)),
+                "scenarioExamples" : getScenarioExamples($(this)),
+            }, function(data) {
             }, 'json');
         });
     }, 'json');

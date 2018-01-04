@@ -1,0 +1,3 @@
+jiraOptions = {
+    project : "ATA",
+}

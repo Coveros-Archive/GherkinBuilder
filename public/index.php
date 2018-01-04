@@ -23,7 +23,7 @@ Improvements
         <script src="js/setup.js"></script>
         <script src="js/buildGherkin.js"></script>
         <script src="js/export.js"></script>
-        <script src="js/properties.js"></script>
+        <script src="props.js"></script>
         <script>
             console.log(testSteps);
         </script>
