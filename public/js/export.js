@@ -51,16 +51,14 @@ $(function() {
         autoOpen : false,
         modal : true,
         open : function() {
-            $("#jiraBase").val(jiraOptions.base);
             $("#jiraProj").val(jiraOptions.project);
         },
         buttons : {
             "Ok" : function() {
-                var jiraBase = $("#jiraBase").val();
                 var jiraProj = $("#jiraProj").val();
                 var username = $("#username").val();
                 var password = $("#password").val();
-                jira(jiraBase, jiraProj, username, password);
+                jira(jiraProj, username, password);
                 $(this).dialog("close");
             },
             "Cancel" : function() {
@@ -70,14 +68,10 @@ $(function() {
     });
 });
 
-function jira(jiraBase, project, username, password) {
-    var jiraREST = jiraBase + "/rest/"
+function jira(project, username, password) {
+    var jiraREST = jiraOptions.base + "/rest/";
     // setup our default credentials
     $.ajaxSetup({
-        beforeSend : function(xhr) {
-            // TODO - still an issue
-            xhr.setRequestHeader('Access-Control-Allow-Origin', 'http://localhost');
-        },
         contentType : "application/json; charset=UTF-8",
         dataType : "json",
         crossDomain : true,
@@ -91,7 +85,7 @@ function jira(jiraBase, project, username, password) {
     var epic_id;
     var epic_key;
     // create the epic to contain the scenarios
-    $.post(jiraREST + "api/2/issue", {
+    $.post(jiraREST + "api/2/issue", JSON.stringify({
         "fields" : {
             "project" : {
                 "key" : project
@@ -102,10 +96,10 @@ function jira(jiraBase, project, username, password) {
                 "name" : "Epic"
             },
             "labels" : getFeatureTags(),
-            "customfield_10004" : getFeatureTitle()
-        // TODO - put in background steps
+            [jiraOptions.epic_name_field] : getFeatureTitle(),
+            [jiraOptions.background_steps_field] : getBackgroundTestSteps(),
         }
-    }, function(data) {
+    }), function(data) {
         epic_id = data.id;
         epic_key = data.key;
         // for each scenario
@@ -114,7 +108,7 @@ function jira(jiraBase, project, username, password) {
             var test_case_id;
             var test_case_key;
             // create the test case
-            $.post(jiraREST + "api/2/issue", {
+            $.post(jiraREST + "api/2/issue", JSON.stringify({
                 "fields" : {
                     "project" : {
                         "key" : project
@@ -125,22 +119,21 @@ function jira(jiraBase, project, username, password) {
                         "name" : "Test"
                     },
                     "labels" : getScenarioTags($(this)),
-                    "customfield_10001" : epic_key
+                    [jiraOptions.epic_link_field] : epic_key,
+                    [jiraOptions.example_data_field] : getScenarioExamples($(this)),
                 }
-            }, function(data) {
+            }), function(data) {
                 test_case_id = data.id;
                 test_case_key = data.key;
                 // add the test steps
                 $.each(getScenarioTestSteps($(this)), function(key, step) {
-                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, {
+                    $.post(jiraREST + "zapi/latest/teststep/" + test_case_id, JSON.stringify({
                         "step" : step
-                    }, function() {
+                    }), function(data) {
+                        // TODO - alert the user as to the epic and test cases
+                        // created
                     }, 'json');
                 });
-                // TODO - do something with the example data - will want a
-                // custom field
-                // for this
-
             }, 'json');
         });
     }, 'json');
