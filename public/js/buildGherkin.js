@@ -363,6 +363,9 @@ function del(el) {
         tmp = $(el).parent().parent().parent()
         $(el).parent().remove();
         buildTable($(tmp));
+        $('.required').each(function() {
+            checkRequired($(this));
+        });
     }
 }
 function edit(el) {
