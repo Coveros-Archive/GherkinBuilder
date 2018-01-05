@@ -65,7 +65,13 @@ function makeDynamic() {
     // mark required fields in red
     $('.required').keyup(function() {
         checkRequired($(this));
-    });        
+    });
+
+    // initialize the delete dialog
+    $("#delete").dialog({
+        autoOpen : false,
+        modal : true
+    });
 }
 
 function checkRequired(element) {
@@ -89,16 +95,16 @@ function addScenario() {
     makeDynamic();
 }
 function addTestStep(el) {
-    $(el).parent().find('.testSteps').append("<div class='testStep'><div class='edit' onclick='edit(this)'>&nbsp;</div><div class='delete' onclick='del(this)'>&nbsp;</div><select class='blue' onchange='fillStep(this)'><option></option><option>Given</option><option>When</option><option>Then</option></div>");
+    $(el).parent().find('.testSteps').append("<div class='testStep'><div class='edit' onclick='edit(this)'>&nbsp;</div><div class='delete' onclick='del(this)'>&nbsp;</div><select class='blue' onchange='fillStep(this,\"\")'><option></option><option>Given</option><option>When</option><option>Then</option></div>");
     makeDynamic();
 }
-function fillStep(el) {
+function fillStep(el, initialVal) {
     var value = $(el).val();
     $(el).next().nextAll().remove();
-    var input = $("<input type='text' class='small' />");
-    var autocompletes = new Array();
+    var input = $("<input type='text' class='small' value='" + initialVal + "'/>");
+    var autocompletes = [];
     if (value == "Given" || value == "When") {
-        for (i = 0; i < testSteps.whens.length; i++) {
+        for (var i = 0; i < testSteps.whens.length; i++) {
             autocompletes.push({
                 label : testSteps.whens[i].string.stripTags(),
                 value : testSteps.whens[i].string,
@@ -126,7 +132,6 @@ function fillStep(el) {
         select : function(event, ui) {
             fillVars(ui.item.what, ui.item.order, $(this));
         },
-        minLength : 0,
     }).click(function() {
         $(this).autocomplete("search", "");
     }).blur(function() {
@@ -134,10 +139,11 @@ function fillStep(el) {
     });
     $(el).next().after(input);
 }
+
 function createStep(el) {
     var newStep = $(el).val();
     var type = $(el).prev().prev();
-    var step = "";
+    var step;
     // Need to determine if this step matches something
     // Check each GWT, replace XXXX with (.*), and do a regex check
     // if any are a match, select it
@@ -148,10 +154,10 @@ function createStep(el) {
     } else {
         return false;
     }
-    for (i = 0; i < testSteps[step].length; i++) {
+    for (var i = 0; i < testSteps[step].length; i++) {
         var string = testSteps[step][i].string;
         var regex = string.replace(/<span class='opt'>(.*?)<\/span>/g, "($1)?");
-        var regex = regex.replace(/<span class='any'>(.*?)<\/span>/g, "(.*?)");
+        regex = regex.replace(/<span class='any'>(.*?)<\/span>/g, "(.*?)");
         regex = regex.replace(/XXXX/g, "(.*)");
         regex = regex.stripTags();
         regex = "^" + regex + "$";
@@ -159,7 +165,7 @@ function createStep(el) {
         if (res != null) {
             fillVars(step, i, el);
             var inputs = type.parent().children('input,select');
-            for (j = 1; j < res.length; j++) {
+            for (var j = 1; j < res.length; j++) {
                 if (res[j] == "XXXX") {
                     res[j] = "";
                 }
@@ -187,8 +193,8 @@ function createStep(el) {
     buildTable(type.parent().parent().parent());
     makeDynamic();
 }
+
 function fillVars(what, order, el) {
-    var sClass = $(el).parent().parent().parent().attr("class");
     var testStepString = testSteps[what][order].string;
     var testStepInputs = testSteps[what][order].inputs;
     var testStepPieces = testStepString.split("XXXX") // .filter(function(el)
@@ -196,7 +202,7 @@ function fillVars(what, order, el) {
     // 0});
     var type = $(el).prev();
     type.nextAll().remove();
-    for (i = 0; i < testStepPieces.length; i++) {
+    for (var i = 0; i < testStepPieces.length; i++) {
         type.parent().append("<span> " + testStepPieces[i] + "</span>");
         if (testStepInputs[i] !== undefined) {
             var objID = rand(10);
@@ -208,7 +214,7 @@ function fillVars(what, order, el) {
                 } else {
                     sel.append("<option>&lt;" + testStepInputs[i].key + "&gt;</option>");
                 }
-                for (j = 0; j < testStepInputs[i].value.length; j++) {
+                for (var j = 0; j < testStepInputs[i].value.length; j++) {
                     sel.append("<option>" + testStepInputs[i].value[j] + "</option>");
                 }
                 type.parent().append(sel);
@@ -229,8 +235,6 @@ function buildTable(testEl) { // el should be the test element
         testEl = $(testEl).parent().parent().parent();
     }
     if (!$(testEl).hasClass('scenario')) {
-        // TODO - remove this, just for error checking
-        // alert( "FAIL!" );
         return false;
     }
     // add a table if needed
@@ -239,7 +243,7 @@ function buildTable(testEl) { // el should be the test element
         $(testEl).children('.addTable').show();
     }
     // get each variable from our test steps
-    var variables = new Object();
+    var variables = {};
     var scenario = $(testEl).children('.testSteps');
     scenario.children('.testStep').each(function() {
         $(this).children('input, select').each(function() {
@@ -270,10 +274,10 @@ function buildTable(testEl) { // el should be the test element
     });
     var examples = scenario.parent().children('.examples');
     $(examples).each(function() {
-        example = $(this);
+        var example = $(this);
         // remove any columns that no longer exist in the variables
         var header = example.children('table').children('thead').children('tr');
-        var headerVals = new Array();
+        var headerVals = [];
         header.children('th').each(function() {
             headerVals.push($(this).html());
             if (!variables.hasOwnProperty($(this).html())) {
@@ -309,16 +313,14 @@ function buildTable(testEl) { // el should be the test element
         ;
     });
     // rearrange our table
-    var order = new Array();
+    var order = [];
     for ( var key in variables) {
         order.push(key);
     }
-    console.log(order);
-    var newOrder = new Array();
+    var newOrder = [];
     examples.find('table').first().find('th').each(function() {
         newOrder.push(jQuery.inArray($(this).html(), order));
     });
-    console.log(newOrder);
 
     makeDynamic();
     // rename our scenario type if needed
@@ -358,21 +360,28 @@ function addDataRow(el) {
     makeDynamic();
 }
 function del(el) {
-    var r = confirm("Are you sure you want to delete this " + $(el).parent().attr('class'));
-    if (r == true) {
-        tmp = $(el).parent().parent().parent()
-        $(el).parent().remove();
-        buildTable($(tmp));
-        $('.required').each(function() {
-            checkRequired($(this));
-        });
-    }
+    $("#delete").dialog({
+        buttons : {
+            "Confirm" : function() {
+                var tmp = $(el).parent().parent().parent()
+                $(el).parent().remove();
+                buildTable($(tmp));
+                $('.required').each(function() {
+                    checkRequired($(this));
+                });
+                $(this).dialog("close");
+            },
+            "Cancel" : function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#delete").dialog("open");
 }
 function edit(el) {
-    var r = confirm("Are you sure you want to edit this " + $(el).parent().attr('class'));
-    if (r == true) {
-        tmp = $(el).parent().parent().parent()
-        fillStep($(el).next().next());
-        buildTable($(tmp));
-    }
+    var tmp = $(el).parent().parent().parent();
+    var value = $(el).next().next().next().nextAll().html();
+    fillStep($(el).next().next(), value);
+    buildTable($(tmp));
 }
