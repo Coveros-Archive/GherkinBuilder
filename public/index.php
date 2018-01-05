@@ -85,6 +85,8 @@ Improvements
                         name="password" id="password" required />
                 </div>
             </form>
+            <div id="error-messages" class="error" style="text-align:center"></div>
+            <div id="success-messages" class="green" style="text-align:center"></div>
         </div>
     </body>
 </html>

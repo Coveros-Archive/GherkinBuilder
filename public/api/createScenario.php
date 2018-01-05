@@ -4,7 +4,7 @@ $params = parse_ini_file ( dirname ( __DIR__ ) . DIRECTORY_SEPARATOR . "props.in
 $data->fields->issuetype->name = "Test";
 
 if (! isset ( $_POST ['auth'] ) || $_POST ['auth'] == "Og==") {
-    echo json_encode ( "Authorization not provided" );
+    echo "Authorization not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -12,7 +12,7 @@ if (! isset ( $_POST ['auth'] ) || $_POST ['auth'] == "Og==") {
 }
 
 if (! isset ( $_POST ['project'] ) || $_POST ['project'] == "") {
-    echo json_encode ( "Project not provided" );
+    echo "Project not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -20,7 +20,7 @@ if (! isset ( $_POST ['project'] ) || $_POST ['project'] == "") {
 }
 
 if (! isset ( $_POST ['feature'] ) || $_POST ['feature'] == "") {
-    echo json_encode ( "Feature not provided" );
+    echo "Feature not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -36,7 +36,7 @@ if (isset ( $_POST ['scenarioTags'] ) && ! empty ( $_POST ['scenarioTags'] )) {
 }
 
 if (! isset ( $_POST ['scenarioTitle'] ) || $_POST ['scenarioTitle'] == "") {
-    echo json_encode ( "Scenario title not provided" );
+    echo "Scenario title not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -87,7 +87,7 @@ curl_close ( $ch );
 
 if (! is_object ( json_decode ( $response ) )) {
     preg_match ( '/<title>(.*)<\/title>/', $response, $match );
-    echo json_encode ( $match [1] );
+    echo $match [1];
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 }
@@ -112,7 +112,7 @@ if (isset ( $_POST ['scenarioDescription'] ) && $_POST ['scenarioDescription'] !
     
     if (! is_object ( json_decode ( $response ) )) {
         preg_match ( '/<title>(.*)<\/title>/', $response, $match );
-        echo json_encode ( $match [1] );
+        echo $match [1];
         header ( "HTTP/1.1 500 Internal Server Error" );
         exit ();
     }
@@ -142,7 +142,7 @@ foreach ( $testSteps as $testStep ) {
     
     if (! is_object ( json_decode ( $response ) )) {
         preg_match ( '/<title>(.*)<\/title>/', $response, $match );
-        echo json_encode ( $match [1] );
+        echo $match [1];
         header ( "HTTP/1.1 500 Internal Server Error" );
         exit ();
     }

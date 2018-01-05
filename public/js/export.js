@@ -63,11 +63,9 @@ $(function() {
         buttons : {
             "Ok" : function() {
                 var jiraProj = $("#jiraProj").val();
-                var username = $("#username").val();
-                var password = $("#password").val();
-                auth = btoa($("#username").val() + ":" + $("#password").val());
+                var auth = btoa($("#username").val() + ":" + $("#password").val());
+                $('#error-messages').empty();
                 jira(jiraProj, auth);
-                $(this).dialog("close");
             },
             "Cancel" : function() {
                 $(this).dialog("close");
@@ -94,9 +92,15 @@ function checkInputs() {
     }
 }
 
+function jiraSuccess(epic_link) {
+    $('#success-messages').empty().html("Successfully created your tests, forwarding you to JIRA");
+    window.location.href = epic_link;
+}
+
 function jira(project, auth) {
     // required values from the epic 'feature' creation
     var epic_key;
+    var epic_link;
     // create the epic to contain the scenarios
     $.post("api/createFeature.php", {
         "auth" : auth,
@@ -106,6 +110,7 @@ function jira(project, auth) {
         "featureDescription" : getFeatureDescription(),
     }, function(data) {
         epic_key = data.key;
+        epic_link = data.self.split("/rest/")[0] + "/browse/" + epic_key;
         // for each scenario
         $('.scenario').each(function() {
             // create the test case
@@ -119,10 +124,16 @@ function jira(project, auth) {
                 "backgroundSteps" : getBackgroundTestSteps(),
                 "scenarioTestSteps" : getScenarioTestSteps($(this)),
                 "scenarioExamples" : getScenarioExamples($(this)),
-            }, function(data) {
+            }, function() {
+                jiraSuccess(epic_link);
             }, 'json');
         });
-    }, 'json');
+        if (!$('.scenario').length) {
+            jiraSuccess(epic_link);
+        }
+    }, 'json').fail(function(xhr) {
+        $('#error-messages').html(xhr.responseText);
+    });
 }
 
 function getJIRACreds() {

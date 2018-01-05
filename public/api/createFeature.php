@@ -4,7 +4,7 @@ $params = parse_ini_file ( dirname ( __DIR__ ) . DIRECTORY_SEPARATOR . "props.in
 $data->fields->issuetype->name = "Epic";
 
 if (! isset ( $_POST ['auth'] ) || $_POST ['auth'] == "Og==") {
-    echo json_encode ( "Authorization not provided" );
+    echo "Authorization not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -12,7 +12,7 @@ if (! isset ( $_POST ['auth'] ) || $_POST ['auth'] == "Og==") {
 }
 
 if (! isset ( $_POST ['project'] ) || $_POST ['project'] == "") {
-    echo json_encode ( "Project not provided" );
+    echo "Project not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -28,7 +28,7 @@ if (isset ( $_POST ['featureTags'] ) && ! empty ( $_POST ['featureTags'] )) {
 }
 
 if (! isset ( $_POST ['featureTitle'] ) || $_POST ['featureTitle'] == "") {
-    echo json_encode ( "Feature title not provided" );
+    echo "Feature title not provided";
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 } else {
@@ -59,7 +59,7 @@ if (is_object ( json_decode ( $response ) )) {
     echo $response;
 } else {
     preg_match ( '/<title>(.*)<\/title>/', $response, $match );
-    echo json_encode ( $match [1] );
+    echo $match [1];
     header ( "HTTP/1.1 500 Internal Server Error" );
     exit ();
 }
