@@ -19,13 +19,15 @@ if (! isset ( $_POST ['project'] ) || $_POST ['project'] == "") {
     $data->fields->project->key = $_POST ['project'];
 }
 
+$tags = array (
+        "Feature" 
+);
 if (isset ( $_POST ['featureTags'] ) && ! empty ( $_POST ['featureTags'] )) {
-    $tags = array ();
     foreach ( $_POST ['featureTags'] as $tag ) {
         array_push ( $tags, substr ( $tag, 1 ) );
     }
-    $data->fields->labels = $tags;
 }
+$data->fields->labels = $tags;
 
 if (! isset ( $_POST ['featureTitle'] ) || $_POST ['featureTitle'] == "") {
     echo "Feature title not provided";

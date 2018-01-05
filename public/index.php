@@ -1,6 +1,5 @@
 <!-- 
 Improvements
- * Editing a test step row should preserve previous test step
  * Delete Data Row
  * Delete Data Table
  * Insert Tests
@@ -87,6 +86,9 @@ Improvements
             </form>
             <div id="error-messages" class="error" style="text-align:center"></div>
             <div id="success-messages" class="green" style="text-align:center"></div>
+        </div>
+        <div id="delete" title="Confirmation Required">
+            Are you sure you want to delete this test step?
         </div>
     </body>
 </html>
