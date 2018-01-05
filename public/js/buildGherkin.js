@@ -27,7 +27,7 @@ function makeDynamic() {
         } else {
             $(this).chosen({
                 placeholder_text_single : placeholder,
-                width : $(this).width() + 15,
+                width : $(this).width() + 30,
                 disable_search_threshold : 4,
                 inherit_select_classes : true,
             });
@@ -61,9 +61,31 @@ function makeDynamic() {
     $('textarea').keyup(function() {
         $(this).attr('rows', ($(this).val().split("\n").length || 1));
     });
+
+    // mark required fields in red
+    $('.required').keyup(function() {
+        checkRequired($(this));
+    });        
 }
+
+function checkRequired(element) {
+    if (element.val() == "") {
+        element.addClass("red");
+    } else {
+        element.removeClass("red");
+    }
+    // check to see if all required things are filled in
+    if ($('.red').length) {
+        $('#exportFile').button("disable");
+        $('#exportJIRA').button("disable");
+    } else {
+        $('#exportFile').button("enable");
+        $('#exportJIRA').button("enable");
+    }
+}
+
 function addScenario() {
-    $('#tests').append("<div class='scenario'>" + "<input class='purple small' placeholder='Scenario Tags' />" + "<div class='green'>" + "<span class='what'>Scenario:</span> <input class='green small' placeholder='Test Case Name' type='text' />" + "<br/>" + "<textarea rows='1' placeholder='Test Case Description'></textarea>" + "</div>" + "<div class='testSteps'></div>\n" + "<button onclick='addTestStep(this)'>Add Test Step</button>" + "<button onclick='addDataTable(this)' class='addTable' style='display:none;'>Add Data Table</button>" + "<div class='delete' onclick='del(this)' style='top:60px;'>&nbsp;</div>" + "</div>");
+    $('#tests').append("<div class='scenario'>" + "<input class='purple small' placeholder='Scenario Tags' />" + "<div class='green'>" + "<span class='what'>Scenario:</span> <input class='green small required red' placeholder='Test Case Name' type='text' required />" + "<br/>" + "<textarea rows='1' placeholder='Test Case Description'></textarea>" + "</div>" + "<div class='testSteps'></div>\n" + "<button onclick='addTestStep(this)' class='ui-button ui-button-small'>Add Test Step</button>" + "<button onclick='addDataTable(this)' class='addTable ui-button ui-button-small' style='display:none;'>Add Data Table</button>" + "<div class='delete' onclick='del(this)' style='top:60px;'>&nbsp;</div>" + "</div>");
     makeDynamic();
 }
 function addTestStep(el) {
@@ -170,8 +192,8 @@ function fillVars(what, order, el) {
     var testStepString = testSteps[what][order].string;
     var testStepInputs = testSteps[what][order].inputs;
     var testStepPieces = testStepString.split("XXXX") // .filter(function(el)
-                                                        // {return el.length !=
-                                                        // 0});
+    // {return el.length !=
+    // 0});
     var type = $(el).prev();
     type.nextAll().remove();
     for (i = 0; i < testStepPieces.length; i++) {
@@ -308,7 +330,7 @@ function buildTable(testEl) { // el should be the test element
     }
 }
 function addTable(el) {
-    $(el).append("<div class='examples'>" + "<input class='purple small' placeholder='Example Tags' />" + "<div class='green'>Examples:</div>" + "<table><thead><tr></tr></thead><tbody></tbody></table>" + "<button onclick='addDataRow(this)'>Add Data Row</button>" + "</div>");
+    $(el).append("<div class='examples'>" + "<input class='purple small' placeholder='Example Tags' />" + "<div class='green'>Examples:</div>" + "<table><thead><tr></tr></thead><tbody></tbody></table>" + "<button onclick='addDataRow(this)' class='ui-button ui-button-small'>Add Data Row</button>" + "</div>");
     $(el).children('.green').children('.what').html("Scenario Outline:");
     addDataRow($(el).children('.examples').last().children('table'));
 }

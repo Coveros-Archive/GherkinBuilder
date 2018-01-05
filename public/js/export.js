@@ -52,8 +52,10 @@ $(function() {
         modal : true,
         open : function() {
             $("#jiraProj").val(jiraOptions.project);
-            $("#jira-creds").keypress(function(e) {
-                if (e.keyCode == $.ui.keyCode.ENTER) {
+            checkInputs();
+            $("#jira-creds").keyup(function(e) {
+                checkInputs();
+                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
                     $(this).next().find("button:eq(0)").trigger("click");
                 }
             });
@@ -73,6 +75,24 @@ $(function() {
         }
     });
 });
+
+function checkInputs() {
+    $('#jira-creds input').each(function() {
+        if ($(this).val() == "") {
+            $(this).addClass("red");
+        } else {
+            $(this).removeClass("red");
+        }
+    });
+    // check to see if all required things are filled in
+    if ($('.red').length) {
+        $("#jira-creds").next().find("button:eq(0)").button("disable");
+        return false;
+    } else {
+        $("#jira-creds").next().find("button:eq(0)").button("enable");
+        return true;
+    }
+}
 
 function jira(project, auth) {
     // required values from the epic 'feature' creation

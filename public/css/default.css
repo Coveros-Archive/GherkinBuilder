@@ -18,6 +18,11 @@ span.new {
     font-weight: bold;
 }
 
+button.ui-button-small {
+    font-size: small;
+    padding: .2em .5em;
+}
+
 .scenario, .background {
     margin-left: 32px;
     padding-top: 32px;
@@ -97,6 +102,13 @@ input, textarea, select {
     border: 1px solid white;
 }
 
+input, textarea, select, button {
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+}
+
 div.testStep input, div.testStep select {
     font-style: italic;
     text-align: center;
@@ -155,4 +167,17 @@ div.blue span, div.blue li {
 .purple {
     font-weight: 900;
     color: purple;
+}
+
+.red {
+    border-color: red;
+    background: lightcoral;
+}
+
+#jira-creds div {
+    text-align: right;
+}
+
+#jira-creds input {
+    width: 60%;
 }

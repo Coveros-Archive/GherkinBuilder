@@ -27,6 +27,24 @@ function resizeInput() {
     $(this).attr('size', $(this).val().length ? $(this).val().length : $(this).attr('placeholder') ? $(this).attr('placeholder').length : '20');
 }
 $(document).ready(function() {
+    // setup the text areas to make easily readable
     $('textarea').attr('rows', '1');
     makeDynamic();
+
+    // setup our button
+    $('#addBackgroundStep').click(function() {
+        addTestStep(this);
+    }).button();
+    $('#addScenario').click(function() {
+        addScenario();
+        $('.required').each(function() {
+            checkRequired($(this));
+        });
+    }).button();
+    $('#exportFile').click(function() {
+        download();
+    }).button().button("disable");
+    $('#exportJIRA').click(function() {
+        getJIRACreds();
+    }).button().button("disable");
 });

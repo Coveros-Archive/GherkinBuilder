@@ -1,5 +1,6 @@
 <!-- 
 Improvements
+ * Editing a test step row should preserve previous test step
  * Delete Data Row
  * Delete Data Table
  * Insert Tests
@@ -16,7 +17,7 @@ Improvements
     <head>
         <title>Cucumber Parser</title>
         <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-        <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
         <script src="https://harvesthq.github.io/chosen/chosen.jquery.js"></script>
         <script src="js/getSteps.js"></script>
         <script src="js/steps.js"></script>
@@ -29,7 +30,7 @@ Improvements
         </script>
         
         <link rel="stylesheet"
-            href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+            href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
         <link rel="stylesheet"
             href="https://harvesthq.github.io/chosen/chosen.css">
         <link rel="stylesheet" href="css/default.css">
@@ -37,25 +38,31 @@ Improvements
     <body>
         <input id='featTag' class='purple small' placeholder='Feature Tags' />
         <div id='featuredef' class='green'>
-            Feature: <input class='green small' placeholder='Feature Title'
-                type='text' /> <br />
-            <textarea class='green' placeholder="Feature Description"></textarea>
+            Feature: <input class='green small required red'
+                placeholder='Feature Title' type='text' required /> <br />
+            <textarea class='green' placeholder="User Story"></textarea>
         </div>
         <div id='backgrounddef' class='background'>
             <div class="green small">
                 <span class='what'>Background:</span> <input class='green small'
                     placeholder='Background Title' type='text' /> <br />
-                <textarea rows='1' placeholder='Background Description'></textarea>
+                <textarea rows='1' placeholder='Description'></textarea>
             </div>
             <div class='testSteps'></div>
-            <button onclick='addTestStep(this)'>Add Background Step</button>
+            <button id="addBackgroundStep"
+                class="ui-button ui-widget ui-corner-all ui-button-small">Add
+                Background Step</button>
         </div>
         <div id='tests'></div>
         <div style="position: fixed; bottom: 0px; width: 100%;">
             <p style="text-align: center;">
-                <button onclick='addScenario()'>Add Scenario</button>
-                <button onclick='download()'>Export as Feature File</button>
-                <button onclick='getJIRACreds()'>Export to JIRA</button>
+                <button id="addScenario" class="ui-button">Add
+                    Scenario</button>
+                <button id="exportFile" class="ui-button">Export
+                    as Feature File</button>
+                <button id="exportJIRA"
+                    class="ui-button" disabled>Export
+                    to JIRA</button>
             </p>
         </div>
     
@@ -67,18 +74,15 @@ Improvements
             <form>
                 <div>
                     <label for="jiraProj">JIRA Project</label> <input type="text"
-                        name="jiraProj" id="jiraProj"
-                        class="text ui-widget-content ui-corner-all" />
+                        name="jiraProj" id="jiraProj" required />
                 </div>
                 <div>
                     <label for="username">Username</label> <input type="text"
-                        name="username" id="username"
-                        class="text ui-widget-content ui-corner-all" />
+                        name="username" id="username" required />
                 </div>
                 <div>
                     <label for="password">Password</label> <input type="password"
-                        name="password" id="password"
-                        class="text ui-widget-content ui-corner-all" />
+                        name="password" id="password" required />
                 </div>
             </form>
         </div>
