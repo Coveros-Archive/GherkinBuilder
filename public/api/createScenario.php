@@ -84,6 +84,14 @@ curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
 ) );
 $response = curl_exec ( $ch );
 curl_close ( $ch );
+
+if (! is_object ( json_decode ( $response ) )) {
+    preg_match ( '/<title>(.*)<\/title>/', $response, $match );
+    echo json_encode ( $match [1] );
+    header ( "HTTP/1.1 500 Internal Server Error" );
+    exit ();
+}
+
 $scenarioId = json_decode ( $response, true ) ['id'];
 
 // add the description to the comments
@@ -101,6 +109,13 @@ if (isset ( $_POST ['scenarioDescription'] ) && $_POST ['scenarioDescription'] !
     ) );
     $response = curl_exec ( $ch );
     curl_close ( $ch );
+    
+    if (! is_object ( json_decode ( $response ) )) {
+        preg_match ( '/<title>(.*)<\/title>/', $response, $match );
+        echo json_encode ( $match [1] );
+        header ( "HTTP/1.1 500 Internal Server Error" );
+        exit ();
+    }
 }
 // setup test steps
 $testSteps = array ();
@@ -124,6 +139,13 @@ foreach ( $testSteps as $testStep ) {
     ) );
     $response = curl_exec ( $ch );
     curl_close ( $ch );
+    
+    if (! is_object ( json_decode ( $response ) )) {
+        preg_match ( '/<title>(.*)<\/title>/', $response, $match );
+        echo json_encode ( $match [1] );
+        header ( "HTTP/1.1 500 Internal Server Error" );
+        exit ();
+    }
 }
 
 ?>

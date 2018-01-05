@@ -20,9 +20,9 @@ if (! isset ( $_POST ['project'] ) || $_POST ['project'] == "") {
 }
 
 if (isset ( $_POST ['featureTags'] ) && ! empty ( $_POST ['featureTags'] )) {
-    $tags = array();
-    foreach( $_POST ['featureTags'] as $tag ) {
-        array_push( $tags, substr($tag, 1));
+    $tags = array ();
+    foreach ( $_POST ['featureTags'] as $tag ) {
+        array_push ( $tags, substr ( $tag, 1 ) );
     }
     $data->fields->labels = $tags;
 }
@@ -55,6 +55,13 @@ curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
 $response = curl_exec ( $ch );
 curl_close ( $ch );
 
-echo $response;
+if (is_object ( json_decode ( $response ) )) {
+    echo $response;
+} else {
+    preg_match ( '/<title>(.*)<\/title>/', $response, $match );
+    echo json_encode ( $match [1] );
+    header ( "HTTP/1.1 500 Internal Server Error" );
+    exit ();
+}
 
 ?>
