@@ -131,7 +131,7 @@ foreach ( $testSteps as $testStep ) {
     curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
     curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
     curl_setopt ( $ch, CURLOPT_POST, TRUE );
-    curl_setopt ( $ch, CURLOPT_POSTFIELDS, "{\"step\":\"" . addslashes ( $testStep ) . "\"}" );
+    curl_setopt ( $ch, CURLOPT_POSTFIELDS, "{\"step\":\"" . addcslashes ( $testStep, '"' ) . "\"}" );
     curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
     curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
     curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
@@ -142,7 +142,11 @@ foreach ( $testSteps as $testStep ) {
     
     if (! is_object ( json_decode ( $response ) )) {
         preg_match ( '/<title>(.*)<\/title>/', $response, $match );
-        echo $match [1];
+        if (sizeof ( $match ) > 1) {
+            echo $match [1];
+        } else {
+            echo $response;
+        }
         header ( "HTTP/1.1 500 Internal Server Error" );
         exit ();
     }

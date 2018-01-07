@@ -113,23 +113,29 @@ function jira(project, auth) {
         epic_link = data.self.split("/rest/")[0] + "/browse/" + epic_key;
         // for each scenario
         $('.scenario').each(function() {
+            // get scenarioTitle
+            var scenarioTitle = getScenarioTitle($(this));
             // create the test case
             $.post("api/createScenario.php", {
                 "auth" : auth,
                 "project" : project,
                 "feature" : epic_key,
                 "scenarioTags" : getScenarioTags($(this)),
-                "scenarioTitle" : getScenarioTitle($(this)),
+                "scenarioTitle" : scenarioTitle,
                 "scenarioDescription" : getScenarioDescription($(this)),
                 "backgroundSteps" : getBackgroundTestSteps(),
                 "scenarioTestSteps" : getScenarioTestSteps($(this)),
                 "scenarioExamples" : getScenarioExamples($(this)),
-            }, function() {
-                jiraSuccess(epic_link);
-            }, 'json');
+            }).done(function() {
+                $('#success-messages').html($('#success-messages').html() + "\nSuccessfully create Scenario: " + scenarioTitle);
+            }).fail(function(xhr) {
+                $('#error-messages').html(xhr.responseText);
+            });
         });
         if (!$('.scenario').length) {
             jiraSuccess(epic_link);
+        } else {
+            $('#success-messages').html("Once all scenario are complete, <a href='" + epic_link + "'>see created test cases on JIRA</a>");
         }
     }, 'json').fail(function(xhr) {
         $('#error-messages').html(xhr.responseText);
