@@ -183,7 +183,7 @@ function createStep(el) {
     var newStepPieces = newStep.split(/<|>/);
     newStep = "";
     for (i = 0; i < newStepPieces.length; i++) {
-        newStep += "<span class='new'> " + newStepPieces[i] + "</span>";
+        newStep += "<span class='new'>" + newStepPieces[i] + "</span>";
         if (newStepPieces[i + 1]) {
             newStep += "<input id='" + rand(10) + "' type='text' class='small' onchange='buildTable(this)' placeholder='<" + newStepPieces[i + 1] + ">' class='new' />";
             i++;
@@ -203,7 +203,7 @@ function fillVars(what, order, el) {
     var type = $(el).prev();
     type.nextAll().remove();
     for (var i = 0; i < testStepPieces.length; i++) {
-        type.parent().append("<span> " + testStepPieces[i] + "</span>");
+        type.parent().append("<span>" + testStepPieces[i] + "</span>");
         if (testStepInputs[i] !== undefined) {
             var objID = rand(10);
             if (Object.prototype.toString.call(testStepInputs[i].value) === '[object Array]') {

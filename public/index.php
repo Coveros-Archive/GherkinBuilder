@@ -5,6 +5,7 @@ Improvements
  * Insert Tests
  * Insert Test Steps
  * Insert Data Row
+ * When using inputs, allow them to double up (use same data column)
  ** Keep Data Table columns in order with test steps
  * Remove drop down form formatting, or add back formatting for input areas
  ** resize min-width for multidropdown to placeholder length
@@ -12,6 +13,7 @@ Improvements
  *** Export is displaying 'dimmed' opt values
  * When writing a step, and 'createStep' is used, and fields don't get filled in with values, the input fields get those values
  -->
+ 
 <html>
     <head>
         <title>Cucumber Parser</title>
@@ -53,7 +55,7 @@ Improvements
                 Background Step</button>
         </div>
         <div id='tests'></div>
-        <div style="position: fixed; bottom: 0px; width: 100%;">
+        <div style="position: fixed; bottom: 0px; right: 0px;">
             <p style="text-align: center;">
                 <button id="addScenario" class="ui-button">Add
                     Scenario</button>

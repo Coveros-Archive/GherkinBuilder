@@ -116,6 +116,10 @@ div.testStep input, div.testStep select {
     font-weight: bold;
 }
 
+.chosen-container-single-nosearch {
+    padding-right: 10px;
+}
+
 .chosen-container-multi {
     min-width: 100px;
 }
