@@ -190,6 +190,10 @@ function getBackgroundTestSteps() {
                     step += $(this).html().stripTags();
                 }
             }
+            // add the required space
+            if ($(this).hasClass('blue')) {
+                step += " ";
+            }
         });
         steps.push(step);
     });
@@ -247,6 +251,10 @@ function getScenarioTestSteps(element) {
                 if ($(this).html() !== undefined) {
                     step += $(this).html().stripTags();
                 }
+            }
+            // add the required space
+            if ($(this).hasClass('blue')) {
+                step += " ";
             }
         });
         steps.push(step);
