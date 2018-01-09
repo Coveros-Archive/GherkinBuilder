@@ -127,7 +127,7 @@ function jira(project, auth) {
                 "scenarioTestSteps" : getScenarioTestSteps($(this)),
                 "scenarioExamples" : getScenarioExamples($(this)),
             }).done(function() {
-                $('#success-messages').html($('#success-messages').html() + "\nSuccessfully create Scenario: " + scenarioTitle);
+                $('#success-messages').html($('#success-messages').html() + "<br/>Successfully create Scenario: " + scenarioTitle);
             }).fail(function(xhr) {
                 $('#error-messages').html(xhr.responseText);
             });
