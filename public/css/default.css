@@ -29,6 +29,10 @@ button.ui-button-small {
     position: relative;
 }
 
+.scenario:last-of-type {
+    margin-bottom: 100px;
+}
+
 .testStep {
     position: relative;
     cursor: move;
