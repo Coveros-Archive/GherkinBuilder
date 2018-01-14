@@ -1,3 +1,5 @@
+var scenarioCount;
+
 function download() {
     var data = "";
     // get feature information
@@ -62,6 +64,7 @@ $(function() {
         },
         buttons : {
             "Ok" : function() {
+                $(this).next().find("button:eq(0)").button("disable");
                 var jiraProj = $("#jiraProj").val();
                 var auth = btoa($("#username").val() + ":" + $("#password").val());
                 $('#error-messages').empty();
@@ -93,7 +96,7 @@ function checkInputs() {
 }
 
 function jiraSuccess(epic_link) {
-    $('#success-messages').empty().html("Successfully created your tests, forwarding you to JIRA");
+    $('#success-messages').empty().html("Successfully created everything, forwarding you to JIRA");
     window.location.href = epic_link;
 }
 
@@ -112,6 +115,9 @@ function jira(project, auth) {
         epic_key = data.key;
         epic_link = data.self.split("/rest/")[0] + "/browse/" + epic_key;
         // for each scenario
+        scenarioCount = $('.scenario').length;
+        var thisCount = 0;
+        var anyFailures = false;
         $('.scenario').each(function() {
             // get scenarioTitle
             var scenarioTitle = getScenarioTitle($(this));
@@ -130,6 +136,16 @@ function jira(project, auth) {
                 $('#success-messages').html($('#success-messages').html() + "<br/>Successfully create Scenario: " + scenarioTitle);
             }).fail(function(xhr) {
                 $('#error-messages').html(xhr.responseText);
+                anyFailures = true;
+            }).always(function() {
+                thisCount++;
+                if (thisCount === scenarioCount) {
+                    if (anyFailures) {
+                        $('#jira-creds').next().find("button:eq(0)").button("enable");
+                    } else {
+                        jiraSuccess(epic_link);
+                    }
+                }
             });
         });
         if (!$('.scenario').length) {
@@ -139,6 +155,8 @@ function jira(project, auth) {
         }
     }, 'json').fail(function(xhr) {
         $('#error-messages').html(xhr.responseText);
+        $('#jira-creds').next().find("button:eq(0)").button("enable");
+
     });
 }
 

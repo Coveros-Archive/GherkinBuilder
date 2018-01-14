@@ -1,19 +1,3 @@
-<!-- 
-Improvements
- * Delete Data Row
- * Delete Data Table
- * Insert Tests
- * Insert Test Steps
- * Insert Data Row
- * When using inputs, allow them to double up (use same data column)
- ** Keep Data Table columns in order with test steps
- * Remove drop down form formatting, or add back formatting for input areas
- ** resize min-width for multidropdown to placeholder length
- *** When using autocomplete, and clicking off (not selecting), multiselect does not get filled out
- *** Export is displaying 'dimmed' opt values
- * When writing a step, and 'createStep' is used, and fields don't get filled in with values, the input fields get those values
- -->
- 
 <html>
     <head>
         <title>Cucumber Parser</title>
@@ -86,6 +70,9 @@ Improvements
                         name="password" id="password" required />
                 </div>
             </form>
+            <div style="text-align:justify;font-style:italic;font-size:small;">Note that 
+            	attempting to export to JIRA multiple times will result in duplicate test 
+            	suites and cases. Please be judicious in your usage of this capability.</div>
             <div id="error-messages" class="error" style="text-align:center"></div>
             <div id="success-messages" class="green" style="text-align:center"></div>
         </div>
