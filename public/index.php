@@ -71,8 +71,8 @@
                 </div>
             </form>
             <div style="text-align:justify;font-style:italic;font-size:small;">Note that 
-            	attempting to export to JIRA multiple times will result in duplicate test 
-            	suites and cases. Please be judicious in your usage of this capability.</div>
+                attempting to export to JIRA multiple times will result in duplicate test 
+                suites and cases. Please be judicious in your usage of this capability.</div>
             <div id="error-messages" class="error" style="text-align:center"></div>
             <div id="success-messages" class="green" style="text-align:center"></div>
         </div>
