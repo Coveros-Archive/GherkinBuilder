@@ -55,33 +55,27 @@ button.ui-button-small {
 }
 
 .edit {
-    font-weight: 900;
-    color: red;
+    color: orange;
     position: absolute;
     top: 4px;
     left: -16px;
     cursor: pointer;
-    background-image:
-        url('http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-10/16/Pencil-icon.png');
-    background-repeat: no-repeat;
-    background-position: right top;
-    overflow: visible;
-    width: 16px;
 }
 
 .delete {
-    font-weight: 900;
     color: red;
     position: absolute;
     top: 4px;
     left: -32px;
     cursor: pointer;
-    background-image:
-        url('http://icons.iconarchive.com/icons/kyo-tux/delikate/16/Close-icon.png');
-    background-repeat: no-repeat;
-    background-position: right top;
-    overflow: visible;
-    width: 16px;
+}
+
+.link {
+    color: blue;
+    position: absolute;
+    top: 4px;
+    left: -16px;
+    cursor: pointer;
 }
 
 input[type=number] {

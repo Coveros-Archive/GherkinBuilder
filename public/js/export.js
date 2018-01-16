@@ -86,7 +86,7 @@ function checkInputs() {
         }
     });
     // check to see if all required things are filled in
-    if ($('.red').length) {
+    if ($('.red:visible').length) {
         $("#jira-creds").next().find("button:eq(0)").button("disable");
         return false;
     } else {
@@ -101,67 +101,80 @@ function jiraSuccess(epic_link) {
 }
 
 function jira(project, auth) {
-    // required values from the epic 'feature' creation
-    var epic_key;
-    var epic_link;
-    // create the epic to contain the scenarios
-    $.post("api/createFeature.php", {
-        "auth" : auth,
-        "project" : project,
-        "featureTags" : getFeatureTags(),
-        "featureTitle" : getFeatureTitle(),
-        "featureDescription" : getFeatureDescription(),
-    }, function(data) {
-        epic_key = data.key;
-        epic_link = data.self.split("/rest/")[0] + "/browse/" + epic_key;
-        // for each scenario
-        scenarioCount = $('.scenario').length;
-        var thisCount = 0;
-        var anyFailures = false;
-        $('.scenario').each(function() {
-            // get scenarioTitle
-            var scenarioTitle = getScenarioTitle($(this));
-            // create the test case
-            $.post("api/createScenario.php", {
-                "auth" : auth,
-                "project" : project,
-                "feature" : epic_key,
-                "scenarioTags" : getScenarioTags($(this)),
-                "scenarioTitle" : scenarioTitle,
-                "scenarioDescription" : getScenarioDescription($(this)),
-                "backgroundSteps" : getBackgroundTestSteps(),
-                "scenarioTestSteps" : getScenarioTestSteps($(this)),
-                "scenarioExamples" : getScenarioExamples($(this)),
-            }).done(function() {
-                $('#success-messages').html($('#success-messages').html() + "<br/>Successfully create Scenario: " + scenarioTitle);
-            }).fail(function(xhr) {
-                $('#error-messages').html(xhr.responseText);
-                anyFailures = true;
-            }).always(function() {
-                thisCount++;
-                if (thisCount === scenarioCount) {
-                    if (anyFailures) {
-                        $('#jira-creds').next().find("button:eq(0)").button("enable");
-                    } else {
-                        jiraSuccess(epic_link);
-                    }
-                }
-            });
-        });
-        if (!$('.scenario').length) {
-            jiraSuccess(epic_link);
-        } else {
-            $('#success-messages').html("Once all scenario are complete, <a href='" + epic_link + "'>see created test cases on JIRA</a>");
-        }
-    }, 'json').fail(function(xhr) {
-        $('#error-messages').html(xhr.responseText);
-        $('#jira-creds').next().find("button:eq(0)").button("enable");
+    if (getExistingFeature() == "") {
+        // create the epic to contain the scenarios
+        $.post("api/createFeature.php", {
+            "auth" : auth,
+            "project" : project,
+            "featureTags" : getFeatureTags(),
+            "featureTitle" : getFeatureTitle(),
+            "featureDescription" : getFeatureDescription(),
+        }, function(data) {
+            jiraCreateTestCases(data.key, project, auth);
+        }, 'json').fail(function(xhr) {
+            $('#error-messages').html(xhr.responseText);
+            $('#jira-creds').next().find("button:eq(0)").button("enable");
 
+        });
+    } else {
+        jiraCreateTestCases(getExistingFeature(), project, auth);
+    }
+}
+
+function jiraCreateTestCases(epic_key, project, auth) {
+    // required values from the epic 'feature' creation
+    var epic_link = jiraOptions.base + "/browse/" + epic_key;
+    // for each scenario
+    scenarioCount = $('.scenario').length;
+    var thisCount = 0;
+    var anyFailures = false;
+    $('.scenario').each(function() {
+        // get scenarioTitle
+        var scenarioTitle = getScenarioTitle($(this));
+        // create the test case
+        $.post("api/createScenario.php", {
+            "auth" : auth,
+            "project" : project,
+            "feature" : epic_key,
+            "scenarioTags" : getScenarioTags($(this)),
+            "scenarioTitle" : scenarioTitle,
+            "scenarioDescription" : getScenarioDescription($(this)),
+            "backgroundSteps" : getBackgroundTestSteps(),
+            "scenarioTestSteps" : getScenarioTestSteps($(this)),
+            "scenarioExamples" : getScenarioExamples($(this)),
+        }).done(function() {
+            $('#success-messages').html($('#success-messages').html() + "<br/>Successfully create Scenario: " + scenarioTitle);
+        }).fail(function(xhr) {
+            $('#error-messages').html(xhr.responseText);
+            anyFailures = true;
+        }).always(function() {
+            thisCount++;
+            if (thisCount === scenarioCount) {
+                if (anyFailures) {
+                    $('#jira-creds').next().find("button:eq(0)").button("enable");
+                } else {
+                    jiraSuccess(epic_link);
+                }
+            }
+        });
     });
+    if (!$('.scenario').length) {
+        jiraSuccess(epic_link);
+    } else {
+        $('#success-messages').html("Once all scenario are complete, <a href='" + epic_link + "'>see created test cases on JIRA</a>");
+    }
 }
 
 function getJIRACreds() {
     $("#jira-creds").dialog("open");
+}
+
+function getExistingFeature() {
+    if ($("#jiraFeat").is(":visible")) {
+        return $('#jiraFeat').val();
+    } else {
+        return "";
+    }
 }
 
 function getFeatureTags() {

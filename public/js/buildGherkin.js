@@ -81,7 +81,7 @@ function checkRequired(element) {
         element.removeClass("red");
     }
     // check to see if all required things are filled in
-    if ($('.red').length) {
+    if ($('.red:visible').length) {
         $('#exportFile').button("disable");
         $('#exportJIRA').button("disable");
     } else {
@@ -91,11 +91,30 @@ function checkRequired(element) {
 }
 
 function addScenario() {
-    $('#tests').append("<div class='scenario'>" + "<input class='purple small' placeholder='Scenario Tags' />" + "<div class='green'>" + "<span class='what'>Scenario:</span> <input class='green small required red' placeholder='Test Case Name' type='text' required />" + "<br/>" + "<textarea rows='1' placeholder='Test Case Description'></textarea>" + "</div>" + "<div class='testSteps'></div>\n" + "<button onclick='addTestStep(this)' class='ui-button ui-button-small'>Add Test Step</button>" + "<button onclick='addDataTable(this)' class='addTable ui-button ui-button-small' style='display:none;'>Add Data Table</button>" + "<div class='delete' onclick='del(this)' style='top:60px;'>&nbsp;</div>" + "</div>");
+    var scenario = $("<div class='scenario'>");
+    var tags = $("<input class='purple small' placeholder='Scenario Tags'>");
+    var holder = $("<div class='green'>");
+    var what = $("<span class='what'>");
+    what.html("Scenario:");
+    var title = $("<input class='green small required red' placeholder='Test Case Name' type='text' required>");
+    var description = $("<textarea rows='1' placeholder='Test Case Description'>");
+    var steps = $("<div class='testSteps'>");
+    var addSteps = $("<button onclick='addTestStep(this)' class='ui-button ui-button-small'>");
+    addSteps.html("Add Test Step");
+    var addTable = $("<button onclick='addDataTable(this)' class='addTable ui-button ui-button-small' style='display:none;'>");
+    addTable.html("Add Data Table");
+    var deleteButton = $("<div class='delete' onclick='del(this)' style='top:33px;' title='Delete Scenario'><i class='fa fa-trash'></i></div>");
+    var linkButton = $("<div class='link' onclick='link(this)' style='top:33px;' title='Link Scenario to Issue in JIRA'><i class='fa fa-link'></i></div>");
+    holder.append(what).append(" ").append(title).append($("<br>")).append(description);
+    scenario.append(tags).append(holder).append(steps).append(addSteps).append(addTable).append(deleteButton);
+    if (jiraOptions.project !== "") {
+        scenario.append(linkButton);
+    }
+    $('#tests').append(scenario);
     makeDynamic();
 }
 function addTestStep(el) {
-    $(el).parent().find('.testSteps').append("<div class='testStep'><div class='edit' onclick='edit(this)'>&nbsp;</div><div class='delete' onclick='del(this)'>&nbsp;</div><select class='blue' onchange='fillStep(this,\"\")'><option></option><option>Given</option><option>When</option><option>Then</option></div>");
+    $(el).parent().find('.testSteps').append("<div class='testStep'><div class='edit' onclick='edit(this)'><i class='fa fa-pencil-square-o'></i></div><div class='delete' onclick='del(this)'><i class='fa fa-trash'></i></div><select class='blue' onchange='fillStep(this,\"\")'><option></option><option>Given</option><option>When</option><option>Then</option></div>");
     makeDynamic();
 }
 function fillStep(el, initialVal) {
