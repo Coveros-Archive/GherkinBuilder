@@ -185,6 +185,14 @@ function getFeatureTags() {
     return tags;
 }
 
+function getFeatureLinks() {
+    var links = [];
+    if ($('#feat .jiraLink').val() != "") {
+        links = $('#feat .jiraLink').val().split(" ");
+    }
+    return links;
+}
+
 function getFeatureTitle() {
     return $('#featuredef input').val();
 }
@@ -253,6 +261,14 @@ function getScenarioTags(element) {
         tags = $(element).children('input.purple').val().split(" ");
     }
     return tags;
+}
+
+function getScenarioLinks(element) {
+    var links = [];
+    if ($(element).children('input.jiralink').val() != "") {
+        links = $(element).children('input.jiralink').val().split(" ");
+    }
+    return links;
 }
 
 function getScenarioType(element) {

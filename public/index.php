@@ -34,24 +34,26 @@ if ($params ['base'] != "") {
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <?php if ($useJIRA) { ?>
-    <span class="edit" style="position: inherit;"
-        onclick="existingFeature()" title="Use Existing Feature in JIRA"> <i
-        class="fa fa-pencil-square-o"></i>
-    </span>
-    <span id="featLink" class="link" style="position: inherit;"
-        onclick="link(this)" title="Link Feature to Issue in JIRA"><i
-        class='fa fa-link'></i></span>
-    <?php } ?>
-    <input id='featTag' class='purple small' placeholder='Feature Tags' />
-    <?php if ($useJIRA) { ?>
-    <input id='jiraFeat' class='green small required red'
-        placeholder='JIRA Epic Key' style='display: none;' required />
-    <?php } ?>
-    <div id='featuredef' class='green'>
-        Feature: <input class='green small required red'
-            placeholder='Feature Title' type='text' required /> <br />
-        <textarea class='green' placeholder="User Story"></textarea>
+    <div id='feat'>
+        <?php if ($useJIRA) { ?>
+        <span class="edit" style="position: inherit;"
+            onclick="existingFeature()" title="Use Existing Feature in JIRA"> <i
+            class="fa fa-pencil-square-o"></i>
+        </span> <span id="featLink" class="link" style="position: inherit;"
+            onclick="link(this)" title="Link Feature to Issue in JIRA"><i
+            class='fa fa-link'></i></span>
+        <?php } ?>
+        <input id='featTag' class='purple small'
+            placeholder='Feature Tags' />
+        <?php if ($useJIRA) { ?>
+        <input id='jiraFeat' class='green small required red'
+            placeholder='Existing JIRA Epic Key' style='display: none;' required />
+        <?php } ?>
+        <div id='featuredef' class='green'>
+            Feature: <input class='green small required red'
+                placeholder='Feature Title' type='text' required /> <br />
+            <textarea class='green' placeholder="User Story"></textarea>
+        </div>
     </div>
     <div id='backgrounddef' class='background'>
         <div class="green small">
