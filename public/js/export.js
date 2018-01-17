@@ -267,7 +267,7 @@ function getScenarioTags(element) {
 
 function getScenarioLinks(element) {
     var links = [];
-    if ($(element).children('input.jiralink').val() != "") {
+    if ($(element).children('input.jiralink').length && $(element).children('input.jiralink').val() != "") {
         links = $(element).children('input.jiralink').val().split(" ");
     }
     return links;

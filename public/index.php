@@ -12,15 +12,15 @@ if ($params ['base'] != "") {
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://harvesthq.github.io/chosen/chosen.jquery.js"></script>
-<script src="js/getSteps.js"></script>
-<script src="js/steps.js"></script>
-<script src="js/setup.js"></script>
-<script src="js/buildGherkin.js"></script>
-<script src="js/export.js"></script>
+<script src="js/getSteps.js?<?php echo time() ?>"></script>
+<script src="js/steps.js?<?php echo time() ?>"></script>
+<script src="js/setup.js?<?php echo time() ?>"></script>
+<script src="js/buildGherkin.js?<?php echo time() ?>"></script>
+<script src="js/export.js?<?php echo time() ?>"></script>
 <?php if ($useJIRA) { ?>
-<script src="js/jira.js"></script>
+<script src="js/jira.js?<?php echo time() ?>"></script>
 <?php } ?>
-<script src="props.js"></script>
+<script src="props.js?<?php echo time() ?>"></script>
 <script>
             console.log(testSteps);
         </script>
@@ -29,7 +29,7 @@ if ($params ['base'] != "") {
     href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <link rel="stylesheet"
     href="https://harvesthq.github.io/chosen/chosen.css">
-<link rel="stylesheet" href="css/default.css">
+<link rel="stylesheet" href="css/default.css?<?php echo time() ?>">
 <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
