@@ -189,8 +189,8 @@ function getFeatureTags() {
 
 function getFeatureLinks() {
     var links = [];
-    if ($('#jiraFeat').val() != "") {
-        links = $('#jiraFeat').val().split(" ");
+    if ($('#feat .jiralink').length && $('#feat .jiralink').val() != "") {
+        links = $('#feat .jiralink').val().split(" ");
     }
     return links;
 }
