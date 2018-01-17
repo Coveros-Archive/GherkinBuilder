@@ -107,6 +107,7 @@ function jira(project, auth) {
             "auth" : auth,
             "project" : project,
             "featureTags" : getFeatureTags(),
+            "featureLinks" : getFeatureLinks(),
             "featureTitle" : getFeatureTitle(),
             "featureDescription" : getFeatureDescription(),
         }, function(data) {
@@ -137,6 +138,7 @@ function jiraCreateTestCases(epic_key, project, auth) {
             "project" : project,
             "feature" : epic_key,
             "scenarioTags" : getScenarioTags($(this)),
+            "scenarioLinks" : getScenarioLinks($(this)),
             "scenarioTitle" : scenarioTitle,
             "scenarioDescription" : getScenarioDescription($(this)),
             "backgroundSteps" : getBackgroundTestSteps(),
@@ -187,8 +189,8 @@ function getFeatureTags() {
 
 function getFeatureLinks() {
     var links = [];
-    if ($('#feat .jiraLink').val() != "") {
-        links = $('#feat .jiraLink').val().split(" ");
+    if ($('#jiraFeat').val() != "") {
+        links = $('#jiraFeat').val().split(" ");
     }
     return links;
 }
