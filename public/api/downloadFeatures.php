@@ -1,6 +1,12 @@
 <?php
 $params = parse_ini_file ( dirname ( __DIR__ ) . DIRECTORY_SEPARATOR . "props.ini" );
 
+$ERROR = "HTTP/1.1 500 Internal Server Error";
+$CONTENTTYPE = "Content-Type: application/json";
+$USERNAME = "username";
+$PASSWORD = "password";
+$DESCRIPTION = "description";
+
 // setup our directory to host our files
 $directory = '../tmp/';
 if (! file_exists ( $directory )) {
@@ -8,27 +14,23 @@ if (! file_exists ( $directory )) {
 }
 
 // get our jira creds
-if (! isset ( $_POST ['username'] ) || $_POST ['username'] == "") {
+if (! isset ( $_GET [$USERNAME] ) || $_GET [$USERNAME] == "") {
     echo "Authorization not provided";
-    header ( "HTTP/1.1 500 Internal Server Error" );
+    header ( $ERROR );
     exit ();
 } else {
-    $username = $_POST ['username'];
+    $username = $_GET [$USERNAME];
 }
-if (! isset ( $_POST ['password'] ) || $_POST ['password'] == "") {
+if (! isset ( $_GET [$PASSWORD] ) || $_GET [$PASSWORD] == "") {
     echo "Authorization not provided";
-    header ( "HTTP/1.1 500 Internal Server Error" );
+    header ( $ERROR );
     exit ();
 } else {
-    $password = $_POST ['password'];
+    $password = $_GET [$PASSWORD];
 }
 
 // setup our zip files
-$zip = new ZipArchive ();
-$filename = $directory . "Features-" . time () . ".zip";
-if ($zip->open ( $filename, ZipArchive::CREATE ) !== TRUE) {
-    exit ( "cannot open <$filename>\n" );
-}
+$zip = $directory . "Features-" . time () . ".zip";
 
 // get all of the feature files
 $ch = curl_init ();
@@ -38,13 +40,13 @@ curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
 curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
 curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
 curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-        "Content-Type: application/json" 
+        $CONTENTTYPE 
 ) );
 $response = curl_exec ( $ch );
 curl_close ( $ch );
 // check for errors
 if (! is_object ( json_decode ( $response ) )) {
-    header ( "HTTP/1.1 500 Internal Server Error" );
+    header ( $ERROR );
     exit ();
 }
 $issues = json_decode ( $response, true ) ['issues'];
@@ -59,13 +61,13 @@ foreach ( $issues as $issue ) {
     curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
     curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
     curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-            "Content-Type: application/json" 
+            $CONTENTTYPE 
     ) );
     $response = curl_exec ( $ch );
     curl_close ( $ch );
     // check for errors
     if (! is_object ( json_decode ( $response ) )) {
-        header ( "HTTP/1.1 500 Internal Server Error" );
+        header ( $ERROR );
         exit ();
     }
     $feature = json_decode ( $response, true ) ['fields'];
@@ -77,7 +79,7 @@ foreach ( $issues as $issue ) {
         }
     }
     $content .= "\nFeature: " . $feature ['summary'];
-    $content .= "\n  " . implode ( "\n  ", explode ( "\n", $feature ['description'] ) );
+    $content .= "\n  " . implode ( "\n  ", explode ( "\n", $feature [$DESCRIPTION] ) );
     // get all scenario details
     $ch = curl_init ();
     curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/search?jql=project=" . $params ['project'] . "%20AND%20\"Epic%20Link\"=" . $issue ['key'] . "&fields=key&maxResults=9999" );
@@ -86,13 +88,13 @@ foreach ( $issues as $issue ) {
     curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
     curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
     curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-            "Content-Type: application/json" 
+            $CONTENTTYPE 
     ) );
     $response = curl_exec ( $ch );
     curl_close ( $ch );
     // check for errors
     if (! is_object ( json_decode ( $response ) )) {
-        header ( "HTTP/1.1 500 Internal Server Error" );
+        header ( $ERROR );
         exit ();
     }
     $isswes = json_decode ( $response, true ) ['issues'];
@@ -104,13 +106,13 @@ foreach ( $issues as $issue ) {
         curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
         curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-                "Content-Type: application/json" 
+                $CONTENTTYPE 
         ) );
         $response = curl_exec ( $ch );
         curl_close ( $ch );
         // check for errors
         if (! is_object ( json_decode ( $response ) )) {
-            header ( "HTTP/1.1 500 Internal Server Error" );
+            header ( $ERROR );
             exit ();
         }
         $scenario = json_decode ( $response, true ) ['fields'];
@@ -120,7 +122,7 @@ foreach ( $issues as $issue ) {
             $content .= " @" . $label;
         }
         $content .= "\n  Scenario";
-        if ($scenario ['description'] != "") {
+        if ($scenario [$DESCRIPTION] != "") {
             $content .= " Outline";
         }
         $content .= ": " . $scenario ['summary'];
@@ -132,36 +134,36 @@ foreach ( $issues as $issue ) {
         curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
         curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-                "Content-Type: application/json" 
+                $CONTENTTYPE 
         ) );
         $response = curl_exec ( $ch );
         curl_close ( $ch );
         // check for errors
         if (! is_array ( json_decode ( $response ) )) {
-            header ( "HTTP/1.1 500 Internal Server Error" );
+            header ( $ERROR );
             exit ();
         }
         $steps = json_decode ( $response, true );
         foreach ( $steps as $step ) {
             $content .= "\n    " . preg_replace('!\s+!', ' ', $step['step']);
         }
-        $content .= "\n\n    " . implode ( "\n      ", explode ( "\n", $scenario ['description'] ) );
+        $content .= "\n\n    " . implode ( "\n      ", explode ( "\n", $scenario [$DESCRIPTION] ) );
     }
     
-    $zip->addFromString ( $file, $content );
+    file_put_contents( $directory . $file, $content );
+    $command = `zip -jr $zip $directory$file`;
+    unlink( $directory . $file );
 }
 
-$zip->close ();
-
-if (file_exists ( $filename )) {
+if (file_exists ( $zip )) {
     header ( 'Content-Description: File Transfer' );
     header ( 'Content-Type: application/octet-stream' );
-    header ( 'Content-Disposition: attachment; filename="' . basename ( $filename ) . '"' );
+    header ( 'Content-Disposition: attachment; filename="' . basename ( $zip ) . '"' );
     header ( 'Expires: 0' );
     header ( 'Cache-Control: must-revalidate' );
     header ( 'Pragma: public' );
-    header ( 'Content-Length: ' . filesize ( $filename ) );
-    readfile ( $filename );
+    header ( 'Content-Length: ' . filesize ( $zip ) );
+    readfile ( $zip );
     exit ();
 }
 ?>
