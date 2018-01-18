@@ -1,5 +1,5 @@
 <?php
-$params = parse_ini_file ( dirname ( __DIR__ ) . DIRECTORY_SEPARATOR . "props.ini" );
+$params = parse_ini_file ( dirname ( __DIR__ ) . DIRECTORY_SEPARATOR . "props.ini", true );
 
 $ERROR = "HTTP/1.1 500 Internal Server Error";
 $PROJECT = "project";
@@ -46,16 +46,30 @@ if (! isset ( $_POST [$FEATURETITLE] ) || $_POST [$FEATURETITLE] == "") {
     exit ();
 } else {
     $data->fields->summary = $_POST [$FEATURETITLE];
-    $data->fields->{$params ['epic_name_field']} = "Test Suite: " . $_POST [$FEATURETITLE];
+    $data->fields->{$params ['jira'] ['epic_name_field']} = "Test Suite: " . $_POST [$FEATURETITLE];
 }
 
 if (isset ( $_POST [$FEATUREDESCRIPTION] ) && $_POST [$FEATUREDESCRIPTION] != "") {
     $data->fields->description = $_POST [$FEATUREDESCRIPTION];
 }
 
+// add any custom parameters that need to be set
+foreach( $params ['feature'] as $key => $value ) {
+    if( is_array( $value ) ) {
+        $data->fields->{$key} = array();
+        foreach ( $value as $item ) {
+            $d = new \stdClass ();
+            $d->value = $item;
+            array_push( $data->fields->{$key}, $d );
+        }
+    } else {
+        $data->fields->{$key} = $value;
+    }
+}
+
 // make curl command
 $ch = curl_init ();
-curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/issue" );
+curl_setopt ( $ch, CURLOPT_URL, $params ['jira'] ['base'] . "/rest/api/2/issue" );
 curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
 curl_setopt ( $ch, CURLOPT_POST, TRUE );
@@ -89,7 +103,7 @@ if (isset ( $_POST [$FEATURELINKS] ) && ! empty ( $_POST [$FEATURELINKS] )) {
         $links->outwardIssue = new \stdClass ();
         $links->outwardIssue->key = $link;
         $ch = curl_init ();
-        curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/issueLink" );
+        curl_setopt ( $ch, CURLOPT_URL, $params ['jira'] ['base'] . "/rest/api/2/issueLink" );
         curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
         curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
         curl_setopt ( $ch, CURLOPT_POST, TRUE );
