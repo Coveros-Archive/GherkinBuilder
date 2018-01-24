@@ -152,7 +152,6 @@ foreach ( $issues as $issue ) {
     
     file_put_contents( $directory . $file, $content );
     $command = `zip -jr $zip $directory$file`;
-    unlink( $directory . $file );
 }
 
 if (file_exists ( $zip )) {
