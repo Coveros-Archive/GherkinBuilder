@@ -180,11 +180,7 @@ function getExistingFeature() {
 }
 
 function getFeatureTags() {
-    var tags = [];
-    if ($('#featTag').val() != "") {
-        tags = $('#featTag').val().split(" ");
-    }
-    return tags;
+    return getTags($('#featTag'));
 }
 
 function getFeatureLinks() {
@@ -258,11 +254,7 @@ function getScenario(element) {
 }
 
 function getScenarioTags(element) {
-    var tags = [];
-    if ($(element).children('input.purple').val() != "") {
-        tags = $(element).children('input.purple').val().split(" ");
-    }
-    return tags;
+    return getTags($(element).children('input.purple'));
 }
 
 function getScenarioLinks(element) {
@@ -343,4 +335,18 @@ function getScenarioExamples(element) {
         });
     }
     return examples;
+}
+
+function getTags(element) {
+    var ts = [];
+    if (typeof tags !== 'undefined' && tags.length > 0) {
+        $(element).parent().children('.tag').each(function(){
+            ts.push( $(this).html() );
+        });
+    } else {
+        if ($(element).val() != "") {
+            ts = $(element).val().split(" ");
+        }
+    }
+    return ts;
 }

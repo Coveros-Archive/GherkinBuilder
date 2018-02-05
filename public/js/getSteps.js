@@ -1,7 +1,7 @@
 //our step functionality
 function step() {
     this.string = arguments[0];
-    this.inputs = new Array();
+    this.inputs = [];
     for (var i = 1; i < arguments.length; i++) {
         this.inputs.push(arguments[i]);
     }
@@ -12,6 +12,6 @@ function keypair(key, value) {
     this.value = value;
 }
 // our basic setup
-var testSteps = new Object();
-testSteps.whens = new Array();
-testSteps.thens = new Array();
+var testSteps = {};
+testSteps.whens = [];
+testSteps.thens = [];

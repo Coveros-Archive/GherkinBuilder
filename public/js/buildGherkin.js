@@ -90,9 +90,49 @@ function checkRequired(element) {
     }
 }
 
+function fillTag(el) {
+    if (typeof tags !== 'undefined' && tags.length > 0) {
+        $(el).attr('placeholder','Choose a Tag...')
+        $(el).autocomplete({
+            minLength : 0,
+            source : tags,
+            select : function(event, ui) {
+                addTag(el, ui.item.value);
+                return false;
+            },
+        }).click(function() {
+            $(this).autocomplete("search", "");
+        }).keyup(function(e) {
+            if(e.keyCode == 32 || e.keyCode == 13){
+                addTag(el);
+            }
+        }).blur(function(){
+            addTag(el);
+        });
+    }
+}
+function addTag(el, tag) {
+    if (tag == "" || tag === undefined ) {
+        tag = $(el).val();
+        if (tag == "") {
+            return;
+        }
+    }
+    // build the environment
+    var span = $("<span>");
+    span.html(tag);
+    span.addClass('tag');
+    span.click(function(){
+        $(this).remove();
+    });
+    $(el).after(span);
+    $(el).val("");
+}
+
 function addScenario() {
     var scenario = $("<div class='scenario'>");
     var tags = $("<input class='purple small' placeholder='Scenario Tags'>");
+    fillTag(tags);
     var holder = $("<div class='green'>");
     var what = $("<span class='what'>");
     what.html("Scenario:");

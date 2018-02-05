@@ -8,7 +8,7 @@ if ($params ['base'] != "") {
 
 <html>
 <head>
-<title>Cucumber Parser</title>
+<title>Gherkin Builder</title>
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://harvesthq.github.io/chosen/chosen.jquery.js"></script>
@@ -19,6 +19,11 @@ if ($params ['base'] != "") {
 <script src="js/export.js?<?php echo time() ?>"></script>
 <?php if ($useJIRA) { ?>
 <script src="js/jira.js?<?php echo time() ?>"></script>
+<?php
+}
+if (file_exists ( "js/tags.js" )) {
+?>
+<script src="js/tags.js?<?php echo time() ?>"></script>
 <?php } ?>
 <script src="props.js?<?php echo time() ?>"></script>
 <script>

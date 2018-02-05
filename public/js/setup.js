@@ -30,6 +30,7 @@ $(document).ready(function() {
     // setup the text areas to make easily readable
     $('textarea').attr('rows', '1');
     makeDynamic();
+    fillTag($('#featTag'));
 
     // setup our button
     $('#addBackgroundStep').click(function() {
