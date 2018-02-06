@@ -93,7 +93,6 @@ jiraOptions = {
  * Provide Tags for each Scenario indicating functionality of the Test Suite
    * Tags should start with an ‘@’ and have no spaces in them
    * By convention, tags should be all lowercase, and have dashes (-) separating multiple words
- * If the testing suite involves functionality being created from a JIRA issue, use the link icon to enter in the JIRA issue
  * Enter a descriptive title for the Test Case into the Scenario title
  * If desired, enter a description into the Scenario Description
  * For each Given, When, and Then step desired
@@ -119,7 +118,6 @@ jiraOptions = {
  * Fill out the Example table with desired inputs, using the ‘Add Data Row’ button to add additional data sets
 
 ## JIRA Integration
-### Features
  * If an existing Feature is in JIRA, use the edit icon to enter in the JIRA issue
  * If the testing suite involves functionality being created from a JIRA issue, use the link icon to enter in the JIRA issue
 
