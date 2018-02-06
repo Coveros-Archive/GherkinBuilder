@@ -129,8 +129,8 @@ jiraOptions = {
 `tags.js`
 ```
 tags = [];
-tags.push( "tag1" );
-tags.push( "tag2" );
-tags.push( "tag3" );
-tags.push( "tag4" );
+tags.push( "@tag1" );
+tags.push( "@tag2" );
+tags.push( "@tag3" );
+tags.push( "@tag4" );
 ```
