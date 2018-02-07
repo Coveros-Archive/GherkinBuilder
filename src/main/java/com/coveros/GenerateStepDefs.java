@@ -3,7 +3,6 @@ package com.coveros;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,45 +14,13 @@ public class GenerateStepDefs {
 	private GenerateStepDefs() {
 	}
 
-	private static File checkInputs(String[] inputs) throws IOException {
-		// get all of our files for the listing
-		if (inputs.length != 1) {
-			throw new IOException("Please provide the file location for the step definitions");
-		}
-		File fileDef = new File(inputs[0]);
-		if (!fileDef.exists()) {
-			throw new IOException("Step defs file does not exist: " + fileDef);
-		}
-		return fileDef;
-	}
-
-	/**
-	 * a method to recursively retrieve all the files in a folder
-	 *
-	 * @param folder:
-	 *            the folder to check for files
-	 * @return ArrayList<String>: an ArrayList with the of multiple files
-	 * @throws IOException
-	 */
-	public static List<String> listFilesForFolder(File folder) {
-		List<String> files = new ArrayList<>();
-		for (final File fileEntry : folder.listFiles()) {
-			if (fileEntry.isDirectory()) {
-				files.addAll(listFilesForFolder(fileEntry));
-			} else {
-				files.add(fileEntry.getPath());
-			}
-		}
-		return files;
-	}
-
 	public static void main(String[] args) throws Exception {
 		GlueCode glueCode = new GlueCode();
 
-		File fileDef = checkInputs(args);
+		File fileDef = Outputs.checkInputs(args);
 		String baseDir = fileDef.getAbsolutePath().substring(0, fileDef.getAbsolutePath().indexOf("\\src\\") + 5);
 
-		List<String> fileDefs = listFilesForFolder(fileDef);
+		List<String> fileDefs = Outputs.listFilesForFolder(fileDef);
 		PrintWriter writer = new PrintWriter(INITIALSTEPLOCATION, "UTF-8");
 
 		List<String> includes = new ArrayList<>();

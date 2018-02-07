@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.coveros.exception.MalformedGlueCode;
+import com.coveros.exception.MalformedMethod;
+
 public class GlueCode {
 
 	private Logger log = Logger.getLogger("Glue Code");
@@ -78,7 +81,15 @@ public class GlueCode {
 		// if no parameters, ok to return empty
 		return new ArrayList<>();
 	}
-	
+
+	/**
+	 * Determines if the provided string is a list or not, with a specific
+	 * object typed
+	 * 
+	 * @param input
+	 *            - a string interpreation of a list object
+	 * @return Boolean - is it a properly identified list
+	 */
 	public Boolean isList(String input) {
 		return input.startsWith("List<") && input.endsWith(">") && input.length() > 6;
 	}
@@ -114,7 +125,7 @@ public class GlueCode {
 				type = "\"text\"";
 			} else {
 				type = object;
-				if( !enumerations.contains(type)) {
+				if (!enumerations.contains(type)) {
 					enumerations.add(type);
 				}
 			}
