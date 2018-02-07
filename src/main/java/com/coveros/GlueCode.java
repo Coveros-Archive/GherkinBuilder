@@ -87,11 +87,36 @@ public class GlueCode {
      * object typed
      * 
      * @param input
-     *            - a string interpreation of a list object
+     *            - a string interpretation of an object
      * @return Boolean - is it a properly identified list
      */
     public Boolean isList(String input) {
         return input.startsWith("List<") && input.endsWith(">") && input.length() > 6;
+    }
+
+    /**
+     * Determines if the provided string is a text element or not. A text
+     * element is considered a string, character, double or boolean
+     * 
+     * @param input
+     *            - a string interpretation of an object
+     * @return Boolean - is it a text element
+     */
+    public Boolean isText(String input) {
+        return "string".equalsIgnoreCase(input) || "char".equalsIgnoreCase(input) || "double".equalsIgnoreCase(input)
+                || "boolean".equalsIgnoreCase(input);
+    }
+
+    /**
+     * Determines if the provided string is a number element or not. A number
+     * element is considered a long, or int
+     * 
+     * @param input
+     *            - a string interpretation of an object
+     * @return Boolean - is it a number element
+     */
+    public Boolean isNumber(String input) {
+        return "long".equalsIgnoreCase(input) || "int".equalsIgnoreCase(input) || "integer".equalsIgnoreCase(input);
     }
 
     /**
@@ -117,11 +142,9 @@ public class GlueCode {
                 name += "List";
             }
             // are we dealing with a whole number
-            if ("long".equalsIgnoreCase(object) || "int".equalsIgnoreCase(object)
-                    || "integer".equalsIgnoreCase(object)) {
+            if (isNumber(object)) {
                 type = "\"number\"";
-            } else if ("string".equalsIgnoreCase(object) || "char".equalsIgnoreCase(object)
-                    || "double".equalsIgnoreCase(object) || "boolean".equalsIgnoreCase(object)) {
+            } else if (isText(object)) {
                 type = "\"text\"";
             } else {
                 type = object;

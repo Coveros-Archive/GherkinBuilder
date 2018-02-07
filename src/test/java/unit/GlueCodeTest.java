@@ -313,4 +313,84 @@ public class GlueCodeTest {
     public void isListFullValueTest() {
         Assert.assertTrue(new GlueCode().isList("List<S>"));
     }
+
+    @Test
+    public void isTextStringTest() {
+        Assert.assertTrue(new GlueCode().isText("String"));
+    }
+
+    @Test
+    public void isTextCharTest() {
+        Assert.assertTrue(new GlueCode().isText("Char"));
+    }
+
+    @Test
+    public void isTextDoubleTest() {
+        Assert.assertTrue(new GlueCode().isText("Double"));
+    }
+
+    @Test
+    public void isTextBooleanTest() {
+        Assert.assertTrue(new GlueCode().isText("Boolean"));
+    }
+
+    @Test
+    public void isTextLongTest() {
+        Assert.assertFalse(new GlueCode().isText("Long"));
+    }
+
+    @Test
+    public void isTextIntegerTest() {
+        Assert.assertFalse(new GlueCode().isText("Integer"));
+    }
+
+    @Test
+    public void isTextIntTest() {
+        Assert.assertFalse(new GlueCode().isText("Int"));
+    }
+
+    @Test
+    public void isTextOtherTest() {
+        Assert.assertFalse(new GlueCode().isText("Other"));
+    }
+
+    @Test
+    public void isNumberStringTest() {
+        Assert.assertFalse(new GlueCode().isNumber("String"));
+    }
+
+    @Test
+    public void isNumberCharTest() {
+        Assert.assertFalse(new GlueCode().isNumber("Char"));
+    }
+
+    @Test
+    public void isNumberDoubleTest() {
+        Assert.assertFalse(new GlueCode().isNumber("Double"));
+    }
+
+    @Test
+    public void isNumberBooleanTest() {
+        Assert.assertFalse(new GlueCode().isNumber("Boolean"));
+    }
+
+    @Test
+    public void isNumberLongTest() {
+        Assert.assertTrue(new GlueCode().isNumber("Long"));
+    }
+
+    @Test
+    public void isNumberIntegerTest() {
+        Assert.assertTrue(new GlueCode().isNumber("Integer"));
+    }
+
+    @Test
+    public void isNumberIntTest() {
+        Assert.assertTrue(new GlueCode().isNumber("Int"));
+    }
+
+    @Test
+    public void isNumberOtherTest() {
+        Assert.assertFalse(new GlueCode().isNumber("Other"));
+    }
 }
