@@ -24,9 +24,9 @@ import java.io.IOException;
 
 public class MalformedMethod extends IOException {
 
-	private static final long serialVersionUID = -4090934898770747219L;
+    private static final long serialVersionUID = -4090934898770747219L;
 
-	public MalformedMethod(String msg) {
-		super(msg);
-	}
+    public MalformedMethod(String msg) {
+        super(msg);
+    }
 }
