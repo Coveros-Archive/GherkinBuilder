@@ -290,4 +290,30 @@ public class GlueCodeTest {
 		glueCode.getStepVariables(listIn);
 		Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
 	}
+	
+	
+	@Test
+	public void isListWrongTest() {
+		Assert.assertFalse(new GlueCode().isList("List"));
+	}
+	
+	@Test
+	public void isListStartTest() {
+		Assert.assertFalse(new GlueCode().isList("List<"));
+	}
+	
+	@Test
+	public void isListEndTest() {
+		Assert.assertFalse(new GlueCode().isList(">"));
+	}
+	
+	@Test
+	public void isListFullTest() {
+		Assert.assertFalse(new GlueCode().isList("List<>"));
+	}
+	
+	@Test
+	public void isListFullValueTest() {
+		Assert.assertTrue(new GlueCode().isList("List<S>"));
+	}
 }

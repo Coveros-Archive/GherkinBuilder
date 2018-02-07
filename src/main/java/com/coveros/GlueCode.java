@@ -78,6 +78,10 @@ public class GlueCode {
 		// if no parameters, ok to return empty
 		return new ArrayList<>();
 	}
+	
+	public Boolean isList(String input) {
+		return input.startsWith("List<") && input.endsWith(">") && input.length() > 6;
+	}
 
 	/**
 	 * Takes a list of paramters and converts it into step variables
@@ -97,7 +101,7 @@ public class GlueCode {
 			String name = parameter.split(" ")[1];
 
 			// are we dealing with a list of elements
-			if (object.startsWith("List<") && object.endsWith(">")) {
+			if (isList(object)) {
 				object = object.substring(5, object.length() - 1);
 				name += "List";
 			}
