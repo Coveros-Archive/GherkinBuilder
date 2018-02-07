@@ -48,6 +48,8 @@ public class GenerateStepDefs {
 	}
 
 	public static void main(String[] args) throws Exception {
+		GlueCode glueCode = new GlueCode();
+
 		File fileDef = checkInputs(args);
 		String baseDir = fileDef.getAbsolutePath().substring(0, fileDef.getAbsolutePath().indexOf("\\src\\") + 5);
 
@@ -55,7 +57,6 @@ public class GenerateStepDefs {
 		PrintWriter writer = new PrintWriter(INITIALSTEPLOCATION, "UTF-8");
 
 		List<String> includes = new ArrayList<>();
-		List<String> enumerations = new ArrayList<>();
 
 		for (String file : fileDefs) {
 			String line = "";
@@ -70,30 +71,7 @@ public class GenerateStepDefs {
 					// if our previous line was just a Given, When or Then, next
 					// will be set, to indicate this line contains parameters
 					if (next) {
-						line = line.substring(line.indexOf('(') + 1, line.indexOf(')'));
-						if (line.length() > 0) {
-							String[] objects = line.split(",");
-							for (String object : objects) {
-								object = object.trim();
-								String[] pieces = object.split(" ");
-								String type = "";
-								if (pieces[0].startsWith("List<") && pieces[0].endsWith(">")) {
-									pieces[0] = pieces[0].substring(5, pieces[0].length() - 1);
-									pieces[1] += "List";
-								}
-								if ("long".equalsIgnoreCase(pieces[0]) || "int".equalsIgnoreCase(pieces[0])) {
-									type = "\"number\"";
-								} else if ("string".equalsIgnoreCase(pieces[0]) || "char".equalsIgnoreCase(pieces[0])
-										|| "Integer".equalsIgnoreCase(pieces[0])
-										|| "Double".equalsIgnoreCase(pieces[0])) {
-									type = "\"text\"";
-								} else {
-									type = pieces[0];
-									enumerations.add(type);
-								}
-								step.append(", new keypair( \"" + pieces[1] + "\", " + type + " )");
-							}
-						}
+						step.append(glueCode.getStepVariables(glueCode.getMethodVariables(line)));
 						step.append(" ) );");
 						next = false;
 						writer.println(step);
@@ -101,11 +79,11 @@ public class GenerateStepDefs {
 					}
 					line = line.trim();
 					if (line.startsWith("@Given") || line.startsWith("@When")) {
-						step.append("testSteps.whens.push( new step( \"" + GlueCode.getStep(line) + "\"");
+						step.append("testSteps.whens.push( new step( \"" + glueCode.getStep(line) + "\"");
 						next = true;
 					}
 					if (line.startsWith("@Then")) {
-						step.append("testSteps.thens.push( new step( \"" + GlueCode.getStep(line) + "\"");
+						step.append("testSteps.thens.push( new step( \"" + glueCode.getStep(line) + "\"");
 						next = true;
 					}
 				}
@@ -118,10 +96,10 @@ public class GenerateStepDefs {
 		writer = new PrintWriter("public/js/steps.js", "UTF-8");
 		// write our enumerations
 		writer.println("//our enumerations");
-		for (String enumeration : enumerations) {
+		for (String enumeration : glueCode.getStepEnumerations()) {
 			for (String include : includes) {
 				if (include.endsWith("." + enumeration)) {
-					include = include.substring(0, include.lastIndexOf("."));
+					include = include.substring(0, include.lastIndexOf('.'));
 					include = include.replaceAll("\\.", "\\\\");
 					String line = "";
 					try (BufferedReader br = new BufferedReader(new FileReader(baseDir + include + ".java"));) {

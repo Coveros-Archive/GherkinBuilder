@@ -22,11 +22,11 @@ package com.coveros;
 
 import java.io.IOException;
 
-public class MalformedGlueCode extends IOException {
+public class MalformedMethod extends IOException {
 
-	private static final long serialVersionUID = -4326104975020224934L;
+	private static final long serialVersionUID = -4090934898770747219L;
 
-	public MalformedGlueCode(String msg) {
+	public MalformedMethod(String msg) {
         super(msg);
     }
 }
