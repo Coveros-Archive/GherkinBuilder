@@ -1,5 +1,6 @@
 package unit;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,74 +13,177 @@ import com.coveros.exception.MalformedMethod;
 
 public class GlueCodeTest {
 
+    @Test
+    public void processLineImportTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("java.io.IOException");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("import java.io.IOException;");
+        Assert.assertEquals(glueCode.getClassIncludes(), list);
+    }
+
+    @Test
+    public void processLineDuplicateImportTest() throws IOException {
+        String line = "import java.io.IOException;";
+        List<String> list = new ArrayList<>();
+        list.add("java.io.IOException");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine(line);
+        glueCode.processLine(line);
+        Assert.assertEquals(glueCode.getClassIncludes(), list);
+    }
+
+    @Test
+    public void processLineNoImportTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("imprt java.io.IOException;");
+        Assert.assertEquals(glueCode.getClassIncludes(), list);
+    }
+
+    @Test
+    public void processLineImportStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("import java.io.IOException;");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineGivenStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@Given(\"^I have a user$\")");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineWhenStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@When(\"^I have a user$\")");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineThenStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@Then(\"^I have a user$\")");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineGivenMethodStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@Given(\"^I have a user$\")");
+        glueCode.processLine("public void haveUser()");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineWhenMethodStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@When(\"^I have a user$\")");
+        glueCode.processLine("public void haveUser()");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineThenMethodStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("testSteps.thens.push( new step( \"I have a user\" ) );");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@Then(\"^I have a user$\")");
+        glueCode.processLine("public void haveUser()");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
+    @Test
+    public void processLineMultipleMethodStepsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.thens.push( new step( \"I have a user\" ) );");
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine("@Given(\"^I have a user$\")");
+        glueCode.processLine("public void haveUser()");
+        glueCode.processLine("@Then(\"^I have a user$\")");
+        glueCode.processLine("public void haveUser()");
+        Assert.assertEquals(glueCode.getGlueCodeSteps(), list);
+    }
+
     @Test(expectedExceptions = MalformedGlueCode.class)
-    public void checkStepValidityNotCarotTest() throws MalformedGlueCode {
+    public void checkStepValidityNotCarotTest() throws IOException {
         String given = "@Given(\"I have a new registered user$\")";
         new GlueCode().getStep(given);
     }
 
     @Test(expectedExceptions = MalformedGlueCode.class)
-    public void checkStepValidityNotDollarTest() throws MalformedGlueCode {
+    public void checkStepValidityNotDollarTest() throws IOException {
         String given = "@Given(\"^I have a new registered user\")";
         new GlueCode().getStep(given);
     }
 
     @Test(expectedExceptions = MalformedGlueCode.class)
-    public void checkStepValidityBadCarotDollarTest() throws MalformedGlueCode {
+    public void checkStepValidityBadCarotDollarTest() throws IOException {
         String given = "@Given(\"$I have a new registered user^\")";
         new GlueCode().getStep(given);
     }
 
     @Test
-    public void getStepSimpleTest() throws MalformedGlueCode {
+    public void getStepSimpleTest() throws IOException {
         String given = "@Given(\"^I have a new registered user$\")";
         Assert.assertEquals(new GlueCode().getStep(given), "I have a new registered user");
     }
 
     @Test
-    public void getStepAnyTest() throws MalformedGlueCode {
+    public void getStepAnyTest() throws IOException {
         String given = "@Given(\"^(?:I'm logged|I log) in as an admin user$\")";
         Assert.assertEquals(new GlueCode().getStep(given), "<span class='any'>...</span> in as an admin user");
     }
 
     @Test
-    public void getStepMatchTest() throws MalformedGlueCode {
+    public void getStepMatchTest() throws IOException {
         String given = "@Given(\"^I have (d+) users$\")";
         Assert.assertEquals(new GlueCode().getStep(given), "I have XXXX users");
     }
 
     @Test
-    public void getStepOptionalTest() throws MalformedGlueCode {
+    public void getStepOptionalTest() throws IOException {
         String given = "@Given(\"^I have [(d+)]? users$\")";
         Assert.assertEquals(new GlueCode().getStep(given), "I have <span class='opt'>XXXX</span> users");
     }
 
     @Test(expectedExceptions = MalformedMethod.class)
-    public void checkMethodVariablesValidityNoOpenParenTest() throws MalformedMethod {
+    public void checkMethodVariablesValidityNoOpenParenTest() throws IOException {
         String method = "public void myMethod)";
         new GlueCode().getMethodVariables(method);
     }
 
     @Test(expectedExceptions = MalformedMethod.class)
-    public void checkMethodVariablesValidityNoCloseParenTest() throws MalformedMethod {
+    public void checkMethodVariablesValidityNoCloseParenTest() throws IOException {
         String method = "public void myMethod(";
         new GlueCode().getMethodVariables(method);
     }
 
     @Test(expectedExceptions = MalformedMethod.class)
-    public void checkMethodVariablesValidityBadParenTest() throws MalformedMethod {
+    public void checkMethodVariablesValidityBadParenTest() throws IOException {
         String method = "public void myMethod)(";
         new GlueCode().getMethodVariables(method);
     }
 
     @Test
-    public void getMethodVariablesNoParamsTest() throws MalformedMethod {
+    public void getMethodVariablesNoParamsTest() throws IOException {
         String method = "public void myMethod()";
         Assert.assertEquals(new GlueCode().getMethodVariables(method), new ArrayList<>());
     }
 
     @Test
-    public void getMethodVariablesSingleParamsTest() throws MalformedMethod {
+    public void getMethodVariablesSingleParamsTest() throws IOException {
         String method = "public void myMethod(String var1)";
         List<String> list = new ArrayList<>();
         list.add("String var1");
@@ -87,7 +191,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getMethodVariablesMultipleParamsTest() throws MalformedMethod {
+    public void getMethodVariablesMultipleParamsTest() throws IOException {
         String method = "public void myMethod(String var1, int 123)";
         List<String> list = new ArrayList<>();
         list.add("String var1");
@@ -96,97 +200,97 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepVariablesNoParamsTest() {
+    public void getStepVariablesNoParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         Assert.assertEquals(new GlueCode().getStepVariables(list), "");
     }
 
     @Test
-    public void getStepVariablesListStringsParamsTest() {
+    public void getStepVariablesListStringsParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("List<String> inputs");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"inputsList\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesListIntsParamsTest() {
+    public void getStepVariablesListIntsParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("List<int> inputs");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"inputsList\", \"number\" )");
     }
 
     @Test
-    public void getStepVariablesListCustomParamsTest() {
+    public void getStepVariablesListCustomParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("List<MyEnums> inputs");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"inputsList\", MyEnums )");
     }
 
     @Test
-    public void getStepVariablesLongParamsTest() {
+    public void getStepVariablesLongParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Long input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"number\" )");
     }
 
     @Test
-    public void getStepVariablesIntParamsTest() {
+    public void getStepVariablesIntParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("int input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"number\" )");
     }
 
     @Test
-    public void getStepVariablesIntegerParamsTest() {
+    public void getStepVariablesIntegerParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Integer input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"number\" )");
     }
 
     @Test
-    public void getStepVariablesStringParamsTest() {
+    public void getStepVariablesStringParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("String input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesCharParamsTest() {
+    public void getStepVariablesCharParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Char input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesDoubleParamsTest() {
+    public void getStepVariablesDoubleParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Double input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesBooleanParamsTest() {
+    public void getStepVariablesBooleanParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Boolean input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesObjectParamsTest() {
+    public void getStepVariablesObjectParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("Object input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", Object )");
     }
 
     @Test
-    public void getStepVariablesCustomParamsTest() {
+    public void getStepVariablesCustomParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("MyEnum input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", MyEnum )");
     }
 
     @Test
-    public void getStepVariablesMultipleParamsTest() {
+    public void getStepVariablesMultipleParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("List<String> inputs");
         list.add("Long input");
@@ -197,21 +301,21 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepVariablesPreSpacingParamsTest() {
+    public void getStepVariablesPreSpacingParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("  String input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepVariablesPostSpacingParamsTest() {
+    public void getStepVariablesPostSpacingParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("String input  ");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"text\" )");
     }
 
     @Test
-    public void getStepEnumerationsDefaultTest() {
+    public void getStepEnumerationsDefaultTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> list = new ArrayList<>();
         glueCode.getStepVariables(list);
@@ -219,7 +323,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsStringTest() {
+    public void getStepEnumerationsStringTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -229,7 +333,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsListStringTest() {
+    public void getStepEnumerationsListStringTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -239,7 +343,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsObjectTest() {
+    public void getStepEnumerationsObjectTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -250,7 +354,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsListObjectTest() {
+    public void getStepEnumerationsListObjectTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -261,7 +365,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsListObjectMultipleTest() {
+    public void getStepEnumerationsListObjectMultipleTest() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -275,7 +379,7 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void getStepEnumerationsListObjectMultiple2Test() {
+    public void getStepEnumerationsListObjectMultiple2Test() throws IOException {
         GlueCode glueCode = new GlueCode();
         List<String> listIn = new ArrayList<>();
         List<String> listOut = new ArrayList<>();
@@ -290,107 +394,107 @@ public class GlueCodeTest {
     }
 
     @Test
-    public void isListWrongTest() {
+    public void isListWrongTest() throws IOException {
         Assert.assertFalse(new GlueCode().isList("List"));
     }
 
     @Test
-    public void isListStartTest() {
+    public void isListStartTest() throws IOException {
         Assert.assertFalse(new GlueCode().isList("List<"));
     }
 
     @Test
-    public void isListEndTest() {
+    public void isListEndTest() throws IOException {
         Assert.assertFalse(new GlueCode().isList(">"));
     }
 
     @Test
-    public void isListFullTest() {
+    public void isListFullTest() throws IOException {
         Assert.assertFalse(new GlueCode().isList("List<>"));
     }
 
     @Test
-    public void isListFullValueTest() {
+    public void isListFullValueTest() throws IOException {
         Assert.assertTrue(new GlueCode().isList("List<S>"));
     }
 
     @Test
-    public void isTextStringTest() {
+    public void isTextStringTest() throws IOException {
         Assert.assertTrue(new GlueCode().isText("String"));
     }
 
     @Test
-    public void isTextCharTest() {
+    public void isTextCharTest() throws IOException {
         Assert.assertTrue(new GlueCode().isText("Char"));
     }
 
     @Test
-    public void isTextDoubleTest() {
+    public void isTextDoubleTest() throws IOException {
         Assert.assertTrue(new GlueCode().isText("Double"));
     }
 
     @Test
-    public void isTextBooleanTest() {
+    public void isTextBooleanTest() throws IOException {
         Assert.assertTrue(new GlueCode().isText("Boolean"));
     }
 
     @Test
-    public void isTextLongTest() {
+    public void isTextLongTest() throws IOException {
         Assert.assertFalse(new GlueCode().isText("Long"));
     }
 
     @Test
-    public void isTextIntegerTest() {
+    public void isTextIntegerTest() throws IOException {
         Assert.assertFalse(new GlueCode().isText("Integer"));
     }
 
     @Test
-    public void isTextIntTest() {
+    public void isTextIntTest() throws IOException {
         Assert.assertFalse(new GlueCode().isText("Int"));
     }
 
     @Test
-    public void isTextOtherTest() {
+    public void isTextOtherTest() throws IOException {
         Assert.assertFalse(new GlueCode().isText("Other"));
     }
 
     @Test
-    public void isNumberStringTest() {
+    public void isNumberStringTest() throws IOException {
         Assert.assertFalse(new GlueCode().isNumber("String"));
     }
 
     @Test
-    public void isNumberCharTest() {
+    public void isNumberCharTest() throws IOException {
         Assert.assertFalse(new GlueCode().isNumber("Char"));
     }
 
     @Test
-    public void isNumberDoubleTest() {
+    public void isNumberDoubleTest() throws IOException {
         Assert.assertFalse(new GlueCode().isNumber("Double"));
     }
 
     @Test
-    public void isNumberBooleanTest() {
+    public void isNumberBooleanTest() throws IOException {
         Assert.assertFalse(new GlueCode().isNumber("Boolean"));
     }
 
     @Test
-    public void isNumberLongTest() {
+    public void isNumberLongTest() throws IOException {
         Assert.assertTrue(new GlueCode().isNumber("Long"));
     }
 
     @Test
-    public void isNumberIntegerTest() {
+    public void isNumberIntegerTest() throws IOException {
         Assert.assertTrue(new GlueCode().isNumber("Integer"));
     }
 
     @Test
-    public void isNumberIntTest() {
+    public void isNumberIntTest() throws IOException {
         Assert.assertTrue(new GlueCode().isNumber("Int"));
     }
 
     @Test
-    public void isNumberOtherTest() {
+    public void isNumberOtherTest() throws IOException {
         Assert.assertFalse(new GlueCode().isNumber("Other"));
     }
 }

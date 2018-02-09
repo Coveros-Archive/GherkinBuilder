@@ -1,5 +1,6 @@
 package com.coveros;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,10 +14,54 @@ public class GlueCode {
 
     private Logger log = Logger.getLogger("Glue Code");
 
+    private List<String> includes;
     private List<String> enumerations;
+    private Boolean next = false;
+
+    private List<String> steps;
+    StringBuilder step;
 
     public GlueCode() {
+        includes = new ArrayList<>();
         enumerations = new ArrayList<>();
+
+        steps = new ArrayList<>();
+        step = new StringBuilder();
+    }
+
+    /**
+     * Runs through the provided line, and determines how to parse it
+     * 
+     * @param line
+     *            - a provided line from a Cucumber Glue Code path
+     * @return String - a step to be consumed by the gherkin builder class as js
+     */
+    public void processLine(String line) throws IOException {
+        // grab any imports that might be useful
+        if (line.startsWith("import ")) {
+            String imprt = line.substring(7, line.length() - 1);
+            if (!includes.contains(imprt)) {
+                includes.add(imprt);
+            }
+        }
+        // if our previous line was just a Given, When or Then, next
+        // will be set, to indicate this line contains parameters
+        if (next) {
+            step.append(getStepVariables(getMethodVariables(line)));
+            step.append(" ) );");
+            next = false;
+            steps.add(step.toString());
+            step.setLength(0);
+        }
+        String ln = line.trim();
+        if (ln.startsWith("@Given") || ln.startsWith("@When")) {
+            step.append("testSteps.whens.push( new step( \"" + getStep(ln) + "\"");
+            next = true;
+        }
+        if (ln.startsWith("@Then")) {
+            step.append("testSteps.thens.push( new step( \"" + getStep(ln) + "\"");
+            next = true;
+        }
     }
 
     /**
@@ -165,5 +210,24 @@ public class GlueCode {
      */
     public List<String> getStepEnumerations() {
         return enumerations;
+    }
+
+    /**
+     * Returns the identified includes while parsing through the method
+     * parameters
+     * 
+     * @return List - a list of includes
+     */
+    public List<String> getClassIncludes() {
+        return includes;
+    }
+
+    /**
+     * Returns the identified steps while parsing through the method parameters
+     * 
+     * @return List - a list of steps
+     */
+    public List<String> getGlueCodeSteps() {
+        return steps;
     }
 }
