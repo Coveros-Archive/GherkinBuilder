@@ -10,10 +10,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class EnumInfoTest {
 
-    public enum Sample { HELLO, WORLD };
+    public enum Sample {HELLO, WORLD}
+
+    public enum ComplexSample {
+        HELLO("123"), WORLD("456");
+        ComplexSample(String count) {
+        }
+    }
 
     @Test
     public void getEnumFileNullTest() throws IOException {
@@ -52,30 +59,47 @@ public class EnumInfoTest {
         System.setProperty("baseDirectory", "./src/test/java/");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("import unit.Sample;");
-        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(),
-                new ArrayList<>());
+        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(), new ArrayList<>());
     }
 
     @Test
     public void getStepEnumerationsMismatchTest() throws IOException {
         System.setProperty("baseDirectory", "./src/test/java/");
+        String given = "@Given(\"^I have [\\w+] [(\\d+)]$\")";
         String method = "public void myMethod(String var1, int 123)";
         GlueCode glueCode = new GlueCode();
-        glueCode.getMethodVariables(method);
         glueCode.processLine("import unit.Sample;");
-        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(),
-                new ArrayList<>());
+        glueCode.processLine(given);
+        glueCode.processLine(method);
+        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(), new ArrayList<>());
     }
 
     @Test
     public void getStepEnumerationsMatchTest() throws IOException {
         System.setProperty("baseDirectory", "./src/test/java/");
+        String given = "@Given(\"^I have [\\w+] [(\\d+)]$\")";
         String method = "public void myMethod(Sample sample)";
         GlueCode glueCode = new GlueCode();
-        glueCode.getMethodVariables(method);
-        glueCode.processLine("import unit.Sample;");
-        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(),
-                new ArrayList<>());
+        glueCode.processLine(given);
+        glueCode.processLine(method);
+        glueCode.processLine("import unit.EnumInfoTest.Sample;");
+        List<String> list = new ArrayList<>();
+        list.add("var Sample = new Array(\"HELLO\",\"WORLD\");");
+        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(), list);
+    }
+
+    @Test
+    public void getStepEnumerationsComplexMatchTest() throws IOException {
+        System.setProperty("baseDirectory", "./src/test/java/");
+        String given = "@Given(\"^I have [\\w+] [(\\d+)]$\")";
+        String method = "public void myMethod(ComplexSample sample)";
+        GlueCode glueCode = new GlueCode();
+        glueCode.processLine(given);
+        glueCode.processLine(method);
+        glueCode.processLine("import unit.EnumInfoTest.ComplexSample;");
+        List<String> list = new ArrayList<>();
+        list.add("var ComplexSample = new Array(\"HELLO\",\"WORLD\");");
+        Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(), list);
     }
 
     @Test
@@ -122,8 +146,8 @@ public class EnumInfoTest {
 
     @Test
     public void formatEnumValuesComplexEnumNestedTest() {
-        Assert.assertEquals(
-                new EnumInfo().formatEnumValues("public enum Simple { YES(\"hello(there)\"), NO(\"world" + "(earth)\");"),
+        Assert.assertEquals(new EnumInfo()
+                        .formatEnumValues("public enum Simple { YES(\"hello(there)\"), NO(\"world" + "(earth)\");"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 }
