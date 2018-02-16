@@ -49,31 +49,35 @@ public class EnumInfo {
         }
     }
 
+    public String buildEnum(BufferedReader br, String enumeration) throws IOException {
+        String line;
+        StringBuilder value = new StringBuilder();
+        Boolean start = false;
+        Boolean end = false;
+        while ((line = br.readLine()) != null) {
+            String ln = line.trim();
+            if (start) {
+                value.append(ln);
+            }
+            if (ln.startsWith("public enum " + enumeration)) {
+                start = true;
+                value.append(ln);
+            }
+            if (start && (ln.endsWith(";") || ln.endsWith("}"))) {
+                end = true;
+            }
+            if (end) {
+                return formatEnumValues(value.toString());
+            }
+        }
+        return null;
+    }
+
     public List<String> getStepEnumerations() throws IOException {
         List<String> enums = new ArrayList<>();
         for (String enumeration : enumerations) {
             try (BufferedReader br = new BufferedReader(new FileReader(getEnumFile(enumeration)));) {
-                String line;
-                StringBuilder value = new StringBuilder();
-                Boolean start = false;
-                Boolean end = false;
-                while ((line = br.readLine()) != null) {
-                    String ln = line.trim();
-                    if (start) {
-                        value.append(ln);
-                    }
-                    if (ln.startsWith("public enum " + enumeration)) {
-                        start = true;
-                        value.append(ln);
-                    }
-                    if (start && (ln.endsWith(";") || ln.endsWith("}"))) {
-                        end = true;
-                    }
-                    if (end) {
-                        enums.add(formatEnumValues(value.toString()));
-                        break;
-                    }
-                }
+                enums.add(buildEnum(br, enumeration));
             }
         }
         return enums;
