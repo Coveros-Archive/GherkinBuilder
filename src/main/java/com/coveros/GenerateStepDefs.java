@@ -1,160 +1,52 @@
 package com.coveros;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.io.*;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GenerateStepDefs {
 
-    private static final String INITIALSTEPLOCATION = "public/js/step.js";
+    private static Logger log = Logger.getLogger("GherkinBuilder");
+    private static final String STEPS = "public/js/steps.js";
 
-    private static File checkInputs(String[] inputs) throws Exception {
-        // get all of our files for the listing
-        if (inputs.length != 1) {
-            throw new Exception("Please provide the file location for the step definitions");
-        }
-        File fileDef = new File(inputs[0]);
-        if (!fileDef.exists()) {
-            throw new Exception("Step defs file does not exist: " + fileDef);
-        }
-        return fileDef;
-    }
-
-    /**
-     * a method to recursively retrieve all the files in a folder
-     *
-     * @param folder:
-     *            the folder to check for files
-     * @return ArrayList<String>: an ArrayList with the of multiple files
-     * @throws IOException
-     */
-    public static List<String> listFilesForFolder(File folder) {
-        List<String> files = new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory()) {
-                files.addAll(listFilesForFolder(fileEntry));
-            } else {
-                files.add(fileEntry.getPath());
-            }
-        }
-        return files;
+    private GenerateStepDefs() {
     }
 
     public static void main(String[] args) throws Exception {
-        File fileDef = checkInputs(args);
-        String baseDir = fileDef.getAbsolutePath().substring(0, fileDef.getAbsolutePath().indexOf("\\src\\") + 5);
+        GlueCode glueCode = new GlueCode();
 
-        List<String> fileDefs = listFilesForFolder(fileDef);
-        PrintWriter writer = new PrintWriter(INITIALSTEPLOCATION, "UTF-8");
+        File fileDef = Outputs.checkInputs(args);
+        List<String> fileDefs = Outputs.listFilesForFolder(fileDef);
+        System.setProperty("baseDirectory",
+                fileDef.getAbsolutePath().substring(0, fileDef.getAbsolutePath().indexOf("src/main/java/") + 14));
 
-        List<String> includes = new ArrayList<>();
-        List<String> enumerations = new ArrayList<>();
-
+        // parse through our step definitions
         for (String file : fileDefs) {
-            String line = "";
-            boolean next = false;
-            StringBuilder step = new StringBuilder();
+            String line;
             try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr);) {
                 while ((line = br.readLine()) != null) {
-                    if (line.startsWith("import ")) {
-                        includes.add(line.substring(7, line.length() - 1));
-                    }
-                    if (next) {
-                        line = line.substring(line.indexOf('(') + 1, line.indexOf(')'));
-                        if (line.length() > 0) {
-                            String[] objects = line.split(",");
-                            for (String object : objects) {
-                                object = object.trim();
-                                String[] pieces = object.split(" ");
-                                String type = "";
-                                if (pieces[0].startsWith("List<") && pieces[0].endsWith(">")) {
-                                    pieces[0] = pieces[0].substring(5, pieces[0].length() - 1);
-                                    pieces[1] += "List";
-                                }
-                                if ("long".equalsIgnoreCase(pieces[0]) || "int".equalsIgnoreCase(pieces[0])) {
-                                    type = "\"number\"";
-                                } else if ("string".equalsIgnoreCase(pieces[0]) || "char".equalsIgnoreCase(pieces[0])
-                                        || "Integer".equalsIgnoreCase(pieces[0])
-                                        || "Double".equalsIgnoreCase(pieces[0])) {
-                                    type = "\"text\"";
-                                } else {
-                                    type = pieces[0];
-                                    enumerations.add(type);
-                                }
-                                step.append(", new keypair( \"" + pieces[1] + "\", " + type + " )");
-                            }
-                        }
-                        step.append(" ) );");
-                        next = false;
-                        writer.println(step);
-                        step.setLength(0);
-                    }
-                    line = line.trim();
-                    if (line.startsWith("@Given") || line.startsWith("@When")) {
-                        line = line.substring(line.indexOf('^') + 1, line.indexOf('$'));
-                        line = line.replaceAll("\\(\\?:.*?\\)", "<span class='any'>...</span>");
-                        line = line.replaceAll("\\(.*?\\)", "XXXX");
-                        line = line.replaceAll("\\[(.*?)\\]\\?", "<span class='opt'>$1</span>");
-                        step.append("testSteps.whens.push( new step( \"" + line + "\"");
-                        next = true;
-                    }
-                    if (line.startsWith("@Then")) {
-                        line = line.substring(line.indexOf('^') + 1, line.indexOf('$'));
-                        line = line.replaceAll("\\(\\?:.*?\\)", "<span class='any'>...</span>");
-                        line = line.replaceAll("\\(.*?\\)", "XXXX");
-                        line = line.replaceAll("\\[(.*?)\\]\\?", "<span class='opt'>$1</span>");
-                        step.append("testSteps.thens.push( new step( \"" + line + "\"");
-                        next = true;
-                    }
+                    glueCode.processLine(line);
                 }
             }
         }
-        // close our file
-        writer.close();
-
-        // to prepend, we must copy, then unlink our old file
-        writer = new PrintWriter("public/js/steps.js", "UTF-8");
-        // write our enumerations
-        writer.println("//our enumerations");
-        for (String enumeration : enumerations) {
-            for (String include : includes) {
-                if (include.endsWith("." + enumeration)) {
-                    include = include.substring(0, include.lastIndexOf("."));
-                    include = include.replaceAll("\\.", "\\\\");
-                    String line = "";
-                    try (BufferedReader br = new BufferedReader(new FileReader(baseDir + include + ".java"));) {
-                        while ((line = br.readLine()) != null) {
-                            line = line.trim();
-                            if (line.startsWith("public enum " + enumeration)) {
-                                String array = "var " + line.substring(12);
-                                array = array.replace("{ ", " = new Array( \"");
-                                array = array.replace(" }", "\" )");
-                                array = array.replace(", ", "\", \"");
-                                writer.println(array);
-                            }
-                        }
-                    }
-                }
+        // write out to our steps file
+        try (BufferedWriter buffer = new BufferedWriter(new FileWriter(STEPS))) {
+            // write our enumerations
+            buffer.write("//our enumerations\n");
+            for (String enumeration : glueCode.getEnumInfo().getStepEnumerations()) {
+                buffer.write(enumeration);
+                buffer.write("\n");
             }
-        }
-        writer.println("");
-        // write our old lines
-        writer.println("//our steps");
-        String line = "";
-        try (BufferedReader br = new BufferedReader(new FileReader(INITIALSTEPLOCATION));) {
-            while ((line = br.readLine()) != null) {
-                writer.println(line);
+            buffer.write("\n");
+            // write our old lines
+            buffer.write("//our steps\n");
+            for (String step : glueCode.getGlueCodeSteps()) {
+                buffer.write(step);
+                buffer.write("\n");
             }
+        } catch (IOException e) {
+            log.log(Level.SEVERE, "Some error occurred writing to '" + STEPS + "'", e);
         }
-        // close our file
-        writer.close();
-        new File(INITIALSTEPLOCATION).delete();
-    }
-
-    private GenerateStepDefs() {
     }
 }
