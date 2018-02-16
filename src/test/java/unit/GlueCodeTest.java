@@ -1,15 +1,14 @@
 package unit;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import com.coveros.GlueCode;
 import com.coveros.exception.MalformedGlueCode;
 import com.coveros.exception.MalformedMethod;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GlueCodeTest {
 
@@ -19,7 +18,7 @@ public class GlueCodeTest {
         list.add("java.io.IOException");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("import java.io.IOException;");
-        Assert.assertEquals(glueCode.getClassIncludes(), list);
+        Assert.assertEquals(glueCode.getEnumInfo().getClassIncludes(), list);
     }
 
     @Test
@@ -30,7 +29,7 @@ public class GlueCodeTest {
         GlueCode glueCode = new GlueCode();
         glueCode.processLine(line);
         glueCode.processLine(line);
-        Assert.assertEquals(glueCode.getClassIncludes(), list);
+        Assert.assertEquals(glueCode.getEnumInfo().getClassIncludes(), list);
     }
 
     @Test
@@ -38,7 +37,7 @@ public class GlueCodeTest {
         List<String> list = new ArrayList<>();
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("imprt java.io.IOException;");
-        Assert.assertEquals(glueCode.getClassIncludes(), list);
+        Assert.assertEquals(glueCode.getEnumInfo().getClassIncludes(), list);
     }
 
     @Test
@@ -319,7 +318,7 @@ public class GlueCodeTest {
         GlueCode glueCode = new GlueCode();
         List<String> list = new ArrayList<>();
         glueCode.getStepVariables(list);
-        Assert.assertEquals(glueCode.getStepEnumerations(), list);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), list);
     }
 
     @Test
@@ -329,7 +328,7 @@ public class GlueCodeTest {
         List<String> listOut = new ArrayList<>();
         listIn.add("String input");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test
@@ -339,7 +338,7 @@ public class GlueCodeTest {
         List<String> listOut = new ArrayList<>();
         listIn.add("List<String> inputs");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test
@@ -350,7 +349,7 @@ public class GlueCodeTest {
         listIn.add("Object input");
         listOut.add("Object");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test
@@ -361,7 +360,7 @@ public class GlueCodeTest {
         listIn.add("List<Object> input");
         listOut.add("Object");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test
@@ -375,7 +374,7 @@ public class GlueCodeTest {
         listIn.add("List<Object> input");
         listOut.add("Object");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test
@@ -390,7 +389,7 @@ public class GlueCodeTest {
         listOut.add("Object");
         listOut.add("MyEnum");
         glueCode.getStepVariables(listIn);
-        Assert.assertEquals(glueCode.getStepEnumerations(), listOut);
+        Assert.assertEquals(glueCode.getEnumInfo().getGlueCodeEnumerations(), listOut);
     }
 
     @Test

@@ -1,5 +1,8 @@
 package com.coveros;
 
+import com.coveros.exception.MalformedGlueCode;
+import com.coveros.exception.MalformedMethod;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,42 +10,30 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.coveros.exception.MalformedGlueCode;
-import com.coveros.exception.MalformedMethod;
-
 public class GlueCode {
 
-    private Logger log = Logger.getLogger("Glue Code");
+    private Logger log = Logger.getLogger("GherkinBuilder");
 
-    private List<String> includes;
-    private List<String> enumerations;
+    private EnumInfo enumInfo = new EnumInfo();
     private Boolean next = false;
-
     private List<String> steps;
-    StringBuilder step;
+    private StringBuilder step;
 
     public GlueCode() {
-        includes = new ArrayList<>();
-        enumerations = new ArrayList<>();
-
         steps = new ArrayList<>();
         step = new StringBuilder();
     }
 
     /**
      * Runs through the provided line, and determines how to parse it
-     * 
-     * @param line
-     *            - a provided line from a Cucumber Glue Code path
+     *
+     * @param line - a provided line from a Cucumber Glue Code path
      * @return String - a step to be consumed by the gherkin builder class as js
      */
     public void processLine(String line) throws IOException {
         // grab any imports that might be useful
         if (line.startsWith("import ")) {
-            String imprt = line.substring(7, line.length() - 1);
-            if (!includes.contains(imprt)) {
-                includes.add(imprt);
-            }
+            enumInfo.addClassInclude(line.substring(7, line.length() - 1));
         }
         // if our previous line was just a Given, When or Then, next
         // will be set, to indicate this line contains parameters
@@ -67,12 +58,11 @@ public class GlueCode {
     /**
      * Extracts the regular expression from the cucumber given, when or then
      * annotation
-     * 
-     * @param glueCode
-     *            - cucumber given, when or then annotation. Example:
-     *            \@Given("^I have a new registered user$") \@When("^I
-     *            (.*)login$") \@Then("^I see the login error message
-     *            \"([^\"]*)\"$")
+     *
+     * @param glueCode - cucumber given, when or then annotation. Example:
+     *                 \@Given("^I have a new registered user$") \@When("^I
+     *                 (.*)login$") \@Then("^I see the login error message
+     *                 \"([^\"]*)\"$")
      * @return String - a formatted string to be consumer by the gherkin builder
      * @throws MalformedGlueCode
      */
@@ -81,8 +71,8 @@ public class GlueCode {
         int start = glueCode.indexOf('^');
         int end = glueCode.indexOf('$');
         if (start < 0 || end < 0 || start > end) {
-            String error = "There is a problem with your glue code. It is expected to"
-                    + " start with '^' and end with '$'. Examine the expression '" + glueCode + "'";
+            String error = "There is a problem with your glue code. It is expected to" +
+                    " start with '^' and end with '$'. Examine the expression '" + glueCode + "'";
             log.log(Level.SEVERE, error);
             throw new MalformedGlueCode(error);
         }
@@ -99,11 +89,10 @@ public class GlueCode {
 
     /**
      * Retrieves the list of parameters from a given method declaration
-     * 
-     * @param method
-     *            - the string representation of a method
+     *
+     * @param method - the string representation of a method
      * @return List - a list of paramters from the method, as strings. It will
-     *         list object, then the object name
+     * list object, then the object name
      * @throws MalformedMethod
      */
     public List<String> getMethodVariables(String method) throws MalformedMethod {
@@ -111,8 +100,8 @@ public class GlueCode {
         int start = method.indexOf('(');
         int end = method.indexOf(')');
         if (start < 0 || end < 0 || start > end) {
-            String error = "There is a problem with your method declaration. It does not contain"
-                    + " a proper parameter definition. Examine the declaration '" + method + "'";
+            String error = "There is a problem with your method declaration. It does not contain" +
+                    " a proper parameter definition. Examine the declaration '" + method + "'";
             log.log(Level.SEVERE, error);
             throw new MalformedMethod(error);
         }
@@ -130,9 +119,8 @@ public class GlueCode {
     /**
      * Determines if the provided string is a list or not, with a specific
      * object typed
-     * 
-     * @param input
-     *            - a string interpretation of an object
+     *
+     * @param input - a string interpretation of an object
      * @return Boolean - is it a properly identified list
      */
     public Boolean isList(String input) {
@@ -142,22 +130,20 @@ public class GlueCode {
     /**
      * Determines if the provided string is a text element or not. A text
      * element is considered a string, character, double or boolean
-     * 
-     * @param input
-     *            - a string interpretation of an object
+     *
+     * @param input - a string interpretation of an object
      * @return Boolean - is it a text element
      */
     public Boolean isText(String input) {
-        return "string".equalsIgnoreCase(input) || "char".equalsIgnoreCase(input) || "double".equalsIgnoreCase(input)
-                || "boolean".equalsIgnoreCase(input);
+        return "string".equalsIgnoreCase(input) || "char".equalsIgnoreCase(input) || "double".equalsIgnoreCase(input) ||
+                "boolean".equalsIgnoreCase(input);
     }
 
     /**
      * Determines if the provided string is a number element or not. A number
      * element is considered a long, or int
-     * 
-     * @param input
-     *            - a string interpretation of an object
+     *
+     * @param input - a string interpretation of an object
      * @return Boolean - is it a number element
      */
     public Boolean isNumber(String input) {
@@ -166,10 +152,9 @@ public class GlueCode {
 
     /**
      * Takes a list of paramters and converts it into step variables
-     * 
-     * @param parameters
-     *            - a list of paramters, as strings. It should list object, then
-     *            the object name
+     *
+     * @param parameters - a list of paramters, as strings. It should list object, then
+     *                   the object name
      * @return String - a keypair definition to be added to the step definition
      */
     public String getStepVariables(List<String> parameters) {
@@ -193,9 +178,7 @@ public class GlueCode {
                 type = "\"text\"";
             } else {
                 type = object;
-                if (!enumerations.contains(type)) {
-                    enumerations.add(type);
-                }
+                enumInfo.addGlueCodeEnumeration(type);
             }
             params.append(", new keypair( \"" + name + "\", " + type + " )");
         }
@@ -203,31 +186,20 @@ public class GlueCode {
     }
 
     /**
-     * Returns the identified enumerations while parsing through the method
-     * parameters
-     * 
-     * @return List - a list of enumerations
-     */
-    public List<String> getStepEnumerations() {
-        return enumerations;
-    }
-
-    /**
-     * Returns the identified includes while parsing through the method
-     * parameters
-     * 
-     * @return List - a list of includes
-     */
-    public List<String> getClassIncludes() {
-        return includes;
-    }
-
-    /**
      * Returns the identified steps while parsing through the method parameters
-     * 
+     *
      * @return List - a list of steps
      */
     public List<String> getGlueCodeSteps() {
         return steps;
+    }
+
+    /**
+     * Returns the enumerations identified in the step code
+     *
+     * @return EnumInfo - all of the enumerations identified
+     */
+    public EnumInfo getEnumInfo() {
+        return enumInfo;
     }
 }

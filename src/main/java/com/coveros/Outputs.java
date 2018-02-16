@@ -17,9 +17,8 @@ public class Outputs {
     /**
      * Checks the provided inputs to see if an input location was specified, and
      * if the location actually exists or not
-     * 
-     * @param inputs
-     *            - the provided program parameters
+     *
+     * @param inputs - the provided program parameters
      * @return File - the File object of the provided input
      * @throws IOException
      */
@@ -42,8 +41,7 @@ public class Outputs {
     /**
      * a method to recursively retrieve all the files in a folder
      *
-     * @param folder:
-     *            the folder to check for files
+     * @param folder: the folder to check for files
      * @return ArrayList<String>: an ArrayList with the of multiple files
      * @throws IOException
      */

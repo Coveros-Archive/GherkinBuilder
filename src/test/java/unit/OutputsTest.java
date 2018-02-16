@@ -1,14 +1,13 @@
 package unit;
 
+import com.coveros.Outputs;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import com.coveros.Outputs;
 
 public class OutputsTest {
 
@@ -24,12 +23,12 @@ public class OutputsTest {
 
     @Test(expectedExceptions = IOException.class)
     public void checkInputsBadLocationTest() throws IOException {
-        Outputs.checkInputs(new String[] { "badLocation" });
+        Outputs.checkInputs(new String[]{"badLocation"});
     }
 
     @Test
     public void checkInputsGoodLocationTest() throws IOException {
-        Assert.assertEquals(Outputs.checkInputs(new String[] { "src/test/java" }), new File("src/test/java"));
+        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java"}), new File("src/test/java"));
     }
 
     @Test
