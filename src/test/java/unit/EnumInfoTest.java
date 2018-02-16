@@ -11,6 +11,11 @@ import java.io.IOException;
 public class EnumInfoTest {
 
     @Test
+    public void getEnumFileNullTest() throws IOException {
+        Assert.assertNull(new EnumInfo().getEnumFile("IOException"));
+    }
+
+    @Test
     public void getEnumFileTest() throws IOException {
         System.setProperty("baseDirectory", "/path/to/file/");
         GlueCode glueCode = new GlueCode();
@@ -34,43 +39,37 @@ public class EnumInfoTest {
 
     @Test
     public void formatEnumValuesBadValueTest() {
-        EnumInfo enumInfo = new EnumInfo();
-        Assert.assertEquals(enumInfo.formatEnumValues("someVeryBadValue"), "var alue = new Array(\"alue\");");
+        Assert.assertEquals(new EnumInfo().formatEnumValues("someVeryBadValue"), "var alue = new Array(\"alue\");");
     }
 
     @Test
     public void formatEnumValuesSimpleEnumTest() {
-        EnumInfo enumInfo = new EnumInfo();
-        Assert.assertEquals(enumInfo.formatEnumValues("public enum Simple { YES, NO }"),
+        Assert.assertEquals(new EnumInfo().formatEnumValues("public enum Simple { YES, NO }"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 
     @Test
     public void formatEnumValuesSimpleEnum2Test() {
-        EnumInfo enumInfo = new EnumInfo();
-        Assert.assertEquals(enumInfo.formatEnumValues("public enum Simple { YES, NO };"),
+        Assert.assertEquals(new EnumInfo().formatEnumValues("public enum Simple { YES, NO };"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 
     @Test
     public void formatEnumValuesComplexEnumTest() {
-        EnumInfo enumInfo = new EnumInfo();
-        Assert.assertEquals(enumInfo.formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\") };"),
+        Assert.assertEquals(new EnumInfo().formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\") };"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 
     @Test
     public void formatEnumValuesComplexEnum2Test() {
-        EnumInfo enumInfo = new EnumInfo();
-        Assert.assertEquals(enumInfo.formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\");"),
+        Assert.assertEquals(new EnumInfo().formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\");"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 
     @Test
     public void formatEnumValuesComplexEnumNestedTest() {
-        EnumInfo enumInfo = new EnumInfo();
         Assert.assertEquals(
-                enumInfo.formatEnumValues("public enum Simple { YES(\"hello(there)\"), NO(\"world" + "(earth)\");"),
+                new EnumInfo().formatEnumValues("public enum Simple { YES(\"hello(there)\"), NO(\"world" + "(earth)\");"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 }
