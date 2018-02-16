@@ -12,8 +12,6 @@ public class EnumInfo {
     private List<String> includes;
     private List<String> enumerations;
 
-    public enum sample {YES, NO}
-
     public EnumInfo() {
         includes = new ArrayList<>();
         enumerations = new ArrayList<>();
@@ -68,7 +66,7 @@ public class EnumInfo {
                         start = true;
                         value.append(ln);
                     }
-                    if ((start && (ln.endsWith(";") || ln.endsWith("}")))) {
+                    if (start && (ln.endsWith(";") || ln.endsWith("}"))) {
                         end = true;
                     }
                     if (end) {
@@ -96,14 +94,14 @@ public class EnumInfo {
         String trim = value.substring(12);
         String enumName = trim.split(" ")[0];
         String enumVals = trim.substring(trim.indexOf('{') + 1);
-        if (enumVals.endsWith(";") || enumVals.endsWith("}")) {
+        while (enumVals.endsWith(";") || enumVals.endsWith("}")) {
             enumVals = enumVals.substring(0, enumVals.length() - 1);
         }
         while (enumVals.contains("(")) {
             enumVals = enumVals.replaceAll("(\\([^\\)\\(]+\\))", "");
         }
         enumVals = enumVals.replace(" ", "");
-        String array = "var " + enumName + " = new Array( \"";
+        String array = "var " + enumName + " = new Array(\"";
         array += enumVals.replace(",", "\",\"");
         array += "\");";
         return array;

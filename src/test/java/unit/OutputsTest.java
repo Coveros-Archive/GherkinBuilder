@@ -35,6 +35,7 @@ public class OutputsTest {
     public void listFilesForFolder() {
         List<String> files = new ArrayList<>();
         files.add("src/test/java/unit/OutputsTest.java");
+        files.add("src/test/java/unit/EnumInfoTest.java");
         files.add("src/test/java/unit/GlueCodeTest.java");
         Assert.assertEquals(Outputs.listFilesForFolder(new File("src/test/java")), files);
     }
