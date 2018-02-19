@@ -5,6 +5,7 @@ $ERROR = "HTTP/1.1 500 Internal Server Error";
 $CONTENTTYPE = "Content-Type: application/json";
 $USERNAME = "username";
 $PASSWORD = "password";
+$PROJECT = "project";
 $DESCRIPTION = "description";
 
 // setup our directory to host our files
@@ -28,13 +29,17 @@ if (! isset ( $_GET [$PASSWORD] ) || $_GET [$PASSWORD] == "") {
 } else {
     $password = $_GET [$PASSWORD];
 }
+$project = $params [$PROJECT];
+if (isset ( $_GET [$PROJECT] ) || $_GET [$PROJECT] != "") {
+    $project = $_GET [$PROJECT];
+}
 
 // setup our zip files
 $zip = $directory . "Features-" . time () . ".zip";
 
 // get all of the feature files
 $ch = curl_init ();
-curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/search?jql=project=" . $params ['project'] . "%20AND%20labels=Feature&fields=key&maxResults=9999" );
+curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/search?jql=project=" . $project . "%20AND%20labels=Feature&fields=key&maxResults=9999" );
 curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
 curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
 curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
@@ -82,7 +87,7 @@ foreach ( $issues as $issue ) {
     $content .= "\n  " . implode ( "\n  ", explode ( "\n", $feature [$DESCRIPTION] ) );
     // get all scenario details
     $ch = curl_init ();
-    curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/search?jql=project=" . $params ['project'] . "%20AND%20\"Epic%20Link\"=" . $issue ['key'] . "&fields=key&maxResults=9999" );
+    curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/search?jql=project=" . $project . "%20AND%20\"Epic%20Link\"=" . $issue ['key'] . "&fields=key&maxResults=9999" );
     curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
     curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
     curl_setopt ( $ch, CURLOPT_USERPWD, "$username:$password" );
