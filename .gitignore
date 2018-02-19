@@ -1,9 +1,12 @@
 /bin/
 steps.js
+tags.js
 /target/
+/public/tmp/*
 
 .project
 .classpath
 .settings
 
 .idea
+*.iml

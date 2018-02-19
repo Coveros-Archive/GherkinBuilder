@@ -326,7 +326,9 @@ function getScenarioExamples(element) {
             $(this).find('tbody tr').each(function() {
                 var dataSet = {};
                 $(this).find('input,select').each(function(index) {
-                    dataSet[inputs[index]] = $(this).val();
+                    if( !$(this).hasClass("chosen-search-input")) {
+                        dataSet[inputs[index]] = $(this).val();
+                    }
                 });
                 data.push(dataSet);
             });
