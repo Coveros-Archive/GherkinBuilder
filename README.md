@@ -72,6 +72,10 @@ jiraOptions = {
     base : "https://my.jira.domain.org/jira"
 }
 ```
+If the `glue_code_project` field is provided under the `[jira]` section, then a ticket describing required work
+will be automatically created in the provided project, when non-pre-existant test steps are defined in the gherkin.
+e.g. any *red* test steps will have a JIRA ticket opened for them, explicitly stating that the glue code needs to
+be defined.
 
 ## Usage
 ### Features

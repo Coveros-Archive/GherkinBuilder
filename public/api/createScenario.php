@@ -90,7 +90,7 @@ if (isset ( $_POST [$SCENARIOEXAMPLES] ) && ! empty ( $_POST [$SCENARIOEXAMPLES]
     $data->fields->description = $exampleString;
 }
 
-// make curl command
+// create the scenario
 $ch = curl_init ();
 curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/issue" );
 curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
@@ -111,10 +111,10 @@ if (! is_object ( json_decode ( $response ) )) {
     header ( $ERROR );
     exit ();
 }
+$key = json_decode ( $response, true ) ['key'];
 
 // add links if they are passed
 if (isset ( $_POST [$SCENARIOLINKS] ) && ! empty ( $_POST [$SCENARIOLINKS] )) {
-    $key = json_decode ( $response, true ) ['key'];
     foreach ( $_POST [$SCENARIOLINKS] as $link ) {
         $links = new \stdClass ();
         $links->type = new \stdClass ();
@@ -132,7 +132,7 @@ if (isset ( $_POST [$SCENARIOLINKS] ) && ! empty ( $_POST [$SCENARIOLINKS] )) {
         curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
         curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
         curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
-                $CONTENTTYPE
+                $CONTENTTYPE 
         ) );
         $response = curl_exec ( $ch );
         curl_close ( $ch );
@@ -164,6 +164,7 @@ if (isset ( $_POST [$SCENARIODESCRIPTION] ) && $_POST [$SCENARIODESCRIPTION] != 
         exit ();
     }
 }
+
 // setup test steps
 $testSteps = array ();
 if (isset ( $_POST [$BACKGROUNDSTEPS] ) && ! empty ( $_POST [$BACKGROUNDSTEPS] )) {
@@ -173,12 +174,13 @@ if (isset ( $_POST [$SCENARIOTESTSTEPS] ) && ! empty ( $_POST [$SCENARIOTESTSTEP
     $testSteps = array_merge ( $testSteps, $_POST [$SCENARIOTESTSTEPS] );
 }
 foreach ( $testSteps as $testStep ) {
+    $step = $testStep ['step'];
     $ch = curl_init ();
     curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/zapi/latest/teststep/" . $scenarioId );
     curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
     curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
     curl_setopt ( $ch, CURLOPT_POST, TRUE );
-    curl_setopt ( $ch, CURLOPT_POSTFIELDS, "{\"step\":\"" . addcslashes ( $testStep, '"' ) . "\"}" );
+    curl_setopt ( $ch, CURLOPT_POSTFIELDS, "{\"step\":\"" . addcslashes ( $step, '"' ) . "\"}" );
     curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
     curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
     curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
@@ -196,6 +198,57 @@ foreach ( $testSteps as $testStep ) {
         }
         header ( $ERROR );
         exit ();
+    }
+    
+    // if it's a new step, and a glue code project is defined, open a ticket for the work to be done
+    if ($testStep ['exists'] == 'false' && (isset ( $params ['glue_code_project'] ) && $params ['glue_code_project'] != "")) {
+        $work = new \stdClass ();
+        $work->fields = new \stdClass ();
+        $work->fields->issuetype = new \stdClass ();
+        $work->fields->issuetype->name = "Story";
+        $work->fields->project = new \stdClass ();
+        $work->fields->project->key = $params ['glue_code_project'];
+        $work->fields->summary = "Write glue code for '$step'";
+        $work->fields->description = "Glue code needs to be written for the newly created test case $key.";
+        $work->fields->description .= "The step '$step' needs to be implemented.";
+        
+        // actually create the new ticket
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/issue" );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
+        curl_setopt ( $ch, CURLOPT_POST, TRUE );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $work ) );
+        curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
+                $CONTENTTYPE 
+        ) );
+        $response = curl_exec ( $ch );
+        curl_close ( $ch );
+        
+        // add the wip label to our actual ticket
+        $tag = new \stdClass ();
+        $tag->add = "wip";
+        $updates = new \stdClass ();
+        $updates->update = new \stdClass ();
+        $updates->update->labels = array (
+                $tag 
+        );
+        
+        $ch = curl_init ();
+        curl_setopt ( $ch, CURLOPT_URL, $params ['base'] . "/rest/api/2/issue/$key" );
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, TRUE );
+        curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
+        curl_setopt ( $ch, CURLOPT_CUSTOMREQUEST, "PUT" );
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, json_encode ( $updates ) );
+        curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
+        curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
+                $CONTENTTYPE 
+        ) );
+        $response = curl_exec ( $ch );
+        curl_close ( $ch );
     }
 }
 

@@ -9,14 +9,18 @@ function download() {
     // get background steps
     data += "Background: " + getBackgroundTitle() + "\n";
     data += getBackgroundDescription() + "\n";
-    data += getBackgroundTestSteps().join("\n") + "\n\n";
+    data += getBackgroundTestSteps().map(function(elem){
+        return elem.step;
+    }).join("\n") + "\n\n";
     // get scenario information
     $('.scenario').each(function() {
         data += getScenarioTags($(this)).join(" ") + "\n";
         data += getScenarioType($(this)) + " ";
         data += getScenarioTitle($(this)) + "\n";
         data += getScenarioDescription($(this)) + "\n";
-        data += getScenarioTestSteps($(this)).join("\n") + "\n";
+        data += getScenarioTestSteps($(this)).map(function(elem){
+            return elem.step;
+        }).join("\n") + "\n";
         $.each(getScenarioExamples($(this)), function(key, example) {
             if (Object.prototype.hasOwnProperty.call(example, "tags")) {
                 data += example.tags.join(" ") + "\n";
@@ -216,31 +220,7 @@ function getBackgroundDescription() {
 }
 
 function getBackgroundTestSteps() {
-    var steps = [];
-    $("#backgrounddef").find('.testStep').each(function() {
-        var step = "";
-        $(this).children('input,select,span').each(function() {
-            if (($(this).val() == "" || $(this).val() == null) && ($(this).is("input") || $(this).is("select"))) {
-                if ($(this).attr('placeholder') !== undefined) {
-                    step += $(this).attr('placeholder');
-                }
-            } else if ($(this).is('select') || $(this).is('input')) {
-                if ($(this).val() !== undefined) {
-                    step += $(this).val();
-                }
-            } else {
-                if ($(this).html() !== undefined) {
-                    step += $(this).html().stripTags();
-                }
-            }
-            // add the required space
-            if ($(this).hasClass('blue')) {
-                step += " ";
-            }
-        });
-        steps.push(step);
-    });
-    return steps;
+    return getScenarioTestSteps($("#backgrounddef"));
 }
 
 function getScenario(element) {
@@ -284,6 +264,8 @@ function getScenarioDescription(element) {
 function getScenarioTestSteps(element) {
     var steps = [];
     $(element).find('.testStep').each(function() {
+        var obj = {};
+        obj.exists = true;
         var step = "";
         $(this).children('input,select,span').each(function() {
             if (($(this).val() == "" || $(this).val() == null) && ($(this).is("input") || $(this).is("select"))) {
@@ -303,8 +285,13 @@ function getScenarioTestSteps(element) {
             if ($(this).hasClass('blue')) {
                 step += " ";
             }
+            // is it a new step
+            if ($(this).hasClass('new')) {
+                obj.exists = false;
+            }
         });
-        steps.push(step);
+        obj.step = step;
+        steps.push(obj);
     });
     return steps;
 }
