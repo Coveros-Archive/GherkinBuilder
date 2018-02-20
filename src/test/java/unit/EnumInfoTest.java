@@ -2,6 +2,7 @@ package unit;
 
 import com.coveros.EnumInfo;
 import com.coveros.GlueCode;
+import com.coveros.exception.MalformedMethod;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -18,13 +19,14 @@ public class EnumInfoTest {
 
     public enum ComplexSample {
         HELLO("123"), WORLD("456");
+
         ComplexSample(String count) {
         }
     }
 
-    @Test
+    @Test(expectedExceptions = MalformedMethod.class)
     public void getEnumFileNullTest() throws IOException {
-        Assert.assertNull(new EnumInfo().getEnumFile("IOException"));
+        new EnumInfo().getEnumFile("IOException");
     }
 
     @Test

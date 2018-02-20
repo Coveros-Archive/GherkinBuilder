@@ -1,13 +1,19 @@
 package com.coveros;
 
+import com.coveros.exception.MalformedMethod;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class EnumInfo {
+
+    private Logger log = Logger.getLogger("GherkinBuilder");
 
     private List<String> includes;
     private List<String> enumerations;
@@ -83,15 +89,26 @@ public class EnumInfo {
         return enums;
     }
 
-    public File getEnumFile(String enumeration) {
+    public File getEnumFile(String enumeration) throws IOException {
         for (String include : getClassIncludes()) {
             if (include.endsWith("." + enumeration)) {
-                include = include.substring(0, include.lastIndexOf('.'));
                 include = include.replaceAll("\\.", "/");
-                return new File(System.getProperty("baseDirectory") + include + ".java");
+                File enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
+                if( enumFile.exists() ) {
+                    return enumFile;
+                }
+                include = include.substring(0, include.lastIndexOf('/'));
+                enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
+                if( enumFile.exists() ) {
+                    return enumFile;
+                }
             }
         }
-        return null;
+        String error = "There is a problem with your enum declaration. The defining enumeration file " +
+                "is not properly identified. Please update your code appropriately where referencing '" + enumeration +
+                "'";
+        log.log(Level.SEVERE, error);
+        throw new MalformedMethod(error);
     }
 
     public String formatEnumValues(String value) {
