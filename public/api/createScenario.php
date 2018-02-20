@@ -83,7 +83,15 @@ if (isset ( $_POST [$SCENARIOEXAMPLES] ) && ! empty ( $_POST [$SCENARIOEXAMPLES]
         }
         if (isset ( $example [$DATA] ) && ! empty ( $example [$DATA] )) {
             foreach ( $example [$DATA] as $row ) {
-                $exampleString .= "| " . implode ( " | ", array_values ( $row ) ) . " |\n";
+                $exampleString .= "| ";
+                foreach ( array_values ( $row ) as $value ) {
+                    if (is_array ( $value )) {
+                        $exampleString .= implode ( ",", $value ) . " |";
+                    } else {
+                        $exampleString .= $value . " |";
+                    }
+                }
+                $exampleString .= "\n";
             }
         }
     }

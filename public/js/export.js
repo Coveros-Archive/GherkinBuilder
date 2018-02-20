@@ -28,7 +28,7 @@ function download() {
             data += "Examples:\n";
             data += "| " + example.inputs.join(" | ") + " |\n";
             $.each(example.data, function(key, example) {
-                data += "| " + Object.values(example).join(" | ") + " |";
+                data += "| " + Object.values(example).join(" | ") + " |\n";
             });
         });
     });
