@@ -29,13 +29,12 @@ public class EnumInfoTest {
         new EnumInfo().getEnumFile("IOException");
     }
 
-    @Test
+    @Test(expectedExceptions = MalformedMethod.class)
     public void getEnumFileTest() throws IOException {
         System.setProperty("baseDirectory", "/path/to/file/");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("import java.io.IOException;");
-        Assert.assertEquals(glueCode.getEnumInfo().getEnumFile("IOException"),
-                new File("/path/to/file/java/io" + ".java"));
+        glueCode.getEnumInfo().getEnumFile("IOException");
     }
 
     @Test
@@ -102,19 +101,6 @@ public class EnumInfoTest {
         List<String> list = new ArrayList<>();
         list.add("var ComplexSample = new Array(\"HELLO\",\"WORLD\");");
         Assert.assertEquals(glueCode.getEnumInfo().getStepEnumerations(), list);
-    }
-
-    @Test
-    public void getEnumFileMultipleTest() throws IOException {
-        System.setProperty("baseDirectory", "/path/to/file/");
-        GlueCode glueCode = new GlueCode();
-        glueCode.processLine("import java.io.IOException;");
-        glueCode.processLine("import java.io.IOException;");
-        glueCode.processLine("import java.ia.Exception;");
-        Assert.assertEquals(glueCode.getEnumInfo().getEnumFile("IOException"),
-                new File("/path/to/file/java/io" + ".java"));
-        Assert.assertEquals(glueCode.getEnumInfo().getEnumFile("Exception"),
-                new File("/path/to/file/java/ia" + ".java"));
     }
 
     @Test
