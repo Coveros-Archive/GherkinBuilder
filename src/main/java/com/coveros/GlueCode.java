@@ -69,7 +69,7 @@ public class GlueCode {
     public String getStep(String glueCode) throws MalformedGlueCode {
         // check for valid formatted glue code
         int start = glueCode.indexOf('^');
-        int end = glueCode.indexOf('$');
+        int end = glueCode.lastIndexOf('$');
         if (start < 0 || end < 0 || start > end) {
             String error = "There is a problem with your glue code. It is expected to" +
                     " start with '^' and end with '$'. Examine the expression '" + glueCode + "'";
@@ -98,7 +98,7 @@ public class GlueCode {
     public List<String> getMethodVariables(String method) throws MalformedMethod {
         // check for valid formatted java method
         int start = method.indexOf('(');
-        int end = method.indexOf(')');
+        int end = method.lastIndexOf(')');
         if (start < 0 || end < 0 || start > end) {
             String error = "There is a problem with your method declaration. It does not contain" +
                     " a proper parameter definition. Examine the declaration '" + method + "'";
@@ -162,6 +162,9 @@ public class GlueCode {
         for (String parameter : parameters) {
             // remove any surrounding whitespace
             parameter = parameter.trim();
+            if( parameter.startsWith("@Transform")) {
+                parameter = parameter.split("\\) ")[1];
+            }
             String type;
             String object = parameter.split(" ")[0];
             String name = parameter.split(" ")[1];
@@ -176,6 +179,8 @@ public class GlueCode {
                 type = "\"number\"";
             } else if (isText(object)) {
                 type = "\"text\"";
+            } else if ("date".equalsIgnoreCase(object)) {
+                type = "\"date\"";
             } else {
                 type = object;
                 enumInfo.addGlueCodeEnumeration(type);
