@@ -45,12 +45,8 @@ public class GlueCode {
             step.setLength(0);
         }
         String ln = line.trim();
-        if (ln.startsWith("@Given") || ln.startsWith("@When")) {
-            step.append("testSteps.whens.push( new step( \"" + getStep(ln) + "\"");
-            next = true;
-        }
-        if (ln.startsWith("@Then")) {
-            step.append("testSteps.thens.push( new step( \"" + getStep(ln) + "\"");
+        if (ln.startsWith("@Given") || ln.startsWith("@When") || ln.startsWith("@Then")) {
+            step.append("testSteps.push( new step( \"" + getStep(ln) + "\"");
             next = true;
         }
     }

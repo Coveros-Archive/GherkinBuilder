@@ -12,6 +12,6 @@ function keypair(key, value) {
     this.value = value;
 }
 // our basic setup
-var testSteps = {};
-testSteps.whens = [];
-testSteps.thens = [];
+var testSteps = [];
+//testSteps.whens = [];
+//testSteps.thens = [];

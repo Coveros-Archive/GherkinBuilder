@@ -75,7 +75,7 @@ public class GlueCodeTest {
     @Test
     public void processLineGivenMethodStepsTest() throws IOException {
         List<String> list = new ArrayList<>();
-        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.push( new step( \"I have a user\" ) );");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("@Given(\"^I have a user$\")");
         glueCode.processLine("public void haveUser()");
@@ -85,7 +85,7 @@ public class GlueCodeTest {
     @Test
     public void processLineWhenMethodStepsTest() throws IOException {
         List<String> list = new ArrayList<>();
-        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.push( new step( \"I have a user\" ) );");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("@When(\"^I have a user$\")");
         glueCode.processLine("public void haveUser()");
@@ -95,7 +95,7 @@ public class GlueCodeTest {
     @Test
     public void processLineThenMethodStepsTest() throws IOException {
         List<String> list = new ArrayList<>();
-        list.add("testSteps.thens.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.push( new step( \"I have a user\" ) );");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("@Then(\"^I have a user$\")");
         glueCode.processLine("public void haveUser()");
@@ -105,8 +105,8 @@ public class GlueCodeTest {
     @Test
     public void processLineMultipleMethodStepsTest() throws IOException {
         List<String> list = new ArrayList<>();
-        list.add("testSteps.whens.push( new step( \"I have a user\" ) );");
-        list.add("testSteps.thens.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.push( new step( \"I have a user\" ) );");
+        list.add("testSteps.push( new step( \"I have a user\" ) );");
         GlueCode glueCode = new GlueCode();
         glueCode.processLine("@Given(\"^I have a user$\")");
         glueCode.processLine("public void haveUser()");

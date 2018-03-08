@@ -154,32 +154,31 @@ function addScenario() {
     makeDynamic();
 }
 function addTestStep(el) {
-    $(el).parent().find('.testSteps').append("<div class='testStep'><div class='edit' onclick='edit(this)'><i class='fa fa-pencil-square-o'></i></div><div class='delete' onclick='del(this)'><i class='fa fa-trash'></i></div><select class='blue' onchange='fillStep(this,\"\")'><option></option><option>Given</option><option>When</option><option>Then</option></div>");
+    var testStep = $("<div class='testStep'>");
+    var editHolder = $("<div class='edit' onclick='edit(this)'>");
+    editHolder.append($("<i class='fa fa-pencil-square-o'>"));
+    var deleteHolder = $("<div class='delete' onclick='del(this)'>");
+    deleteHolder.append($("<i class='fa fa-trash'>"));
+    var select = $("<select class='blue' onchange='void(0);'>");
+    select.append($("<option>"));
+    select.append($("<option>Given</option>"));
+    select.append($("<option>When</option>"));
+    select.append($("<option>Then</option>"));
+    testStep.append(editHolder).append(deleteHolder).append(select);
+    $(el).parent().find('.testSteps').append(testStep);
     makeDynamic();
+    fillStep(select, "");
 }
 function fillStep(el, initialVal) {
-    var value = $(el).val();
     $(el).next().nextAll().remove();
     var input = $("<input type='text' class='small' value='" + initialVal + "'/>");
     var autocompletes = [];
-    if (value == "Given" || value == "When") {
-        for (var i = 0; i < testSteps.whens.length; i++) {
-            autocompletes.push({
-                label : testSteps.whens[i].string.stripTags(),
-                value : testSteps.whens[i].string,
-                what : "whens",
-                order : i
-            });
-        }
-    } else if (value == "Then") {
-        for (i = 0; i < testSteps.thens.length; i++) {
-            autocompletes.push({
-                label : testSteps.thens[i].string.stripTags(),
-                value : testSteps.thens[i].string,
-                what : "thens",
-                order : i
-            });
-        }
+    for (var i = 0; i < testSteps.length; i++) {
+        autocompletes.push({
+            label : testSteps[i].string.stripTags(),
+            value : testSteps[i].string,
+            order : i
+        });
     }
     input.autocomplete({
         minLength : 0,
@@ -189,7 +188,7 @@ function fillStep(el, initialVal) {
             return false;
         },
         select : function(event, ui) {
-            fillVars(ui.item.what, ui.item.order, $(this));
+            fillVars(ui.item.order, $(this));
         },
     }).click(function() {
         $(this).autocomplete("search", "");
@@ -202,17 +201,9 @@ function fillStep(el, initialVal) {
 function createStep(el) {
     var newStep = $(el).val();
     var type = $(el).prev().prev();
-    var step;
     // Need to determine if this step matches something
     // Check each GWT, replace XXXX with (.*), and do a regex check
     // if any are a match, select it
-    if (type.val() == "Given" || type.val() == "When") {
-        step = "whens";
-    } else if (type.val() == "Then") {
-        step = "thens"
-    } else {
-        return false;
-    }
     for (var i = 0; i < testSteps[step].length; i++) {
         var string = testSteps[step][i].string;
         var regex = string.replace(/<span class='opt'>(.*?)<\/span>/g, "($1)?");
@@ -222,7 +213,7 @@ function createStep(el) {
         regex = "^" + regex + "$";
         var res = newStep.match(regex);
         if (res != null) {
-            fillVars(step, i, el);
+            fillVars(i, el);
             var inputs = type.parent().children('input,select');
             for (var j = 1; j < res.length; j++) {
                 if (res[j] == "XXXX") {
@@ -253,12 +244,10 @@ function createStep(el) {
     makeDynamic();
 }
 
-function fillVars(what, order, el) {
-    var testStepString = testSteps[what][order].string;
-    var testStepInputs = testSteps[what][order].inputs;
-    var testStepPieces = testStepString.split("XXXX") // .filter(function(el)
-    // {return el.length !=
-    // 0});
+function fillVars(order, el) {
+    var testStepString = testSteps[order].string;
+    var testStepInputs = testSteps[order].inputs;
+    var testStepPieces = testStepString.split("XXXX");
     var type = $(el).prev();
     type.nextAll().remove();
     for (var i = 0; i < testStepPieces.length; i++) {
