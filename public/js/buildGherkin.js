@@ -204,8 +204,8 @@ function createStep(el) {
     // Need to determine if this step matches something
     // Check each GWT, replace XXXX with (.*), and do a regex check
     // if any are a match, select it
-    for (var i = 0; i < testSteps[step].length; i++) {
-        var string = testSteps[step][i].string;
+    for (var i = 0; i < testSteps.length; i++) {
+        var string = testSteps[i].string;
         var regex = string.replace(/<span class='opt'>(.*?)<\/span>/g, "($1)?");
         regex = regex.replace(/<span class='any'>(.*?)<\/span>/g, "(.*?)");
         regex = regex.replace(/XXXX/g, "(.*)");
