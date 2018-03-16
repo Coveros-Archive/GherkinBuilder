@@ -282,10 +282,31 @@ public class GlueCodeTest {
     }
 
     @Test
+    public void getStepVariablesDateParamsTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("Date input");
+        Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"date\" )");
+    }
+
+    @Test
     public void getStepVariablesCustomParamsTest() throws IOException {
         List<String> list = new ArrayList<>();
         list.add("MyEnum input");
         Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", MyEnum )");
+    }
+
+    @Test
+    public void getStepVariablesTransformerTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("@Transform(GherkinDateConverter.class) Date input");
+        Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"input\", \"date\" )");
+    }
+
+    @Test
+    public void getStepVariablesDelimiterTest() throws IOException {
+        List<String> list = new ArrayList<>();
+        list.add("@Delimiter(\";\") List<Object> input");
+        Assert.assertEquals(new GlueCode().getStepVariables(list), ", new keypair( \"inputList\", Object )");
     }
 
     @Test

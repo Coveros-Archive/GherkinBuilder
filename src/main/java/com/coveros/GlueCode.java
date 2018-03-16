@@ -161,6 +161,9 @@ public class GlueCode {
             if( parameter.startsWith("@Transform")) {
                 parameter = parameter.split("\\) ")[1];
             }
+            if( parameter.startsWith("@Delimiter")) {
+                parameter = parameter.split("\\) ")[1];
+            }
             String type;
             String object = parameter.split(" ")[0];
             String name = parameter.split(" ")[1];
