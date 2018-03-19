@@ -35,8 +35,10 @@ public class GenerateStepDefs {
             // write our enumerations
             buffer.write("//our enumerations\n");
             for (String enumeration : glueCode.getEnumInfo().getStepEnumerations()) {
-                buffer.write(enumeration);
-                buffer.write("\n");
+                if (enumeration != null) {
+                    buffer.write(enumeration);
+                    buffer.write("\n");
+                }
             }
             buffer.write("\n");
             // write our old lines

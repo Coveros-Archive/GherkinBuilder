@@ -94,12 +94,12 @@ public class EnumInfo {
             if (include.endsWith("." + enumeration)) {
                 include = include.replaceAll("\\.", "/");
                 File enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
-                if( enumFile.exists() ) {
+                if (enumFile.exists()) {
                     return enumFile;
                 }
                 include = include.substring(0, include.lastIndexOf('/'));
                 enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
-                if( enumFile.exists() ) {
+                if (enumFile.exists()) {
                     return enumFile;
                 }
             }

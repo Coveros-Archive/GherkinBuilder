@@ -158,10 +158,10 @@ public class GlueCode {
         for (String parameter : parameters) {
             // remove any surrounding whitespace
             parameter = parameter.trim();
-            if( parameter.startsWith("@Transform")) {
+            if (parameter.startsWith("@Transform")) {
                 parameter = parameter.split("\\) ")[1];
             }
-            if( parameter.startsWith("@Delimiter")) {
+            if (parameter.startsWith("@Delimiter")) {
                 parameter = parameter.split("\\) ")[1];
             }
             String type;
