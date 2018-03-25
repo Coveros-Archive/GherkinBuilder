@@ -10,3 +10,6 @@ tags.js
 
 .idea
 *.iml
+
+composer.lock
+vendor/
