@@ -40,8 +40,12 @@ testSteps.thens.push( new step( "the continue button is disabled" ) );
 testSteps.thens.push( new step( "I can replay the video" ) );
 ```
 
-Ensure the `public` folder is hosted on a php server. Then, simply accessing the base URL will give access
-to the Gherkin Builder
+Run `composer install`, if you haven't already, to install the needed php tools and dependencies. Then:
+```
+vendor/bin/lambdaphp deploy -v
+```
+This will update the GherkinBuilder Lambda function to the latest code and ensure all steps are up to date.
+The previous command will give you the address to use. TODO: Add a custom domain to API Gateway.
 
 ### JIRA Integration
 To enable JIRA integration, simply fill out the two properties files in the base public directory.
