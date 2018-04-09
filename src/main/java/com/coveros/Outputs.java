@@ -22,20 +22,24 @@ public class Outputs {
      * @return File - the File object of the provided input
      * @throws IOException
      */
-    public static File checkInputs(String[] inputs) throws IOException {
+    public static List<File> checkInputs(String[] inputs) throws IOException {
         // get all of our files for the listing
-        if (inputs.length != 1) {
+        if (inputs.length < 1) {
             String error = "Please provide the file location for the step definitions";
             log.log(Level.SEVERE, error);
             throw new IOException(error);
         }
-        File fileDef = new File(inputs[0]);
-        if (!fileDef.exists()) {
-            String error = "Step defs file does not exist: " + fileDef;
-            log.log(Level.SEVERE, error);
-            throw new IOException(error);
+        List<File> stepDirs = new ArrayList<>();
+        for( String input : inputs ) {
+            File stepDir = new File(input);
+            if (!stepDir.exists()) {
+                String error = "Step defs file does not exist: " + stepDir;
+                log.log(Level.SEVERE, error);
+                throw new IOException(error);
+            }
+            stepDirs.add(stepDir);
         }
-        return fileDef;
+        return stepDirs;
     }
 
     /**

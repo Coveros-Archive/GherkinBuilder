@@ -1,6 +1,7 @@
 package com.coveros;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,10 +17,13 @@ public class GenerateStepDefs {
     public static void main(String[] args) throws Exception {
         GlueCode glueCode = new GlueCode();
 
-        File fileDef = Outputs.checkInputs(args);
-        List<String> fileDefs = Outputs.listFilesForFolder(fileDef);
-        System.setProperty("baseDirectory",
-                fileDef.getAbsolutePath().substring(0, fileDef.getAbsolutePath().indexOf("src/main/java/") + 14));
+        List<File> stepDirs = Outputs.checkInputs(args);
+        List<String> fileDefs = new ArrayList<>();
+        for (File stepDir : stepDirs ) {
+            fileDefs.addAll( Outputs.listFilesForFolder(stepDir) );
+            glueCode.addBaseDirectory(stepDir.getAbsolutePath().substring(0, stepDir.getAbsolutePath().indexOf
+                    ("src/main/java/") + 14));
+        }
 
         // parse through our step definitions
         for (String file : fileDefs) {

@@ -14,14 +14,20 @@ public class GlueCode {
 
     private Logger log = Logger.getLogger("GherkinBuilder");
 
-    private EnumInfo enumInfo = new EnumInfo();
+    private EnumInfo enumInfo = new EnumInfo(null);
     private Boolean next = false;
     private List<String> steps;
+    private List<String> baseDirectories = new ArrayList<>();
     private StringBuilder step;
 
     public GlueCode() {
         steps = new ArrayList<>();
         step = new StringBuilder();
+    }
+
+    public void addBaseDirectory(String baseDirectory) {
+        baseDirectories.add(baseDirectory);
+        enumInfo = new EnumInfo(baseDirectories);
     }
 
     /**

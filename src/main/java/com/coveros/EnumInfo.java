@@ -17,10 +17,13 @@ public class EnumInfo {
 
     private List<String> includes;
     private List<String> enumerations;
+    private List<String> baseDirectories = new ArrayList<>();
 
-    public EnumInfo() {
+
+    public EnumInfo(List<String> baseDirectories) {
         includes = new ArrayList<>();
         enumerations = new ArrayList<>();
+        this.baseDirectories = baseDirectories;
     }
 
     /**
@@ -93,14 +96,16 @@ public class EnumInfo {
         for (String include : getClassIncludes()) {
             if (include.endsWith("." + enumeration)) {
                 include = include.replaceAll("\\.", "/");
-                File enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
-                if (enumFile.exists()) {
-                    return enumFile;
-                }
-                include = include.substring(0, include.lastIndexOf('/'));
-                enumFile = new File(System.getProperty("baseDirectory") + include + ".java");
-                if (enumFile.exists()) {
-                    return enumFile;
+                for (String baseDirectory : baseDirectories) {
+                    File enumFile = new File(baseDirectory + include + ".java");
+                    if (enumFile.exists()) {
+                        return enumFile;
+                    }
+                    String subInclude = include.substring(0, include.lastIndexOf('/'));
+                    enumFile = new File(baseDirectory + subInclude + ".java");
+                    if (enumFile.exists()) {
+                        return enumFile;
+                    }
                 }
             }
         }

@@ -6,6 +6,8 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OutputsTest {
 
@@ -15,18 +17,25 @@ public class OutputsTest {
     }
 
     @Test(expectedExceptions = IOException.class)
-    public void checkInputsTwoTest() throws IOException {
-        Outputs.checkInputs(new String[2]);
-    }
-
-    @Test(expectedExceptions = IOException.class)
     public void checkInputsBadLocationTest() throws IOException {
         Outputs.checkInputs(new String[]{"badLocation"});
     }
 
     @Test
     public void checkInputsGoodLocationTest() throws IOException {
-        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java"}), new File("src/test/java"));
+        List files = new ArrayList<>();
+        files.add( new File("src/test/java") );
+        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java"}).size(), 1);
+        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java"}), files);
+    }
+
+    @Test
+    public void checkInputsGoodLocationsTest() throws IOException {
+        List files = new ArrayList<>();
+        files.add( new File("src/test/java") );
+        files.add( new File("src/main/java") );
+        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java","src/main/java"}).size(), 2);
+        Assert.assertEquals(Outputs.checkInputs(new String[]{"src/test/java","src/main/java"}), files);
     }
 
     @Test
