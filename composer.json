@@ -1,0 +1,18 @@
+{
+  "name": "GherkinBuilder",
+  "description": "PHP app to build gherkin feature files",
+  "type": "project",
+  "license": "Apache",
+  "authors": [
+    {
+      "name": "Max Saperstone",
+      "email": "max.saperstone@coveros.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "ext-zip": "*",
+    "lambdaphp/installer": "*"
+  },
+  "minimum-stability": "dev"
+}
