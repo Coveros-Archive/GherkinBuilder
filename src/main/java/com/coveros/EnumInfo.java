@@ -68,7 +68,7 @@ public class EnumInfo {
             if (start) {
                 value.append(ln);
             }
-            if (ln.startsWith("public enum " + enumeration)) {
+            if (ln.startsWith("public enum " + enumeration) || ln.startsWith("enum " + enumeration)) {
                 start = true;
                 value.append(ln);
             }
@@ -117,7 +117,8 @@ public class EnumInfo {
     }
 
     public String formatEnumValues(String value) {
-        String trim = value.substring(12);
+        int start = value.indexOf("enum");
+        String trim = value.substring(start + 5);
         String enumName = trim.split(" ")[0];
         String enumVals = trim.substring(trim.indexOf('{') + 1);
         while (enumVals.endsWith(";") || enumVals.endsWith("}")) {

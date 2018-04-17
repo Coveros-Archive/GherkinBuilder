@@ -10,17 +10,35 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 public class EnumInfoTest {
 
     public enum Sample {HELLO, WORLD}
 
+    enum openSample {HELLO, WORLD}
+
+    enum interfaceSample implements Enumeration {
+        HELLO, WORLD;
+
+        @Override
+        public boolean hasMoreElements() {
+            return false;
+        }
+
+        @Override
+        public Object nextElement() {
+            return null;
+        }
+    }
+
     public enum ComplexSample {
         HELLO("123"), WORLD("456");
 
         ComplexSample(String count) {
         }
+
     }
 
     @Test(expectedExceptions = MalformedMethod.class)
@@ -43,6 +61,24 @@ public class EnumInfoTest {
             enumValue = new EnumInfo(null).buildEnum(br, "Sample");
         }
         Assert.assertEquals(enumValue, "var Sample = new Array(\"HELLO\",\"WORLD\");");
+    }
+
+    @Test
+    public void buildEnumOpenTest() throws IOException {
+        String enumValue;
+        try (BufferedReader br = new BufferedReader(new FileReader("./src/test/java/unit/EnumInfoTest.java"));) {
+            enumValue = new EnumInfo(null).buildEnum(br, "openSample");
+        }
+        Assert.assertEquals(enumValue, "var openSample = new Array(\"HELLO\",\"WORLD\");");
+    }
+
+    @Test
+    public void buildEnumInterfaceTest() throws IOException {
+        String enumValue;
+        try (BufferedReader br = new BufferedReader(new FileReader("./src/test/java/unit/EnumInfoTest.java"));) {
+            enumValue = new EnumInfo(null).buildEnum(br, "interfaceSample");
+        }
+        Assert.assertEquals(enumValue, "var interfaceSample = new Array(\"HELLO\",\"WORLD\");");
     }
 
     @Test
@@ -104,7 +140,7 @@ public class EnumInfoTest {
 
     @Test
     public void formatEnumValuesBadValueTest() {
-        Assert.assertEquals(new EnumInfo(null).formatEnumValues("someVeryBadValue"), "var alue = new Array(\"alue\");");
+        Assert.assertEquals(new EnumInfo(null).formatEnumValues("someVeryBadValue"), "var VeryBadValue = new Array(\"VeryBadValue\");");
     }
 
     @Test
@@ -121,7 +157,8 @@ public class EnumInfoTest {
 
     @Test
     public void formatEnumValuesComplexEnumTest() {
-        Assert.assertEquals(new EnumInfo(null).formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\") };"),
+        Assert.assertEquals(
+                new EnumInfo(null).formatEnumValues("public enum Simple { YES(\"hello\"), NO(\"world\") };"),
                 "var Simple = new Array(\"YES\",\"NO\");");
     }
 
