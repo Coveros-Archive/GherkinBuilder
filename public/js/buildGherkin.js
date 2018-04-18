@@ -380,15 +380,26 @@ function buildTable(testEl) { // el should be the test element
     }
 }
 function addTable(el) {
-    $(el).append("<div class='examples'>" + "<input class='purple small' placeholder='Example Tags' />" + "<div class='green'>Examples:</div>" + "<table><thead><tr></tr></thead><tbody></tbody></table>" + "<button onclick='addDataRow(this)' class='ui-button ui-button-small'>Add Data Row</button>" + "</div>");
+    // build our example table
+    var exampleDiv = $("<div class='examples'>");
+    var deleteButton = $("<div class='delete' onclick='del(this)' style='top:2px;' title='Delete Scenario'><i class='fa fa-trash'></i></div>");
+    var exampleTags = $("<input class='purple small' placeholder='Example Tags'>");
+    var exampleTitle = $("<div class='green'>Examples:</div>");
+    var table = $("<table><thead><tr><td></td></tr></thead><tbody></tbody></table>");
+    var addRowButton = $("<button onclick='addDataRow(this)' class='ui-button ui-button-small'>Add Data Row</button>");
+    exampleDiv.append(deleteButton).append(exampleTags).append(exampleTitle).append(table).append(addRowButton);
+    // add our example table
+    $(el).append(exampleDiv);
+    // tell the scenario to be an outline instead
     $(el).children('.green').children('.what').html("Scenario Outline:");
+    // add an initial data row
     addDataRow($(el).children('.examples').last().children('table'));
 }
 function addDataRow(el) {
     var examples = $(el).parent();
     var body = examples.children('table').children('tbody');
     var cols = examples.children('table').children('thead').children('tr').children('th');
-    var row = $("<tr></tr>");
+    var row = $("<tr><td class='error' onclick='del(this)' title='Delete Data Row' style='cursor:pointer;'><i class='fa fa-trash'></i></td></tr>");
     cols.each(function() {
         var cell = $("<td></td>");
         var input = $("#" + $(this).attr('inheritFrom')).clone();

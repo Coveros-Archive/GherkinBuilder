@@ -113,6 +113,6 @@ if (file_exists ( "js/tags.js" )) {
     </div>
     <?php } ?>
     <div id="delete" title="Confirmation Required">Are you sure you want
-        to delete this test step?</div>
+        to delete this?</div>
 </body>
 </html>
