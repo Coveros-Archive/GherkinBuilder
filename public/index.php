@@ -9,8 +9,8 @@ if ($params ['base'] != "") {
 <html>
 <head>
 <title>Gherkin Builder</title>
-<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 <script src="https://harvesthq.github.io/chosen/chosen.jquery.js"></script>
 <script src="js/getSteps.js?<?php echo time() ?>"></script>
 <script src="js/steps.js?<?php echo time() ?>"></script>
@@ -31,7 +31,7 @@ if (file_exists ( "js/tags.js" )) {
         </script>
 
 <link rel="stylesheet"
-    href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css">
 <link rel="stylesheet"
     href="https://harvesthq.github.io/chosen/chosen.css">
 <link rel="stylesheet" href="css/default.css?<?php echo time() ?>">
