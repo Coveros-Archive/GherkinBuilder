@@ -125,7 +125,7 @@ public class EnumInfo {
             enumVals = enumVals.substring(0, enumVals.length() - 1);
         }
         while (enumVals.contains("(")) {
-            enumVals = enumVals.replaceAll("(\\([^\\)\\(]+\\))", "");
+            enumVals = enumVals.replaceAll("(\\([^(\\)|\\()]*\\))", "");
         }
         enumVals = enumVals.replace(" ", "");
         String array = "var " + enumName + " = new Array(\"";
