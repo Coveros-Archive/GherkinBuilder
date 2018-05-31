@@ -32,7 +32,7 @@ $(document).ready(function() {
     makeDynamic();
     fillTag($('#featTag'));
 
-    // setup our button
+    // setup our buttons
     $('#addBackgroundStep').click(function() {
         addTestStep(this);
     }).button();
@@ -48,4 +48,5 @@ $(document).ready(function() {
     $('#exportJIRA').click(function() {
         getJIRACreds();
     }).button().button("disable");
+    $('button[name=linkButton]').button().button("disable");
 });

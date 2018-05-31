@@ -208,10 +208,10 @@ div.blue span, div.blue li {
     color: red;
 }
 
-#jira-creds div {
+.creds div {
     text-align: right;
 }
 
-#jira-creds input {
+.creds input {
     width: 60%;
 }

@@ -84,9 +84,11 @@ function checkRequired(element) {
     if ($('.red:visible').length) {
         $('#exportFile').button("disable");
         $('#exportJIRA').button("disable");
+        $('button[name=linkButton]').button("disable");
     } else {
         $('#exportFile').button("enable");
         $('#exportJIRA').button("enable");
+        $('button[name=linkButton]').button("enable");
     }
 }
 

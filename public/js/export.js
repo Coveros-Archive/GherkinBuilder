@@ -1,5 +1,68 @@
 var scenarioCount;
 
+$(function() {
+    $("#download").dialog({
+        autoOpen : false,
+        modal : true,
+        buttons : {
+            "Ok" : function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#jira-creds").dialog({
+        autoOpen : false,
+        modal : true,
+        open : function() {
+            $("#jiraProj").val(jiraOptions.project);
+            checkInputs();
+            $("#jira-creds").keyup(function(e) {
+                checkInputs();
+                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
+                    $(this).next().find("button:eq(0)").trigger("click");
+                }
+            });
+        },
+        buttons : {
+            "Ok" : function() {
+                $(this).next().find("button:eq(0)").button("disable");
+                var jiraProj = $("#jiraProj").val();
+                var auth = btoa($("#username").val() + ":" + $("#password").val());
+                $('#error-messages').empty();
+                jira(jiraProj, auth);
+            },
+            "Cancel" : function() {
+                $(this).dialog("close");
+            }
+        }
+    });
+
+    $("#link-creds").dialog({
+            autoOpen : false,
+            modal : true,
+            open : function() {
+                checkInputs();
+                $("#link-creds").keyup(function(e) {
+                    checkInputs();
+                    if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
+                        $(this).next().find("button:eq(0)").trigger("click");
+                    }
+                });
+            },
+            buttons : {
+                "Ok" : function() {
+                    $(this).next().find("button:eq(0)").button("disable");
+                    $('#error-messages').empty();
+                    runLink(btoa($("#user").val() + ":" + $("#pass").val()), $("#link").val());
+                },
+                "Cancel" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+});
+
 function download() {
     var data = "";
     // get feature information
@@ -43,43 +106,6 @@ function download() {
     // warn the user about filename and linebreaks
     $("#download").dialog("open");
 }
-$(function() {
-    $("#download").dialog({
-        autoOpen : false,
-        modal : true,
-        buttons : {
-            "Ok" : function() {
-                $(this).dialog("close");
-            }
-        }
-    });
-    $("#jira-creds").dialog({
-        autoOpen : false,
-        modal : true,
-        open : function() {
-            $("#jiraProj").val(jiraOptions.project);
-            checkInputs();
-            $("#jira-creds").keyup(function(e) {
-                checkInputs();
-                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
-                    $(this).next().find("button:eq(0)").trigger("click");
-                }
-            });
-        },
-        buttons : {
-            "Ok" : function() {
-                $(this).next().find("button:eq(0)").button("disable");
-                var jiraProj = $("#jiraProj").val();
-                var auth = btoa($("#username").val() + ":" + $("#password").val());
-                $('#error-messages').empty();
-                jira(jiraProj, auth);
-            },
-            "Cancel" : function() {
-                $(this).dialog("close");
-            }
-        }
-    });
-});
 
 function checkInputs() {
     $('#jira-creds input').each(function() {
@@ -173,6 +199,47 @@ function jiraCreateTestCases(epic_key, project, auth) {
 
 function getJIRACreds() {
     $("#jira-creds").dialog("open");
+}
+
+function getLinkCreds(link) {
+    $("#link").val(link);
+    $("#link-creds").dialog("open");
+}
+
+function runLink(auth, link) {
+    //build our feature information
+    var feature = {};
+    feature.featureKey = getExistingFeature();
+    feature.featureTags = getFeatureTags();
+    feature.featureLinks = getFeatureLinks();
+    feature.featureTitle = getFeatureTitle();
+    feature.featureDescription = getFeatureDescription();
+    feature.backgroundSteps = getBackgroundTestSteps();
+    //build our scenario information
+    var scenarios = [];
+    $('.scenario').each(function() {
+        scenario = {};
+        scenario.featureKey = getExistingFeature();
+//        scenario.scenarioKey = ;
+        scenario.scenarioTags = getScenarioTags($(this));
+        scenario.scenarioLinks = getScenarioLinks($(this));
+        scenario.scenarioTitle = getScenarioTitle($(this));
+        scenario.scenarioDescription = getScenarioDescription($(this));
+        scenario.scenarioTestSteps = getScenarioTestSteps($(this));
+        scenario.scenarioExamples = getScenarioExamples($(this));
+        scenarios.push(scenario);
+    });
+    $.post("api/sendData.php", {
+        "auth" : auth,
+        "link" : link,
+        "Feature" : feature,
+        "Scenarios" : scenarios,
+    }).done(function(data) {
+        $('#success-mess').html($('#success-mess').html() + "<br/>Successfully sent feature and scenario data. Please manually navigate to find the information.");
+    }).fail(function(xhr) {
+        $('#error-mess').html(xhr.responseText);
+        $('#link-creds').next().find("button:eq(0)").button("enable");
+    });
 }
 
 function getExistingFeature() {

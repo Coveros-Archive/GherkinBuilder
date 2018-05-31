@@ -80,6 +80,9 @@ if (file_exists ( "js/tags.js" )) {
             <button id="exportJIRA" class="ui-button" disabled>Export to
                 JIRA</button>
             <?php } ?>
+            <?php foreach ($params ['links'] as $title => $link) {
+                echo "<button name='linkButton' class='ui-button' onclick='getLinkCreds(\"$link\")'>$title</button> ";
+            } ?>
         </p>
     </div>
 
@@ -87,8 +90,9 @@ if (file_exists ( "js/tags.js" )) {
         <p>Note: this file will need to be renamed.</p>
         <p>Open in wordpad or np++ to preserve line breaks.</p>
     </div>
+
     <?php if ($useJIRA) { ?>
-    <div id="jira-creds" title="JIRA Credentials">
+    <div id="jira-creds" class="creds" title="JIRA Credentials">
         <form>
             <div>
                 <label for="jiraProj">JIRA Project</label> <input type="text"
@@ -112,6 +116,32 @@ if (file_exists ( "js/tags.js" )) {
         <div id="success-messages" class="green" style="text-align: center"></div>
     </div>
     <?php } ?>
+
+    <?php if (!empty ( $params ['links'])) { ?>
+        <div id="link-creds" class="creds" title="Credentials">
+            <form>
+                <div>
+                    <label for="user">Username</label> <input type="text"
+                        name="user" id="user" required />
+                </div>
+                <div>
+                    <label for="pass">Password</label> <input type="password"
+                        name="pass" id="pass" required />
+                </div>
+                <div>
+                    <input type="hidden" name="link" id="link" required />
+                </div>
+            </form>
+            <div
+                style="text-align: justify; font-style: italic; font-size: small;">Note
+                that attempting to send this data multiple times may result in
+                duplicate test suites and cases. Please be judicious in your usage of
+                this capability.</div>
+            <div id="error-mess" class="error" style="text-align: center"></div>
+            <div id="success-mess" class="green" style="text-align: center"></div>
+        </div>
+        <?php } ?>
+
     <div id="delete" title="Confirmation Required">Are you sure you want
         to delete this?</div>
 </body>
