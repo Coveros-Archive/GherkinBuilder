@@ -35,7 +35,6 @@ if (! isset ( $_POST [$SCENARIOS] ) || $_POST [$SCENARIOS] == "") {
 }
 
 $fullLink = $link . "&" . $feature . "&" . $scenarios;
-echo $fullLink;
 
 // make curl command
 $ch = curl_init ();
@@ -52,7 +51,7 @@ $response = curl_exec ( $ch );
 curl_close ( $ch );
 
 if ($response == "") {
-    echo "SUCCESS";
+    echo $fullLink;
 } else {
     preg_match ( '/<title>(.*)<\/title>/', $response, $match );
     echo $match [1];
