@@ -333,7 +333,7 @@ function buildTable(testEl) { // el should be the test element
             if (!variables.hasOwnProperty($(this).html())) {
                 var column = $(this).parent().children().index(this);
                 example.find('tr').each(function() {
-                    $(this).find("th:eq(" + column + ")").remove();
+                    $(this).find("th:eq(" + (column - 1) + ")").remove();
                     $(this).find("td:eq(" + column + ")").remove();
                 })
             }
