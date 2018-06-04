@@ -44,6 +44,7 @@ curl_setopt ( $ch, CURLOPT_HEADER, FALSE );
 curl_setopt ( $ch, CURLOPT_POST, TRUE );
 curl_setopt ( $ch, CURLOPT_USERPWD, $auth );
 curl_setopt ( $ch, CURLOPT_SSL_VERIFYHOST, false );
+curl_setopt ( $ch, CURLOPT_POSTFIELDS, "{'DUMMY_VALUES'='HI'}" );
 curl_setopt ( $ch, CURLOPT_HTTPHEADER, array (
         "Content-Type: application/json" 
 ) );
