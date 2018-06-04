@@ -81,6 +81,48 @@ will be automatically created in the provided project, when non-pre-existant tes
 e.g. any *red* test steps will have a JIRA ticket opened for them, explicitly stating that the glue code needs to
 be defined.
 
+### External Integration
+If you have alternative tools to integrate with, you can provide objects under the [external] section in the ini props
+file. Anything labeled as 'datas' will have the Gherkin information asynchronously via a POST call sent to the provided url, 
+while anything labeled as 'links' will have the Gherkin information sent directly, via a GET call, with the user 
+forwarded to the URL. 
+The data will be send URL encoded, to the URL provided. There are 2 parameters that are included: Feature, and Scenarios.
+Their structure will look like the below:
+
+```json
+Feature = { 
+  "featureKey" : "", 
+  "featureTags" : [], 
+  "featureLinks" : [], 
+  "featureTitle" : "", 
+  "featureDescription" : "", 
+  "backgroundSteps" : [] 
+}
+```
+```json
+Scenarios = [
+  {
+    "featureKey" : "", 
+    "scenarioKey" : "", 
+    "scenarioTags" : [], 
+    "scenarioLinks" : [], 
+    "scenarioTitle" : "", 
+    "scenarioDescription" : "", 
+    "scenarioTestSteps" : [], 
+    "scenarioExamples" : ""
+  }
+]
+```
+For example, to integration this tool within Jenkins, setup a job to accept a 'Feature' and 'Scenarios' parameter.
+Then, the links could be provided like the below:
+```ini
+datas[Silently Execute Gherkin] = "https://jenkins.me/job/execute_gherkin/buildWithParameters?"
+links[Explicitly Execute Gherkin] = "https://jenkins.me/job/execute_gherkin/parambuild/?"
+```
+Each of the above jobs would receive the Feature/Scenarios information, and would kick off the job. The first one would
+do it automatically, and the user would need to pass in credentials. These should be the users' username and apiToken. The
+second would just forward the user to the Jenkins job, and let the user click the 'Build' button.
+
 ## Usage
 ### Features
  * Provide Tags for each Feature indicating functionality of the Test Suite
