@@ -38,12 +38,12 @@ $(function() {
         }
     });
 
-    $("#link-creds").dialog({
+    $("#data-creds").dialog({
             autoOpen : false,
             modal : true,
             open : function() {
                 checkInputs();
-                $("#link-creds").keyup(function(e) {
+                $("#data-creds").keyup(function(e) {
                     checkInputs();
                     if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
                         $(this).next().find("button:eq(0)").trigger("click");
@@ -54,7 +54,7 @@ $(function() {
                 "Ok" : function() {
                     $(this).next().find("button:eq(0)").button("disable");
                     $('#error-messages').empty();
-                    runLink(btoa($("#user").val() + ":" + $("#pass").val()), $("#link").val());
+                    sendData(btoa($("#user").val() + ":" + $("#pass").val()), $("#link").val());
                 },
                 "Cancel" : function() {
                     $(this).dialog("close");
@@ -201,12 +201,12 @@ function getJIRACreds() {
     $("#jira-creds").dialog("open");
 }
 
-function getLinkCreds(link) {
+function getDataCreds(link) {
     $("#link").val(link);
-    $("#link-creds").dialog("open");
+    $("#data-creds").dialog("open");
 }
 
-function runLink(auth, link) {
+function getFeatureJson() {
     //build our feature information
     var feature = {};
     feature.featureKey = getExistingFeature();
@@ -215,6 +215,10 @@ function runLink(auth, link) {
     feature.featureTitle = getFeatureTitle();
     feature.featureDescription = getFeatureDescription();
     feature.backgroundSteps = getBackgroundTestSteps();
+    return feature;
+}
+
+function getScenariosJson() {
     //build our scenario information
     var scenarios = [];
     $('.scenario').each(function() {
@@ -229,17 +233,25 @@ function runLink(auth, link) {
         scenario.scenarioExamples = getScenarioExamples($(this));
         scenarios.push(scenario);
     });
+    return scenarios;
+}
+
+function sendData(auth, link) {
     $.post("api/sendData.php", {
         "auth" : auth,
         "link" : link,
-        "Feature" : feature,
-        "Scenarios" : scenarios,
+        "Feature" : getFeatureJson(),
+        "Scenarios" : getScenariosJson(),
     }).done(function(data) {
         $('#success-mess').html($('#success-mess').html() + "<br/>Successfully sent feature and scenario data. Please manually navigate to find the information.");
     }).fail(function(xhr) {
         $('#error-mess').html(xhr.responseText);
-        $('#link-creds').next().find("button:eq(0)").button("enable");
+        $('#data-creds').next().find("button:eq(0)").button("enable");
     });
+}
+
+function forwardToLink(link) {
+    window.location = link + "Feature=" + encodeURIComponent(JSON.stringify(getFeatureJson())) + "&Scenarios=" + encodeURIComponent(JSON.stringify(getScenariosJson()));
 }
 
 function getExistingFeature() {

@@ -80,8 +80,11 @@ if (file_exists ( "js/tags.js" )) {
             <button id="exportJIRA" class="ui-button" disabled>Export to
                 JIRA</button>
             <?php } ?>
+            <?php foreach ($params ['datas'] as $title => $link) {
+                echo "<button name='linkButton' class='ui-button' onclick='getDataCreds(\"$link\")'>$title</button> ";
+            } ?>
             <?php foreach ($params ['links'] as $title => $link) {
-                echo "<button name='linkButton' class='ui-button' onclick='getLinkCreds(\"$link\")'>$title</button> ";
+                echo "<button name='linkButton' class='ui-button' onclick='forwardToLink(\"$link\")'>$title</button> ";
             } ?>
         </p>
     </div>
@@ -117,8 +120,8 @@ if (file_exists ( "js/tags.js" )) {
     </div>
     <?php } ?>
 
-    <?php if (!empty ( $params ['links'])) { ?>
-        <div id="link-creds" class="creds" title="Credentials">
+    <?php if (!empty ( $params ['datas'])) { ?>
+        <div id="data-creds" class="creds" title="Credentials">
             <form>
                 <div>
                     <label for="user">Username</label> <input type="text"
