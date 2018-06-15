@@ -1,122 +1,122 @@
 span.opt {
-	font-style: italic;
-	color: grey;
-	font-weight: bold;
-	cursor: pointer;
+    font-style: italic;
+    color: grey;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 span.any {
-	font-style: italic;
-	color: grey;
-	font-weight: bold;
-	cursor: pointer;
+    font-style: italic;
+    color: grey;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 span.new {
-	font-style: italic;
-	color: red;
-	font-weight: bold;
+    font-style: italic;
+    color: red;
+    font-weight: bold;
 }
 
 button.ui-button-small {
-	font-size: small;
-	padding: .2em .5em;
+    font-size: small;
+    padding: .2em .5em;
 }
 
 .scenario, .background {
-	margin-left: 32px;
-	padding-top: 32px;
-	position: relative;
+    margin-left: 32px;
+    padding-top: 32px;
+    position: relative;
 }
 
 .scenario:last-of-type {
-	margin-bottom: 100px;
+    margin-bottom: 100px;
 }
 
 .testStep {
-	position: relative;
-	cursor: move;
+    position: relative;
+    cursor: move;
 }
 
 .ui-autocomplete {
-	max-height: 150px;
-	overflow-y: auto;
-	overflow-x: hidden;
-	font-size: small;
+    max-height: 150px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-size: small;
 }
 
 .what {
-	position: relative;
-	cursor: move;
+    position: relative;
+    cursor: move;
 }
 
 .examples {
-	position: relative;
-	margin-left: 32px;
+    position: relative;
+    margin-left: 32px;
 }
 
 .tag, .link {
-	display: inline-block;
-	border: 1px solid lightgrey;
-	padding: 2px 4px 2px 0;
-	margin: 0 2px 2px 2px;
-	border-radius: 5px;
-	pointer-events: none;
-	font-size: small;
+    display: inline-block;
+    border: 1px solid lightgrey;
+    padding: 2px 4px 2px 0;
+    margin: 0 2px 2px 2px;
+    border-radius: 5px;
+    pointer-events: none;
+    font-size: small;
 }
 
 .tag {
-	color: purple;
+    color: purple;
 }
 
 .link {
-	color: blue;
+    color: blue;
 }
 
 .tag:before, .link:before {
-	content: '\f014';
-	font-family: FontAwesome;
-	font-weight: normal;
-	font-style: normal;
-	padding: 5px;
-	text-decoration: none;
-	background-color: red;
-	margin-right: 5px;
-	border-right: 1px solid lightgrey;
-	border-top-left-radius: 5px;
-	border-bottom-left-radius: 5px;
-	cursor: pointer;
-	pointer-events: all;
+    content: '\f014';
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    padding: 5px;
+    text-decoration: none;
+    background-color: red;
+    margin-right: 5px;
+    border-right: 1px solid lightgrey;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    cursor: pointer;
+    pointer-events: all;
 }
 
 .edit {
-	color: orange;
-	position: absolute;
-	top: 4px;
-	left: -16px;
-	cursor: pointer;
+    color: orange;
+    position: absolute;
+    top: 4px;
+    left: -16px;
+    cursor: pointer;
 }
 
 .delete {
-	color: red;
-	position: absolute;
-	top: 4px;
-	left: -32px;
-	cursor: pointer;
+    color: red;
+    position: absolute;
+    top: 4px;
+    left: -32px;
+    cursor: pointer;
 }
 
 .jiralink {
-	font-weight: 900;
-	color: blue;
+    font-weight: 900;
+    color: blue;
 }
 
 input[type=number] {
-	width: 50px;
+    width: 50px;
 }
 
 table {
-	border-collapse: separate;
-	border-spacing: 0px 5px;
+    border-collapse: separate;
+    border-spacing: 0px 5px;
 }
 
 td
@@ -175,98 +175,98 @@ black
 ;
 }
 tbody tr {
-	cursor: move;
+    cursor: move;
 }
 
 input, textarea, select {
-	border: 1px solid white;
+    border: 1px solid white;
 }
 
 input, textarea, select, button {
-	border-bottom-right-radius: 3px;
-	border-bottom-left-radius: 3px;
-	border-top-right-radius: 3px;
-	border-top-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
 }
 
 div.testStep input, div.testStep select {
-	font-style: italic;
-	text-align: center;
-	color: grey;
-	font-weight: bold;
+    font-style: italic;
+    text-align: center;
+    color: grey;
+    font-weight: bold;
 }
 
 .chosen-container-single-nosearch {
-	padding-right: 10px;
+    padding-right: 10px;
 }
 
 .chosen-container-multi {
-	min-width: 100px;
+    min-width: 100px;
 }
 
 .chosen-container-multi .chosen-choices li.search-field input[type="text"]
-	{
-	padding: 0px;
+    {
+    padding: 0px;
 }
 
 .chosen-container-multi .chosen-choices {
-	border: 1px solid white;
-	background-image: none;
-	box-shadow: none;
+    border: 1px solid white;
+    background-image: none;
+    box-shadow: none;
 }
 
 .chosen-container-multi .chosen-choices:hover {
-	border: 1px solid grey;
+    border: 1px solid grey;
 }
 
 input:hover, textarea:hover, select:hover {
-	border: 1px solid grey;
+    border: 1px solid grey;
 }
 
 div.testStep input.ui-autocomplete-input {
-	border: 1px solid black;
-	font-style: normal;
-	text-align: left;
-	color: black;
-	font-weight: normal;
+    border: 1px solid black;
+    font-style: normal;
+    text-align: left;
+    color: black;
+    font-weight: normal;
 }
 
 div.testStep select.blue {
-	border: 1px solid black;
-	font-style: normal;
-	text-align: left;
-	color: blue;
-	font-weight: normal;
+    border: 1px solid black;
+    font-style: normal;
+    text-align: left;
+    color: blue;
+    font-weight: normal;
 }
 
 div.blue span, div.blue li {
-	color: blue;
+    color: blue;
 }
 
 .green {
-	font-weight: 900;
-	color: green;
+    font-weight: 900;
+    color: green;
 }
 
 .purple {
-	font-weight: 900;
-	color: purple;
+    font-weight: 900;
+    color: purple;
 }
 
 .red {
-	border-color: red;
-	background: lightcoral;
+    border-color: red;
+    background: lightcoral;
 }
 
 .error {
-	font-weight: 1200;
-	color: red;
+    font-weight: 1200;
+    color: red;
 }
 
 .creds div {
-	text-align: right;
+    text-align: right;
 }
 
 .creds input {
-	width: 60%;
+    width: 60%;
 }
