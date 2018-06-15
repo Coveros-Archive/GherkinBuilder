@@ -234,7 +234,7 @@ function getScenariosJson() {
     $('.scenario').each(function() {
         scenario = {};
         scenario.featureKey = getExistingFeature();
-        scenario.scenarioKey = getScenarioKey($(this))
+        scenario.scenarioKey = getScenarioKey($(this));
         scenario.scenarioTags = getScenarioTags($(this));
         scenario.scenarioLinks = getScenarioLinks($(this));
         scenario.scenarioTitle = getScenarioTitle($(this));
