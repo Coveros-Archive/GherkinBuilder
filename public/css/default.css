@@ -65,7 +65,17 @@ button.ui-button-small {
     font-size: small;
     color: purple;
 }
-.tag:before {
+.link {
+    display: inline-block;
+    border: 1px solid lightgrey;
+    padding: 2px 4px 2px 0;
+    margin: 0 2px 2px 2px;
+    border-radius: 5px;
+    pointer-events: none;
+    font-size: small;
+    color: blue;
+}
+.tag:before,.link:before {
     content: '\f014';
     font-family: FontAwesome;
     font-weight: normal;
@@ -97,12 +107,9 @@ button.ui-button-small {
     cursor: pointer;
 }
 
-.link {
+.jiralink {
+    font-weight: 900;
     color: blue;
-    position: absolute;
-    top: 4px;
-    left: -16px;
-    cursor: pointer;
 }
 
 input[type=number] {
