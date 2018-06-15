@@ -66,7 +66,11 @@ $(function() {
 function download() {
     var data = "";
     // get feature information
-    data += getFeatureTags().join(" ") + "\n";
+    links = getFeatureLinks($(this));
+    for(var i=0;i<links.length;i++){
+        links[i]="@tests-"+links[i];
+    }
+    data += getFeatureTags().concat(links).join(" ") + "\n"
     data += "Feature: " + getFeatureTitle() + "\n";
     data += getFeatureDescription() + "\n\n";
     // get background steps
@@ -77,7 +81,11 @@ function download() {
     }).join("\n") + "\n\n";
     // get scenario information
     $('.scenario').each(function() {
-        data += getScenarioTags($(this)).join(" ") + "\n";
+        links = getScenarioLinks($(this));
+        for(var i=0;i<links.length;i++){
+            links[i]="@tests-"+links[i];
+        }
+        data += getScenarioTags($(this)).concat(links).join(" ") + "\n"
         data += getScenarioType($(this)) + " ";
         data += getScenarioTitle($(this)) + "\n";
         data += getScenarioDescription($(this)) + "\n";
@@ -214,6 +222,8 @@ function getFeatureJson() {
     feature.featureLinks = getFeatureLinks();
     feature.featureTitle = getFeatureTitle();
     feature.featureDescription = getFeatureDescription();
+    feature.backgroundTitle = getBackgroundTitle();
+    feature.backgroundDescription = getBackgroundDescription();
     feature.backgroundSteps = getBackgroundTestSteps();
     return feature;
 }
@@ -224,7 +234,7 @@ function getScenariosJson() {
     $('.scenario').each(function() {
         scenario = {};
         scenario.featureKey = getExistingFeature();
-//        scenario.scenarioKey = ;
+        scenario.scenarioKey = getScenarioKey($(this))
         scenario.scenarioTags = getScenarioTags($(this));
         scenario.scenarioLinks = getScenarioLinks($(this));
         scenario.scenarioTitle = getScenarioTitle($(this));
@@ -267,11 +277,7 @@ function getFeatureTags() {
 }
 
 function getFeatureLinks() {
-    var links = [];
-    if ($('#feat .jiralink').length && $('#feat .jiralink').val() != "") {
-        links = $('#feat .jiralink').val().split(" ");
-    }
-    return links;
+    return getLinks($('#featLink'));
 }
 
 function getFeatureTitle() {
@@ -302,14 +308,8 @@ function getBackgroundTestSteps() {
     return getScenarioTestSteps($("#backgrounddef"));
 }
 
-function getScenario(element) {
-    var scenario = {};
-    scenario.tags = getScenarioTags(element);
-    scenario.type = getScenarioType(element);
-    scenario.title = getScenarioTitle(element);
-    scenario.description = getScenarioDescription(element);
-    scenario.steps = getScenarioTestSteps(element);
-    return scenario;
+function getScenarioKey(element) {
+    return element.attr('id');
 }
 
 function getScenarioTags(element) {
@@ -317,11 +317,7 @@ function getScenarioTags(element) {
 }
 
 function getScenarioLinks(element) {
-    var links = [];
-    if ($(element).children('input.jiralink').length && $(element).children('input.jiralink').val() != "") {
-        links = $(element).children('input.jiralink').val().split(" ");
-    }
-    return links;
+    return getLinks($(element).children('input.jiralink'));
 }
 
 function getScenarioType(element) {
@@ -380,9 +376,11 @@ function getScenarioExamples(element) {
     if ($(element).children('.examples').length) {
         $($(element).children('.examples')).each(function() {
             var example = {};
-            if ($(this).children('input.purple').val() != "") {
-                example.tags = $(this).children('input.purple').val().split(" ");
-            }
+            var tags = [];
+            $(this).children('.tag').each(function(){
+                tags.push($(this).html());
+            });
+            example.tags = tags;
             var inputs = [];
             $(this).find('th').each(function() {
                 inputs.push($(this).html());
@@ -407,14 +405,16 @@ function getScenarioExamples(element) {
 
 function getTags(element) {
     var ts = [];
-    if (typeof tags !== 'undefined' && tags.length > 0) {
-        $(element).parent().children('.tag').each(function(){
-            ts.push( $(this).html() );
-        });
-    } else {
-        if ($(element).val() != "") {
-            ts = $(element).val().split(" ");
-        }
-    }
+    $(element).parent().children('.tag').each(function(){
+        ts.push( $(this).html() );
+    });
+    return ts;
+}
+
+function getLinks(element) {
+    var ts = [];
+    $(element).parent().children('.link').each(function(){
+        ts.push( $(this).html() );
+    });
     return ts;
 }

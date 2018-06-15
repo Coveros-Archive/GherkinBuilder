@@ -390,6 +390,7 @@ function addTable(el) {
     var exampleDiv = $("<div class='examples'>");
     var deleteButton = $("<div class='delete' onclick='del(this)' style='top:2px;' title='Delete Outline'><i class='fa fa-trash'></i></div>");
     var exampleTags = $("<input class='purple small' placeholder='Example Tags'>");
+    fillTag(exampleTags);
     var exampleTitle = $("<div class='green'>Examples:</div>");
     var table = $("<table><thead><tr><td></td></tr></thead><tbody></tbody></table>");
     var addRowButton = $("<button onclick='addDataRow(this)' class='ui-button ui-button-small'>Add Data Row</button>");

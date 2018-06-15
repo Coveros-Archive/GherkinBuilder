@@ -107,15 +107,19 @@ $(function() {
                     var exampleTable = scenarioEl.find('.examples:last-child');
                     if ( example.hasOwnProperty('tags') && example.tags.length > 0 ) {
                         example.tags.forEach(function(tag) {
-                            exampleTable.find('input.purple').val(exampleTable.find('input.purple').val() + tag + " ");
+                            addTag(exampleTable.find('input.purple'), tag)
                         })
                     }
                     exampleTable.find('tbody tr').remove();
                     if ( example.hasOwnProperty('data') && example.data.length > 0 ) {
                         example.data.forEach(function(data) {
                             exampleTable.find('button').click();
-                            // and fill in each value - but need to match them up
-                // if comma separated, it's a multiline
+                            Object.keys(data).forEach(function(key){
+                                var cell = exampleTable.find('thead th:contains('+key+')');
+                                var col = cell.parent().children().index(cell);
+                                var exampleTableRow = exampleTable.find('tbody tr:last-child');
+                                exampleTableRow.find('td:nth-child('+(col+1)+') select').val(data[key]).trigger("chosen:updated");
+                            });
                         })
                     }
                 })
