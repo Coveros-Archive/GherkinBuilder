@@ -119,61 +119,11 @@ table {
     border-spacing: 0px 5px;
 }
 
-td
-
-
-:not
-
- 
-
-(
-:first-child
-
- 
-
-)
-{
-border-left
-
-
-:
-
- 
-
-1
-px
-
- 
-
-solid
-
- 
-
-black
-
-
-;
-border-right
-
-
-:
-
- 
-
-1
-px
-
- 
-
-solid
-
- 
-
-black
-
-
-;
+td:not(:first-child) {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
 }
+
 tbody tr {
     cursor: move;
 }
