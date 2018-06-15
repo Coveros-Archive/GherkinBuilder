@@ -94,7 +94,7 @@ function checkRequired(element) {
 
 function fillTag(el) {
     if (typeof tags !== 'undefined' && tags.length > 0) {
-        $(el).attr('placeholder','Choose an existing tag, or write your own...')
+        $(el).attr('placeholder', 'Choose an existing tag, or write your own...')
         $(el).autocomplete({
             minLength : 0,
             source : tags,
@@ -107,15 +107,15 @@ function fillTag(el) {
         })
     }
     $(el).keyup(function(e) {
-        if(e.keyCode == 32 || e.keyCode == 13){
+        if (e.keyCode == 32 || e.keyCode == 13) {
             addTag(el);
         }
-    }).blur(function(){
+    }).blur(function() {
         addTag(el);
     });
 }
 function addTag(el, tag) {
-    if (tag == "" || tag === undefined ) {
+    if (tag == "" || tag === undefined) {
         tag = $(el).val();
         if (tag == "") {
             return;
@@ -125,7 +125,7 @@ function addTag(el, tag) {
     var span = $("<span>");
     span.html(tag);
     span.addClass('tag');
-    span.click(function(){
+    span.click(function() {
         $(this).remove();
     });
     $(el).after(span);
@@ -134,7 +134,7 @@ function addTag(el, tag) {
 
 function addScenario(id) {
     var scenario = $("<div class='scenario'>");
-    if ( typeof id !== 'undefined' ) {
+    if (typeof id !== 'undefined') {
         scenario.attr('id', id);
     }
     var tags = $("<input class='purple small' placeholder='Scenario Tags'>");

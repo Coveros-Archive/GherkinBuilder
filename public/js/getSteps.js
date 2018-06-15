@@ -13,5 +13,3 @@ function keypair(key, value) {
 }
 // our basic setup
 var testSteps = [];
-//testSteps.whens = [];
-//testSteps.thens = [];

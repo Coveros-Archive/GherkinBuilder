@@ -25,15 +25,15 @@ function existingFeature() {
 
 function fillLink(el) {
     $(el).keyup(function(e) {
-        if(e.keyCode == 32 || e.keyCode == 13){
+        if (e.keyCode == 32 || e.keyCode == 13) {
             addLink(el);
         }
-    }).blur(function(){
+    }).blur(function() {
         addLink(el);
     });
 }
 function addLink(el, link) {
-    if (link == "" || link === undefined ) {
+    if (link == "" || link === undefined) {
         link = $(el).val();
         if (link == "") {
             return;
@@ -43,7 +43,7 @@ function addLink(el, link) {
     var span = $("<span>");
     span.html(link);
     span.addClass('link');
-    span.click(function(){
+    span.click(function() {
         $(this).remove();
     });
     $(el).after(span);

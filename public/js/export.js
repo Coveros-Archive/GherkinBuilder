@@ -39,36 +39,36 @@ $(function() {
     });
 
     $("#data-creds").dialog({
-            autoOpen : false,
-            modal : true,
-            open : function() {
+        autoOpen : false,
+        modal : true,
+        open : function() {
+            checkInputs();
+            $("#data-creds").keyup(function(e) {
                 checkInputs();
-                $("#data-creds").keyup(function(e) {
-                    checkInputs();
-                    if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
-                        $(this).next().find("button:eq(0)").trigger("click");
-                    }
-                });
-            },
-            buttons : {
-                "Ok" : function() {
-                    $(this).next().find("button:eq(0)").button("disable");
-                    $('#error-messages').empty();
-                    sendData(btoa($("#user").val() + ":" + $("#pass").val()), $("#link").val());
-                },
-                "Cancel" : function() {
-                    $(this).dialog("close");
+                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
+                    $(this).next().find("button:eq(0)").trigger("click");
                 }
+            });
+        },
+        buttons : {
+            "Ok" : function() {
+                $(this).next().find("button:eq(0)").button("disable");
+                $('#error-messages').empty();
+                sendData(btoa($("#user").val() + ":" + $("#pass").val()), $("#link").val());
+            },
+            "Cancel" : function() {
+                $(this).dialog("close");
             }
-        });
+        }
+    });
 });
 
 function download() {
     var data = "";
     // get feature information
     links = getFeatureLinks($(this));
-    for(var i=0;i<links.length;i++){
-        links[i]="@tests-"+links[i];
+    for (var i = 0; i < links.length; i++) {
+        links[i] = "@tests-" + links[i];
     }
     data += getFeatureTags().concat(links).join(" ") + "\n"
     data += "Feature: " + getFeatureTitle() + "\n";
@@ -76,20 +76,20 @@ function download() {
     // get background steps
     data += "Background: " + getBackgroundTitle() + "\n";
     data += getBackgroundDescription() + "\n";
-    data += getBackgroundTestSteps().map(function(elem){
+    data += getBackgroundTestSteps().map(function(elem) {
         return elem.step;
     }).join("\n") + "\n\n";
     // get scenario information
     $('.scenario').each(function() {
         links = getScenarioLinks($(this));
-        for(var i=0;i<links.length;i++){
-            links[i]="@tests-"+links[i];
+        for (var i = 0; i < links.length; i++) {
+            links[i] = "@tests-" + links[i];
         }
         data += getScenarioTags($(this)).concat(links).join(" ") + "\n"
         data += getScenarioType($(this)) + " ";
         data += getScenarioTitle($(this)) + "\n";
         data += getScenarioDescription($(this)) + "\n";
-        data += getScenarioTestSteps($(this)).map(function(elem){
+        data += getScenarioTestSteps($(this)).map(function(elem) {
             return elem.step;
         }).join("\n") + "\n";
         $.each(getScenarioExamples($(this)), function(key, example) {
@@ -215,7 +215,7 @@ function getDataCreds(link) {
 }
 
 function getFeatureJson() {
-    //build our feature information
+    // build our feature information
     var feature = {};
     feature.featureKey = getExistingFeature();
     feature.featureTags = getFeatureTags();
@@ -229,7 +229,7 @@ function getFeatureJson() {
 }
 
 function getScenariosJson() {
-    //build our scenario information
+    // build our scenario information
     var scenarios = [];
     $('.scenario').each(function() {
         scenario = {};
@@ -377,7 +377,7 @@ function getScenarioExamples(element) {
         $($(element).children('.examples')).each(function() {
             var example = {};
             var tags = [];
-            $(this).children('.tag').each(function(){
+            $(this).children('.tag').each(function() {
                 tags.push($(this).html());
             });
             example.tags = tags;
@@ -390,7 +390,7 @@ function getScenarioExamples(element) {
             $(this).find('tbody tr').each(function() {
                 var dataSet = {};
                 $(this).find('input,select').each(function(index) {
-                    if( !$(this).hasClass("chosen-search-input")) {
+                    if (!$(this).hasClass("chosen-search-input")) {
                         dataSet[inputs[index]] = $(this).val();
                     }
                 });
@@ -405,16 +405,16 @@ function getScenarioExamples(element) {
 
 function getTags(element) {
     var ts = [];
-    $(element).parent().children('.tag').each(function(){
-        ts.push( $(this).html() );
+    $(element).parent().children('.tag').each(function() {
+        ts.push($(this).html());
     });
     return ts;
 }
 
 function getLinks(element) {
     var ts = [];
-    $(element).parent().children('.link').each(function(){
-        ts.push( $(this).html() );
+    $(element).parent().children('.link').each(function() {
+        ts.push($(this).html());
     });
     return ts;
 }
