@@ -222,7 +222,7 @@ function getScenariosJson() {
     //build our scenario information
     var scenarios = [];
     $('.scenario').each(function() {
-        scenario = {};
+        var scenario = {};
         scenario.featureKey = getExistingFeature();
 //        scenario.scenarioKey = ;
         scenario.scenarioTags = getScenarioTags($(this));
