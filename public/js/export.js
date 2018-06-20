@@ -17,12 +17,7 @@ $(function() {
         open : function() {
             $("#jiraProj").val(jiraOptions.project);
             checkInputs();
-            $("#jira-creds").keyup(function(e) {
-                checkInputs();
-                if (e.keyCode === $.ui.keyCode.ENTER && checkInputs()) {
-                    $(this).next().find("button:eq(0)").trigger("click");
-                }
-            });
+            $("#jira-creds").keyup(function(e){verifyInputs(e)});
         },
         buttons : {
             "Ok" : function() {
@@ -43,12 +38,7 @@ $(function() {
             modal : true,
             open : function() {
                 checkInputs();
-                $("#data-creds").keyup(function(e) {
-                    checkInputs();
-                    if (e.keyCode === $.ui.keyCode.ENTER && checkInputs()) {
-                        $(this).next().find("button:eq(0)").trigger("click");
-                    }
-                });
+                $("#data-creds").keyup(function(e){verifyInputs(e)});
             },
             buttons : {
                 "Ok" : function() {
@@ -62,6 +52,13 @@ $(function() {
             }
         });
 });
+
+function verifyInputs(e) {
+    checkInputs();
+    if (e.keyCode === $.ui.keyCode.ENTER && checkInputs()) {
+        $(this).next().find("button:eq(0)").trigger("click");
+    }
+}
 
 function download() {
     var data = "";
