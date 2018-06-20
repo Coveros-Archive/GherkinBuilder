@@ -9,6 +9,24 @@
 
     <name>Gherkin Builder</name>
 
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+
+    <properties>
+        <!-- General Java properties -->
+        <java.version>1.8</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- SonarQube properties -->
+        <sonar.host.url>http://localhost:9000/sonar</sonar.host.url>
+        <sonar.sources>src/main/java,public</sonar.sources>
+        <sonar.test>src/test/java</sonar.test>
+        <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
+        <sonar.jacoco.reportPaths>target/coverage-reports/jacoco-ut.exec</sonar.jacoco.reportPaths>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

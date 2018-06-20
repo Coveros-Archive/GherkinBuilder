@@ -15,7 +15,7 @@ node() {
     urlBranch = env.BRANCH_NAME.replaceAll(/\//, "%252F")
     baseVersion = "${env.BUILD_NUMBER}"
     version = "$branch-$baseVersion"
-    env.PROJECT = "AutomationFramework"
+    env.PROJECT = "GherkinBuilder"
     def branchCheckout
     pullRequest = env.CHANGE_ID
     if (pullRequest) {
@@ -26,27 +26,41 @@ node() {
         branchCheckout = env.BRANCH_NAME
         refspecs = '+refs/heads/*:refs/remotes/origin/*'
     }
-    stage('Checkout Test Framework') { // for display purposes
+    stage('Checkout Gherkin Builder') { // for display purposes
         // Get the test code from GitHub repository
         checkout([
-                $class           : 'GitSCM',
-                branches: [[ name: "*/${branchCheckout}"]],
-                userRemoteConfigs: [[
-                    credentialsId: 'e08f3fab-ba06-459b-bebb-5d7df5f683a3',
-                    url          : 'git@github.com:Coveros/GherkinBuilder.git',
-                    refspec      : "${refspecs}"
-                                    ]]
+            $class           : 'GitSCM',
+            branches: [[ name: "*/${branchCheckout}"]],
+            userRemoteConfigs: [[
+                url          : 'https://github.com/Coveros/GherkinBuilder.git',
+                refspec      : "${refspecs}"
+            ]]
         ])
     }
     stage('Run Unit Tests') {
         sh "mvn clean test"
-        sh "mv target target-unit"
     }
-    stage('Perform SonarQube Analysis') {
-        sh """
-            mvn clean test -Dskip.unit.tests sonar:sonar \
-                    -Dsonar.junit.reportPaths="target/surefire-reports" \
-                    -Dsonar.jacoco.reportPath=target/coverage-reports/jacoco-ut.exec \
-        """
+    withCredentials([
+        string(
+            credentialsId: 'sonar-token',
+            variable: 'sonartoken'
+        ),
+        string(
+            credentialsId: 'sonar-github',
+            variable: 'SONAR_GITHUB_TOKEN'
+        )
+    ]) {
+        stage('Perform SonarQube Analysis') {
+            def sonarCmd = "mvn clean compile sonar:sonar -Dsonar.login=${env.sonartoken}"
+            if (branchType == 'master') {
+                sh "${sonarCmd} -Dsonar.branch=${env.BRANCH_NAME}"
+            } else {
+                if (pullRequest) {
+                    sh "${sonarCmd} -Dsonar.analysis.mode=preview -Dsonar.branch=${env.BRANCH_NAME} -Dsonar.github.pullRequest=${pullRequest} -Dsonar.github.repository=Coveros/${env.PROJECT} -Dsonar.github.oauth=${SONAR_GITHUB_TOKEN}"
+                } else {
+                    sh "${sonarCmd} -Dsonar.analysis.mode=preview"
+                }
+            }
+        }
     }
 }
