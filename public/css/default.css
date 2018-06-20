@@ -1,24 +1,24 @@
-span.opt {
+.opt {
     font-style: italic;
     color: grey;
     font-weight: bold;
     cursor: pointer;
 }
 
-span.any {
+.any {
     font-style: italic;
     color: grey;
     font-weight: bold;
     cursor: pointer;
 }
 
-span.new {
+.new {
     font-style: italic;
     color: red;
     font-weight: bold;
 }
 
-button.ui-button-small {
+.ui-button-small {
     font-size: small;
     padding: .2em .5em;
 }
@@ -33,7 +33,7 @@ button.ui-button-small {
     margin-bottom: 100px;
 }
 
-.testStep {
+.test-step {
     position: relative;
     cursor: move;
 }
@@ -75,7 +75,7 @@ button.ui-button-small {
 
 .tag:before, .link:before {
     content: '\f014';
-    font-family: FontAwesome;
+    font-family: 'FontAwesome';
     font-weight: normal;
     font-style: normal;
     padding: 5px;
@@ -116,7 +116,7 @@ input[type=number] {
 
 table {
     border-collapse: separate;
-    border-spacing: 0px 5px;
+    border-spacing: 0 5px;
 }
 
 td:not(:first-child) {
@@ -139,7 +139,7 @@ input, textarea, select, button {
     border-top-left-radius: 3px;
 }
 
-div.testStep input, div.testStep select {
+div.test-step input, div.test-step select {
     font-style: italic;
     text-align: center;
     color: grey;
@@ -154,9 +154,8 @@ div.testStep input, div.testStep select {
     min-width: 100px;
 }
 
-.chosen-container-multi .chosen-choices li.search-field input[type="text"]
-    {
-    padding: 0px;
+.chosen-choices .search-field input[type='text'] {
+    padding: 0;
 }
 
 .chosen-container-multi .chosen-choices {
@@ -173,7 +172,7 @@ input:hover, textarea:hover, select:hover {
     border: 1px solid grey;
 }
 
-div.testStep input.ui-autocomplete-input {
+div.test-step .ui-autocomplete-input {
     border: 1px solid black;
     font-style: normal;
     text-align: left;
@@ -181,7 +180,7 @@ div.testStep input.ui-autocomplete-input {
     font-weight: normal;
 }
 
-div.testStep select.blue {
+div.test-step select.blue {
     border: 1px solid black;
     font-style: normal;
     text-align: left;
@@ -209,7 +208,7 @@ div.blue span, div.blue li {
 }
 
 .error {
-    font-weight: 1200;
+    font-weight: 900;
     color: red;
 }
 

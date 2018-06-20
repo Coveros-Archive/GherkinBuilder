@@ -40,7 +40,7 @@ $(function() {
         if (featureJson.hasOwnProperty('backgroundSteps') && featureJson.backgroundSteps.length > 0) {
             featureJson.backgroundSteps.forEach(function(backgroundStep) {
                 $('#addBackgroundStep').click();
-                var stepEl = $('#backgrounddef .testStep:last-child');
+                var stepEl = $('#backgrounddef .test-step:last-child');
                 stepEl.find('.blue').val(backgroundStep.step.split(/ /)[0]).trigger("chosen:updated");
                 stepEl.find('input').val(backgroundStep.step.split(/ (.+)/)[1]).blur();
             });
@@ -94,7 +94,7 @@ $(function() {
             if (scenario.hasOwnProperty('scenarioTestSteps') && scenario.scenarioTestSteps.length > 0) {
                 scenario.scenarioTestSteps.forEach(function(testStep) {
                     scenarioEl.find('button').click();
-                    var stepEl = scenarioEl.find('.testStep:last-child');
+                    var stepEl = scenarioEl.find('.test-step:last-child');
                     stepEl.find('.blue').val(testStep.step.split(/ /)[0]).trigger("chosen:updated");
                     stepEl.find('input').val(testStep.step.split(/ (.+)/)[1]).blur();
                 });
