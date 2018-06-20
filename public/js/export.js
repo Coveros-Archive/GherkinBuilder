@@ -66,7 +66,7 @@ $(function() {
 function download() {
     var data = "";
     // get feature information
-    links = getFeatureLinks($(this));
+    var links = getFeatureLinks($(this));
     for (var i = 0; i < links.length; i++) {
         links[i] = "@tests-" + links[i];
     }
