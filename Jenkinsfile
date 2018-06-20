@@ -51,7 +51,7 @@ node() {
         )
     ]) {
         stage('Perform SonarQube Analysis') {
-            def sonarCmd = "mvn clean compile sonar:sonar -Dsonar.login=${env.sonartoken}"
+            def sonarCmd = "mvn sonar:sonar -Dsonar.login=${env.sonartoken}"
             if (branchType == 'master') {
                 sh "${sonarCmd} -Dsonar.branch=${env.BRANCH_NAME}"
             } else {
