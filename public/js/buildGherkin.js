@@ -301,8 +301,9 @@ function buildTable(testEl) { // el should be the test element
     var scenario = $(testEl).children('.testSteps');
     scenario.children('.testStep').each(function() {
         $(this).children('input, select').each(function() {
+            var placeholder;
             if ($(this).val() === null) {
-                var placeholder = $(this).attr('placeholder')
+                placeholder = $(this).attr('placeholder')
                 if (placeholder.startsWith("<") && placeholder.endsWith(">")) {
                     variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
                 }
@@ -315,12 +316,12 @@ function buildTable(testEl) { // el should be the test element
                 return;
             }
             if ($(this).val() === "" && $(this).is("input")) {
-                var placeholder = $(this).attr('placeholder')
+                placeholder = $(this).attr('placeholder')
                 variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
                 return;
             }
             if ($(this).val().startsWith("<") && $(this).val().endsWith(">")) {
-                var placeholder = $(this).val();
+                placeholder = $(this).val();
                 variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
                 return;
             }
@@ -364,15 +365,6 @@ function buildTable(testEl) { // el should be the test element
                 });
             }
         }
-    });
-    // rearrange our table
-    var order = [];
-    for ( var key in variables) {
-        order.push(key);
-    }
-    var newOrder = [];
-    examples.find('table').first().find('th').each(function() {
-        newOrder.push(jQuery.inArray($(this).html(), order));
     });
 
     makeDynamic();
