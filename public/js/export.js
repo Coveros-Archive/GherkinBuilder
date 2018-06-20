@@ -63,7 +63,7 @@ function verifyInputs(e) {
 function download() {
     var data = "";
     // get feature information
-    var links = getFeatureLinks($(this));
+    var links = getFeatureLinks();
     for (var i = 0; i < links.length; i++) {
         links[i] = "@tests-" + links[i];
     }
