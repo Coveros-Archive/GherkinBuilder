@@ -1,6 +1,6 @@
 function makeDynamic() {
     // make our testSteps sortable
-    $(".testSteps").sortable({
+    $(".test-steps").sortable({
         stop : function(event, ui) {
             buildTable($(ui.item).parent().parent());
         }
@@ -140,7 +140,7 @@ function addScenario() {
     what.html("Scenario:");
     var title = $("<input class='green small required red' placeholder='Test Case Name' type='text' required>");
     var description = $("<textarea rows='1' placeholder='Test Case Description'>");
-    var steps = $("<div class='testSteps'>");
+    var steps = $("<div class='test-steps'>");
     var addSteps = $("<button onclick='addTestStep(this)' class='ui-button ui-button-small'>");
     addSteps.html("Add Test Step");
     var addTable = $("<button onclick='addDataTable(this)' class='addTable ui-button ui-button-small' style='display:none;'>");
@@ -156,7 +156,7 @@ function addScenario() {
     makeDynamic();
 }
 function addTestStep(el) {
-    var testStep = $("<div class='testStep'>");
+    var testStep = $("<div class='test-step'>");
     var editHolder = $("<div class='edit' onclick='edit(this)'>");
     editHolder.append($("<i class='fa fa-pencil-square-o'>"));
     var deleteHolder = $("<div class='delete' onclick='del(this)'>");
@@ -167,7 +167,7 @@ function addTestStep(el) {
     select.append($("<option>When</option>"));
     select.append($("<option>Then</option>"));
     testStep.append(editHolder).append(deleteHolder).append(select);
-    $(el).parent().find('.testSteps').append(testStep);
+    $(el).parent().find('.test-steps').append(testStep);
     makeDynamic();
     fillStep(select, "");
 }
@@ -294,8 +294,8 @@ function buildTable(testEl) { // el should be the test element
     }
     // get each variable from our test steps
     var variables = {};
-    var scenario = $(testEl).children('.testSteps');
-    scenario.children('.testStep').each(function() {
+    var scenario = $(testEl).children('.test-steps');
+    scenario.children('.test-step').each(function() {
         $(this).children('input, select').each(function() {
             var placeholder;
             if ($(this).val() === null) {

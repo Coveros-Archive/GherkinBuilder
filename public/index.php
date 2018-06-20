@@ -66,7 +66,7 @@ if (file_exists ( "js/tags.js" )) {
                 placeholder='Background Title' type='text' /> <br />
             <textarea rows='1' placeholder='Description'></textarea>
         </div>
-        <div class='testSteps'></div>
+        <div class='test-steps'></div>
         <button id="addBackgroundStep"
             class="ui-button ui-widget ui-corner-all ui-button-small">Add
             Background Step</button>

@@ -339,7 +339,7 @@ function getScenarioDescription(element) {
 
 function getScenarioTestSteps(element) {
     var steps = [];
-    $(element).find('.testStep').each(function() {
+    $(element).find('.test-step').each(function() {
         var obj = {};
         obj.exists = true;
         var step = "";
