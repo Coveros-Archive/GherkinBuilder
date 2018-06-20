@@ -17,7 +17,7 @@ function makeDynamic() {
         if ($(this).parent().is("td")) {
             placeholder = " ";
         }
-        if ($(this).attr('multiple') == 'multiple') {
+        if ($(this).attr('multiple') === 'multiple') {
             $(this).chosen({
                 placeholder_text_multiple : placeholder,
                 width : 'auto',
@@ -36,7 +36,7 @@ function makeDynamic() {
     // allow editing of an any span
     $('span.any').dblclick(function() {
         var input = $("<input type='text' class='small' />").keyup(resizeInput).each(resizeInput).blur(function() {
-            if ($(this).val() == "") {
+            if ($(this).val() === "") {
                 $(this).parent().html("...");
             }
         });
@@ -75,7 +75,7 @@ function makeDynamic() {
 }
 
 function checkRequired(element) {
-    if (element.val() == "") {
+    if (element.val() === "") {
         element.addClass("red");
     } else {
         element.removeClass("red");
@@ -105,7 +105,7 @@ function fillTag(el) {
         }).click(function() {
             $(this).autocomplete("search", "");
         }).keyup(function(e) {
-            if(e.keyCode == 32 || e.keyCode == 13){
+            if(e.keyCode === 32 || e.keyCode === 13){
                 addTag(el);
             }
         }).blur(function(){
@@ -114,9 +114,9 @@ function fillTag(el) {
     }
 }
 function addTag(el, tag) {
-    if (tag == "" || tag === undefined ) {
+    if (tag === "" || tag === undefined ) {
         tag = $(el).val();
-        if (tag == "") {
+        if (tag === "") {
             return;
         }
     }
@@ -214,11 +214,11 @@ function createStep(el) {
         regex = regex.stripTags();
         regex = "^" + regex + "$";
         var res = newStep.match(regex);
-        if (res != null) {
+        if (res !== null) {
             fillVars(i, el);
             var inputs = type.parent().children('input,select');
             for (var j = 1; j < res.length; j++) {
-                if (res[j] == "XXXX") {
+                if (res[j] === "XXXX") {
                     res[j] = "";
                 }
                 $(inputs).eq(j).val(res[j]);
@@ -288,7 +288,7 @@ function buildTable(testEl) { // el should be the test element
         return false;
     }
     // add a table if needed
-    if ($(testEl).find('.examples').length == 0) {
+    if ($(testEl).find('.examples').length === 0) {
         addTable($(testEl));
         $(testEl).children('.addTable').show();
     }
@@ -297,7 +297,7 @@ function buildTable(testEl) { // el should be the test element
     var scenario = $(testEl).children('.testSteps');
     scenario.children('.testStep').each(function() {
         $(this).children('input, select').each(function() {
-            if ($(this).val() == null) {
+            if ($(this).val() === null) {
                 var placeholder = $(this).attr('placeholder')
                 if (placeholder.startsWith("<") && placeholder.endsWith(">")) {
                     variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
@@ -310,7 +310,7 @@ function buildTable(testEl) { // el should be the test element
             if ($(this).hasClass('ui-autocomplete-input')) {
                 return true;
             }
-            if ($(this).val() == "" && $(this).is("input")) {
+            if ($(this).val() === "" && $(this).is("input")) {
                 var placeholder = $(this).attr('placeholder')
                 variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
                 return true;
@@ -340,7 +340,7 @@ function buildTable(testEl) { // el should be the test element
         });
         // add in any new values that may be missing
         for ( var key in variables) {
-            if ($.inArray(key, headerVals) == -1) {
+            if ($.inArray(key, headerVals) === -1) {
                 header.append("<th inheritFrom='" + variables[key] + "'>" + key + "</th>");
                 example.children('table').children('tbody').children('tr').each(function() {
                     var cell = $("<td></td>");
@@ -375,7 +375,7 @@ function buildTable(testEl) { // el should be the test element
     makeDynamic();
     // rename our scenario type if needed
     var cols = examples.children('table').children('thead').children('tr').children('th');
-    if (cols.length == 0) {
+    if (cols.length === 0) {
         examples.parent().children('.green').children('.what').html("Scenario:");
         examples.remove();
         $(testEl).children('.addTable').hide();
