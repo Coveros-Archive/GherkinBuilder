@@ -94,7 +94,7 @@ function checkRequired(element) {
 
 function fillTag(el) {
     if (typeof tags !== 'undefined' && tags.length > 0) {
-        $(el).attr('placeholder','Choose a Tag...')
+        $(el).attr('placeholder', 'Choose an existing tag, or write your own...')
         $(el).autocomplete({
             minLength : 0,
             source : tags,
@@ -104,17 +104,18 @@ function fillTag(el) {
             },
         }).click(function() {
             $(this).autocomplete("search", "");
-        }).keyup(function(e) {
-            if(e.keyCode === 32 || e.keyCode === 13){
-                addTag(el);
-            }
-        }).blur(function(){
-            addTag(el);
         });
     }
+    $(el).keyup(function(e) {
+        if (e.keyCode === 32 || e.keyCode === 13) {
+            addTag(el);
+        }
+    }).blur(function() {
+        addTag(el);
+    });
 }
 function addTag(el, tag) {
-    if (tag === "" || tag === undefined ) {
+    if (tag === "" || tag === undefined) {
         tag = $(el).val();
         if (tag === "") {
             return;
@@ -124,17 +125,24 @@ function addTag(el, tag) {
     var span = $("<span>");
     span.html(tag);
     span.addClass('tag');
-    span.click(function(){
+    span.click(function() {
         $(this).remove();
     });
     $(el).after(span);
     $(el).val("");
 }
 
-function addScenario() {
+function addScenario(id) {
     var scenario = $("<div class='scenario'>");
+    if (typeof id !== 'undefined') {
+        scenario.attr('id', id);
+    }
     var tags = $("<input class='purple small' placeholder='Scenario Tags'>");
     fillTag(tags);
+    if (jiraOptions.project !== "") {
+        var links = $("<input class='small jiralink' placeholder='JIRA Issue(s) Tested'>");
+        fillLink(links);
+    }
     var holder = $("<div class='green'>");
     var what = $("<span class='what'>");
     what.html("Scenario:");
@@ -146,12 +154,8 @@ function addScenario() {
     var addTable = $("<button onclick='addDataTable(this)' class='addTable ui-button ui-button-small' style='display:none;'>");
     addTable.html("Add Data Table");
     var deleteButton = $("<div class='delete' onclick='del(this)' style='top:33px;' title='Delete Scenario'><i class='fa fa-trash'></i></div>");
-    var linkButton = $("<div class='link' onclick='link(this)' style='top:33px;' title='Link Scenario to Issue in JIRA'><i class='fa fa-link'></i></div>");
     holder.append(what).append(" ").append(title).append($("<br>")).append(description);
-    scenario.append(tags).append(holder).append(steps).append(addSteps).append(addTable).append(deleteButton);
-    if (jiraOptions.project !== "") {
-        scenario.append(linkButton);
-    }
+    scenario.append(links).append(tags).append(holder).append(steps).append(addSteps).append(addTable).append(deleteButton);
     $('#tests').append(scenario);
     makeDynamic();
 }
@@ -375,8 +379,9 @@ function buildTable(testEl) { // el should be the test element
 function addTable(el) {
     // build our example table
     var exampleDiv = $("<div class='examples'>");
-    var deleteButton = $("<div class='delete' onclick='del(this)' style='top:2px;' title='Delete Scenario'><i class='fa fa-trash'></i></div>");
+    var deleteButton = $("<div class='delete' onclick='del(this)' style='top:2px;' title='Delete Outline'><i class='fa fa-trash'></i></div>");
     var exampleTags = $("<input class='purple small' placeholder='Example Tags'>");
+    fillTag(exampleTags);
     var exampleTitle = $("<div class='green'>Examples:</div>");
     var table = $("<table><thead><tr><td></td></tr></thead><tbody></tbody></table>");
     var addRowButton = $("<button onclick='addDataRow(this)' class='ui-button ui-button-small'>Add Data Row</button>");

@@ -17,6 +17,7 @@ if ($params ['base'] != "") {
 <script src="js/setup.js?<?php echo time() ?>"></script>
 <script src="js/buildGherkin.js?<?php echo time() ?>"></script>
 <script src="js/export.js?<?php echo time() ?>"></script>
+<script src="js/import.js?<?php echo time() ?>"></script>
 <?php if ($useJIRA) { ?>
 <script src="js/jira.js?<?php echo time() ?>"></script>
 <?php
@@ -44,9 +45,7 @@ if (file_exists ( "js/tags.js" )) {
         <span class="edit" style="position: inherit;"
             onclick="existingFeature()" title="Use Existing Feature in JIRA"> <i
             class="fa fa-pencil-square-o"></i>
-        </span> <span id="featLink" class="link" style="position: inherit;"
-            onclick="link(this)" title="Link Feature to Issue in JIRA"><i
-            class='fa fa-link'></i></span>
+        </span> <input id="featLink" class="small jiralink" placeholder="JIRA Issue(s) Tested">
         <?php } ?>
         <input id='featTag' class='purple small'
             placeholder='Feature Tags' />
@@ -57,7 +56,7 @@ if (file_exists ( "js/tags.js" )) {
         <div id='featuredef' class='green'>
             Feature: <input class='green small required red'
                 placeholder='Feature Title' type='text' required /> <br />
-            <textarea class='green' placeholder="User Story"></textarea>
+            <textarea placeholder="User Story"></textarea>
         </div>
     </div>
     <div id='backgrounddef' class='background'>
