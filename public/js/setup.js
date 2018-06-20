@@ -1,14 +1,14 @@
-if (typeof String.prototype.startsWith != 'function') {
+if (typeof String.prototype.startsWith !== 'function') {
     String.prototype.startsWith = function(str) {
-        return this.slice(0, str.length) == str;
+        return this.slice(0, str.length) === str;
     };
 }
-if (typeof String.prototype.endsWith != 'function') {
+if (typeof String.prototype.endsWith !== 'function') {
     String.prototype.endsWith = function(str) {
-        return this.slice(-str.length) == str;
+        return this.slice(-str.length) === str;
     };
 }
-if (typeof String.prototype.stripTags != 'function') {
+if (typeof String.prototype.stripTags !== 'function') {
     String.prototype.stripTags = function() {
         var tmp = document.createElement("DIV");
         tmp.innerHTML = this;

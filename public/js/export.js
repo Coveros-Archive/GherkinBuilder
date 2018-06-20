@@ -19,7 +19,7 @@ $(function() {
             checkInputs();
             $("#jira-creds").keyup(function(e) {
                 checkInputs();
-                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
+                if (e.keyCode === $.ui.keyCode.ENTER && checkInputs()) {
                     $(this).next().find("button:eq(0)").trigger("click");
                 }
             });
@@ -45,7 +45,7 @@ $(function() {
             checkInputs();
             $("#data-creds").keyup(function(e) {
                 checkInputs();
-                if (e.keyCode == $.ui.keyCode.ENTER && checkInputs()) {
+                if (e.keyCode === $.ui.keyCode.ENTER && checkInputs()) {
                     $(this).next().find("button:eq(0)").trigger("click");
                 }
             });
@@ -117,7 +117,7 @@ function download() {
 
 function checkInputs() {
     $('#jira-creds input').each(function() {
-        if ($(this).val() == "") {
+        if ($(this).val() === "") {
             $(this).addClass("red");
         } else {
             $(this).removeClass("red");
@@ -139,7 +139,7 @@ function jiraSuccess(epic_link) {
 }
 
 function jira(project, auth) {
-    if (getExistingFeature() == "") {
+    if (getExistingFeature() === "") {
         // create the epic to contain the scenarios
         $.post("api/createFeature.php", {
             "auth" : auth,
@@ -286,7 +286,7 @@ function getFeatureTitle() {
 
 function getFeatureDescription() {
     var def = "";
-    if ($('#featuredef textarea').val() != "") {
+    if ($('#featuredef textarea').val() !== "") {
         def = $('#featuredef textarea').val();
     }
     return def;
@@ -298,7 +298,7 @@ function getBackgroundTitle() {
 
 function getBackgroundDescription() {
     var def = "";
-    if ($('#backgrounddef textarea').val() != "") {
+    if ($('#backgrounddef textarea').val() !== "") {
         def = $('#backgrounddef textarea').val();
     }
     return def;
@@ -330,7 +330,7 @@ function getScenarioTitle(element) {
 
 function getScenarioDescription(element) {
     var def = "";
-    if ($(element).children('div.green').children('textarea').val() != "") {
+    if ($(element).children('div.green').children('textarea').val() !== "") {
         def = $(element).children('div.green').children('textarea').val();
     }
     return def;
@@ -343,7 +343,7 @@ function getScenarioTestSteps(element) {
         obj.exists = true;
         var step = "";
         $(this).children('input,select,span').each(function() {
-            if (($(this).val() == "" || $(this).val() == null) && ($(this).is("input") || $(this).is("select"))) {
+            if (($(this).val() === "" || $(this).val() === null) && ($(this).is("input") || $(this).is("select"))) {
                 if ($(this).attr('placeholder') !== undefined) {
                     step += $(this).attr('placeholder');
                 }

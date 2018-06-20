@@ -25,7 +25,7 @@ function existingFeature() {
 
 function fillLink(el) {
     $(el).keyup(function(e) {
-        if (e.keyCode == 32 || e.keyCode == 13) {
+        if (e.keyCode === 32 || e.keyCode === 13) {
             addLink(el);
         }
     }).blur(function() {
@@ -33,9 +33,9 @@ function fillLink(el) {
     });
 }
 function addLink(el, link) {
-    if (link == "" || link === undefined) {
+    if (link === "" || link === undefined) {
         link = $(el).val();
-        if (link == "") {
+        if (link === "") {
             return;
         }
     }

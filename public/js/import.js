@@ -4,7 +4,7 @@ $(function() {
     var scenarios = url.searchParams.get("Scenarios");
 
     // if we have feature information
-    if (feature != null) {
+    if (feature !== null) {
         var featureJson = JSON.parse(feature);
         console.log(featureJson);
         // if there are tags, do something
@@ -21,19 +21,19 @@ $(function() {
             });
         }
         // add in the title
-        if (featureJson.hasOwnProperty('featureTitle') && featureJson.featureTitle != "") {
+        if (featureJson.hasOwnProperty('featureTitle') && featureJson.featureTitle !== "") {
             $('#featuredef input').val(featureJson.featureTitle);
         }
         // add in the description
-        if (featureJson.hasOwnProperty('featureDescription') && featureJson.featureDescription != "") {
+        if (featureJson.hasOwnProperty('featureDescription') && featureJson.featureDescription !== "") {
             $('#featuredef textarea').val(featureJson.featureDescription);
         }
         // add in the background title
-        if (featureJson.hasOwnProperty('backgroundTitle') && featureJson.backgroundTitle != "") {
+        if (featureJson.hasOwnProperty('backgroundTitle') && featureJson.backgroundTitle !== "") {
             $('#backgrounddef input').val(featureJson.backgroundTitle);
         }
         // add in the background description
-        if (featureJson.hasOwnProperty('backgroundDescription') && featureJson.backgroundDescription != "") {
+        if (featureJson.hasOwnProperty('backgroundDescription') && featureJson.backgroundDescription !== "") {
             $('#backgrounddef textarea').val(featureJson.backgroundDescription);
         }
         // add in background steps
@@ -46,24 +46,24 @@ $(function() {
             });
         }
         // finally, add our feature key if it exists
-        if (featureJson.hasOwnProperty('featureKey') && featureJson.featureKey != "") {
+        if (featureJson.hasOwnProperty('featureKey') && featureJson.featureKey !== "") {
             existingFeature();
             $('#jiraFeat').val(featureJson.featureKey);
         }
     }
 
     // if we have scenario information
-    if (scenarios != null) {
+    if (scenarios !== null) {
         var scenariosJson = JSON.parse(scenarios);
         scenariosJson.forEach(function(scenario) {
             console.log(scenario);
             // add our feature key if it exists
-            if (scenario.hasOwnProperty('featureKey') && scenario.featureKey != "") {
+            if (scenario.hasOwnProperty('featureKey') && scenario.featureKey !== "") {
                 existingFeature();
                 $('#jiraFeat').val(scenario.featureKey);
             }
             // add our scenario
-            if (scenario.hasOwnProperty('scenarioKey') && scenario.scenarioKey != "") {
+            if (scenario.hasOwnProperty('scenarioKey') && scenario.scenarioKey !== "") {
                 addScenario(scenario.scenarioKey);
             } else {
                 addScenario();
@@ -83,11 +83,11 @@ $(function() {
                 });
             }
             // add in the title
-            if (scenario.hasOwnProperty('scenarioTitle') && scenario.scenarioTitle != "") {
+            if (scenario.hasOwnProperty('scenarioTitle') && scenario.scenarioTitle !== "") {
                 scenarioEl.find('input.green').val(scenario.scenarioTitle);
             }
             // add in the description
-            if (scenario.hasOwnProperty('scenarioDescription') && scenario.scenarioDescription != "") {
+            if (scenario.hasOwnProperty('scenarioDescription') && scenario.scenarioDescription !== "") {
                 scenarioEl.find('textarea').val(scenario.scenarioDescription);
             }
             // add in test steps
