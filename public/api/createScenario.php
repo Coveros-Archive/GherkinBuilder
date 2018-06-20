@@ -13,31 +13,12 @@ $SCENARIODESCRIPTION = "scenarioDescription";
 $BACKGROUNDSTEPS = "backgroundSteps";
 $SCENARIOTESTSTEPS = "scenarioTestSteps";
 $SCENARIOEXAMPLES = "scenarioExamples";
+$GLUECODE = "glue_code_project";
 $TAGS = "tags";
 $DATA = "data";
 $INPUTS = "inputs";
 
-$data = new \stdClass ();
-$data->fields = new \stdClass ();
-$data->fields->issuetype = new \stdClass ();
-$data->fields->issuetype->name = "Test";
-
-if (! isset ( $_POST ['auth'] ) || $_POST ['auth'] == "Og==") {
-    echo "Authorization not provided";
-    header ( $ERROR );
-    exit ();
-} else {
-    $auth = base64_decode ( $_POST ['auth'] );
-}
-
-if (! isset ( $_POST [$PROJECT] ) || $_POST [$PROJECT] == "") {
-    echo "Project not provided";
-    header ( $ERROR );
-    exit ();
-} else {
-    $data->fields->project = new \stdClass ();
-    $data->fields->project->key = $_POST [$PROJECT];
-}
+include "setupData.php";
 
 if (! isset ( $_POST [$FEATURE] ) || $_POST [$FEATURE] == "") {
     echo "Feature not provided";
@@ -209,13 +190,13 @@ foreach ( $testSteps as $testStep ) {
     }
     
     // if it's a new step, and a glue code project is defined, open a ticket for the work to be done
-    if ($testStep ['exists'] == 'false' && (isset ( $params ['glue_code_project'] ) && $params ['glue_code_project'] != "")) {
+    if ($testStep ['exists'] == 'false' && (isset ( $params [$GLUECODE] ) && $params [$GLUECODE] != "")) {
         $work = new \stdClass ();
         $work->fields = new \stdClass ();
         $work->fields->issuetype = new \stdClass ();
         $work->fields->issuetype->name = "Story";
         $work->fields->project = new \stdClass ();
-        $work->fields->project->key = $params ['glue_code_project'];
+        $work->fields->project->key = $params [$GLUECODE];
         $work->fields->summary = "Write glue code for '$step'";
         $work->fields->description = "Glue code needs to be written for the newly created test case $key.";
         $work->fields->description .= "The step '$step' needs to be implemented.";
