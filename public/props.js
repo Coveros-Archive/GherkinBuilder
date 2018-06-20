@@ -1,4 +1,4 @@
-jiraOptions = {
+var jiraOptions = {
     project : "",
     base : ""
 }

@@ -104,7 +104,7 @@ function fillTag(el) {
             },
         }).click(function() {
             $(this).autocomplete("search", "");
-        })
+        });
     }
     $(el).keyup(function(e) {
         if (e.keyCode === 32 || e.keyCode === 13) {
@@ -232,7 +232,7 @@ function createStep(el) {
                 buildTable(type.parent().parent().parent());
                 makeDynamic();
             }
-            return true;
+            return;
         }
     }
     type.next().nextAll().remove();
@@ -289,7 +289,7 @@ function buildTable(testEl) { // el should be the test element
         testEl = $(testEl).parent().parent().parent();
     }
     if (!$(testEl).hasClass('scenario')) {
-        return false;
+        return;
     }
     // add a table if needed
     if ($(testEl).find('.examples').length === 0) {
@@ -306,23 +306,23 @@ function buildTable(testEl) { // el should be the test element
                 if (placeholder.startsWith("<") && placeholder.endsWith(">")) {
                     variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
                 }
-                return true;
+                return;
             }
             if (Object.prototype.toString.call($(this).val()) === '[object Array]') {
-                return true;
+                return;
             }
             if ($(this).hasClass('ui-autocomplete-input')) {
-                return true;
+                return;
             }
             if ($(this).val() === "" && $(this).is("input")) {
                 var placeholder = $(this).attr('placeholder')
                 variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
-                return true;
+                return;
             }
             if ($(this).val().startsWith("<") && $(this).val().endsWith(">")) {
                 var placeholder = $(this).val();
                 variables[placeholder.substring(1, placeholder.length - 1)] = $(this).attr('id');
-                return true;
+                return;
             }
         });
     });
@@ -364,7 +364,6 @@ function buildTable(testEl) { // el should be the test element
                 });
             }
         }
-        ;
     });
     // rearrange our table
     var order = [];
