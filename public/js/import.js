@@ -67,7 +67,9 @@ $(function() {
         }
         // finally, add our feature key if it exists
         if (featureJson.hasOwnProperty('featureKey') && featureJson.featureKey !== "") {
-            existingFeature();
+            if ( !$('#jiraFeat').is(":visible") ) {
+                existingFeature();
+            }
             $('#jiraFeat').val(featureJson.featureKey);
         }
     }
@@ -79,7 +81,9 @@ $(function() {
             console.log(scenario);
             // add our feature key if it exists
             if (scenario.hasOwnProperty('featureKey') && scenario.featureKey !== "") {
-                existingFeature();
+                if ( !$('#jiraFeat').is(":visible") ) {
+                    existingFeature();
+                }
                 $('#jiraFeat').val(scenario.featureKey);
             }
             // add our scenario
@@ -115,8 +119,14 @@ $(function() {
                 scenario.scenarioTestSteps.forEach(function(testStep) {
                     scenarioEl.find('button').click();
                     var stepEl = scenarioEl.find('.test-step:last-child');
-                    stepEl.find('.blue').val(testStep.step.split(/ /)[0]).trigger("chosen:updated");
-                    stepEl.find('input').val(testStep.step.split(/ (.+)/)[1]).blur();
+                    var thisStep;
+                    if ( testStep.step !== undefined ) {
+                        thisStep = testStep.step;
+                    } else {
+                        thisStep = testStep;
+                    }
+                    stepEl.find('.blue').val(thisStep.split(/ /)[0]).trigger("chosen:updated");
+                    stepEl.find('input').val(thisStep.split(/ (.+)/)[1]).blur();
                 });
             }
             // add in examples
