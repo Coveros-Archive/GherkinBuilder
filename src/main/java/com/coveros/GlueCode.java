@@ -158,7 +158,7 @@ public class GlueCode {
      */
     public Boolean isText(String input) {
         return "string".equalsIgnoreCase(input) || "char".equalsIgnoreCase(input) || "double".equalsIgnoreCase(input) ||
-                "boolean".equalsIgnoreCase(input);
+                "boolean".equalsIgnoreCase(input) || "datatable".equalsIgnoreCase(input);
     }
 
     /**
