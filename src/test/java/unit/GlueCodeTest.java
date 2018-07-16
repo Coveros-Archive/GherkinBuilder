@@ -459,6 +459,11 @@ public class GlueCodeTest {
     }
 
     @Test
+    public void isTextDataTableTest() throws IOException {
+        Assert.assertTrue(new GlueCode().isText("DataTable"));
+    }
+
+    @Test
     public void isTextLongTest() throws IOException {
         Assert.assertFalse(new GlueCode().isText("Long"));
     }
