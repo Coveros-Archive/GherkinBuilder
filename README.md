@@ -30,14 +30,14 @@ It is suggested to set this up as part of your CI process, so that each time new
 the test steps are re-generated. A sample test steps file might look like:
 `steps.js`
 ```
-testSteps.whens.push( new step( "I close the form" ) );
-testSteps.whens.push( new step( "I resume filling out the form" ) );
-testSteps.whens.push( new step( "I select prefer not to answer" ) );
-testSteps.whens.push( new step( "I click through the form using \"XXXX\"", new keypair( "options", "text" ) ) );
-testSteps.whens.push( new step( "I navigate to the next page" ) );
-testSteps.thens.push( new step( "I see the \"XXXX\" of type \"XXXX\"", new keypair( "placeholder", "text" ), new keypair( "fieldType", "text" ) ) );
-testSteps.thens.push( new step( "the continue button is disabled" ) );
-testSteps.thens.push( new step( "I can replay the video" ) );
+testSteps.push( new step( "I close the form" ) );
+testSteps.push( new step( "I resume filling out the form" ) );
+testSteps.push( new step( "I select prefer not to answer" ) );
+testSteps.push( new step( "I click through the form using \"XXXX\"", new keypair( "options", "text" ) ) );
+testSteps.push( new step( "I navigate to the next page" ) );
+testSteps.push( new step( "I see the \"XXXX\" of type \"XXXX\"", new keypair( "placeholder", "text" ), new keypair( "fieldType", "text" ) ) );
+testSteps.push( new step( "the continue button is disabled" ) );
+testSteps.push( new step( "I can replay the video" ) );
 ```
 
 Run `composer install`, if you haven't already, to install the needed php tools and dependencies. Then:
