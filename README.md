@@ -40,12 +40,28 @@ testSteps.push( new step( "the continue button is disabled" ) );
 testSteps.push( new step( "I can replay the video" ) );
 ```
 
+### Composer
 Run `composer install`, if you haven't already, to install the needed php tools and dependencies. Then:
 ```
 vendor/bin/lambdaphp deploy -v
 ```
 This will update the GherkinBuilder Lambda function to the latest code and ensure all steps are up to date.
-The previous command will give you the address to use. TODO: Add a custom domain to API Gateway.
+The previous command will give you the address to use.
+
+TODO: Add a custom domain to API Gateway.
+
+### Docker
+A Dockerfile is included in this repository. This is a simple container, built on top of the `nimmis/apache-php5` 
+container. To build the container, first, generate the test steps (see the above instructions), and then simply run 
+docker build:
+```
+docker build -t gherkin-builder .
+```
+Then, run the container:
+```
+docker run gherkin-builder
+```
+The container will spit out the IP that it can be accessed on, and both HTTP and HTTPS ports are exposed.
 
 ### JIRA Integration
 To enable JIRA integration, simply fill out the two properties files in the base public directory.
